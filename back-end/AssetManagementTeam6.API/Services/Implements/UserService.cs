@@ -15,8 +15,6 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-  
-
         public async Task<UserModel?> GetUserById(int id)
         {
             var user = await _userRepository.GetOneAsync(user => user.Id == id);

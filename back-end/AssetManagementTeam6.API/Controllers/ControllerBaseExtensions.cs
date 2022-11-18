@@ -7,6 +7,7 @@ namespace AssetManagementTeam6.API.Controllers
     {
         public static int? GetCurrentLoginUserId(this ControllerBase controller)
         {
+            var abc = controller.HttpContext;
             if (controller.HttpContext.User.Identity is ClaimsIdentity identity)
             {
                 var userIdString = identity?.FindFirst("UserId")?.Value;

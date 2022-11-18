@@ -61,9 +61,13 @@ namespace AssetManagementTeam6.API.Controllers
             });
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
+            if (id < 1)
+                return BadRequest();
+
             try
             {
                 var data = await _userService.GetUserById(id);
@@ -76,8 +80,9 @@ namespace AssetManagementTeam6.API.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("check")]
-        public async Task<IActionResult> CheckLogin()
+        public IActionResult CheckLogin()
         {
             var userId = this.GetCurrentLoginUserId();
 
@@ -87,13 +92,6 @@ namespace AssetManagementTeam6.API.Controllers
             }
 
             return Ok(userId);
-        }
-
-        [HttpGet("logout")]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return Ok("Logout");
         }
     }
 }

@@ -8,19 +8,19 @@
     "net6.0": []
   },
   "packageFolders": {
-    "C:\\Users\\22nvh\\.nuget\\packages\\": {}
+    "C:\\Users\\PhungVu\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
+      "projectUniqueName": "C:\\Users\\PhungVu\\Desktop\\FinalProject\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
       "projectName": "Common",
-      "projectPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
-      "packagesPath": "C:\\Users\\22nvh\\.nuget\\packages\\",
-      "outputPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\obj\\",
+      "projectPath": "C:\\Users\\PhungVu\\Desktop\\FinalProject\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
+      "packagesPath": "C:\\Users\\PhungVu\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\PhungVu\\Desktop\\FinalProject\\nashtech-rookies-hn06-final\\back-end\\Common\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\22nvh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\PhungVu\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -61,7 +61,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.403\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
       }
     }
   }
