@@ -1,0 +1,7 @@
+./Common/obj
+./AssetManagementTeam6.Data/obj
+./AssetManagementTeam6.API/obj
+.vs
+./Common/bin
+./AssetManagementTeam6.Data/bin
+./AssetManagementTeam6.API/bin
