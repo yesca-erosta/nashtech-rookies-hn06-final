@@ -1,0 +1,16 @@
+﻿To run migration to your database:
+
+1. Change connection string in appsettings.json 
+
+2. Open Package Manager Console
+
+3. Run migration:
+add-migration FirstMigration -context AssetManagementContext -o Migrations
+
+4. Update migration:
+update-database
+
+
+To TestAPI:
+Get: https://localhost:7233/api/test/get
+Post: https://localhost:7233/api/test/post
