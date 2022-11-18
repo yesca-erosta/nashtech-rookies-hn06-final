@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj": {}
+    "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj": {}
   },
   "projects": {
-    "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj": {
+    "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj",
+        "projectUniqueName": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj",
         "projectName": "AssetManagementTeam6.Data",
-        "projectPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj",
-        "packagesPath": "C:\\Users\\22nvh\\.nuget\\packages\\",
-        "outputPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\obj\\",
+        "projectPath": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\AssetManagementTeam6.Data.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\22nvh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -28,8 +28,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj": {
-                "projectPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj"
+              "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj": {
+                "projectPath": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj"
               }
             }
           }
@@ -73,17 +73,17 @@
         }
       }
     },
-    "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj": {
+    "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
+        "projectUniqueName": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
         "projectName": "Common",
-        "projectPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
-        "packagesPath": "C:\\Users\\22nvh\\.nuget\\packages\\",
-        "outputPath": "C:\\CustomProject\\TheFinal_Assignment\\nashtech-rookies-hn06-final\\back-end\\Common\\obj\\",
+        "projectPath": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\Common.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "D:\\Rookies_Team6\\nashtech-rookies-hn06-final\\back-end\\Common\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\22nvh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
