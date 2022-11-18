@@ -55,6 +55,7 @@ jobs:
       - name: Build with dotnet
         run:
           cd back-end
+          
           dotnet build --configuration Release
 
       - name: dotnet publish
