@@ -1,0 +1,30 @@
+.wrapper {
+    width: 320px;
+}
+
+.logo {
+    div {
+        color: #e4010b;
+        font-weight: 700;
+        font-size: 21px;
+        margin-top: -66px;
+        position: absolute;
+    }
+
+    img {
+        width: 136px;
+        object-fit: cover;
+        margin: 50px 0 50px -16px;
+        position: relative;
+    }
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    color: #1c2024;
+    font-weight: 500;
+    font-size: 22px;
+    justify-content: center;
+    cursor: pointer;
+}

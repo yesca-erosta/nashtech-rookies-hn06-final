@@ -1,0 +1,22 @@
+.wrapper {
+    width: 100%;
+    height: 60px;
+    background-color: #cf2338;
+    display: flex;
+    justify-content: center;
+}
+
+.inner {
+    height: 100%;
+    width: 1680px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    font-size: 22px;
+    color: #eff1f5;
+}
+
+.inner-name {
+    display: flex;
+}
