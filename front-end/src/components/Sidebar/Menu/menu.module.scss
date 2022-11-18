@@ -1,0 +1,18 @@
+.menu-item {
+    font-weight: 500;
+    font-size: 22px;
+    text-decoration: none;
+    color: #1c2024;
+}
+
+.menu-title {
+    width: 100%;
+    background-color: #eff1f5;
+    margin-bottom: 4px;
+    padding: 12px 0 12px 10px;
+
+    &:hover {
+        background-color: #cf2338;
+        color: #eff1f5;
+    }
+}
