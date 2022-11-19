@@ -1,0 +1,12 @@
+back-end/AssetManagementTeam6.API/bin
+back-end/AssetManagementTeam6.API/obj
+
+back-end/AssetManagementTeam6.Data
+back-end/AssetManagementTeam6.Data/obj
+
+back-end/Common/bin
+back-end/Common/obj
+
+back-end/AssetManagementTeam6.API/obj/Debug/net6.0/project.razor.json
+back-end/AssetManagementTeam6.Data/obj/Debug/net6.0/project.razor.json
+back-end/Common/obj/Debug/net6.0/project.razor.json
