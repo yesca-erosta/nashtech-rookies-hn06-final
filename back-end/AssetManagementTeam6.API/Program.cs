@@ -1,9 +1,11 @@
+using AssetManagementTeam6.API.Dtos.Validator;
 using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data;
 using AssetManagementTeam6.Data.Repositories.Implements;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Constants;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 
 
 // Add config
