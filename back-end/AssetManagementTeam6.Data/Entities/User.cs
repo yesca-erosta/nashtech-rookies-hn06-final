@@ -25,6 +25,13 @@ namespace AssetManagementTeam6.Data.Entities
 
         [Required]
         public StaffEnum Type { get; set; }
+
+        [Required]
+        public LocationEnum Location { get; set; }
+
+        [Required]
+        public bool IsFirst { get; set; }
+
         public string FullName => $"{FirstName} {LastName}";
 
     }
