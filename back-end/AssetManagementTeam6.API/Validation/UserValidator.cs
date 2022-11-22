@@ -13,28 +13,31 @@ namespace AssetManagementTeam6.API.Validation
                 RuleFor(x => x.Id).GreaterThan(0);
             });
 
-            RuleFor(x => x.FirstName)
-                .NotNull()
-                .NotEmpty()
-                .Matches(StringPattern.UserFirstName);
+            RuleSet("CreateUser", () =>
+            {
+                RuleFor(x => x.Password)
+                 .NotNull()
+                 .NotEmpty()
+                 .Matches(StringPattern.UserPassword);
 
-            RuleFor(x => x.LastName)
-                .NotNull()
-                .NotEmpty()
-                .Matches(StringPattern.UserLastName);
-
-            RuleFor(x => x.Password)
-                .NotNull()
-                .NotEmpty()
-                .Matches(StringPattern.UserPassword);
-
-            RuleFor(x => x.UserName)
+                RuleFor(x => x.UserName)
                 .NotNull()
                 .NotEmpty()
                 .Matches(StringPattern.UserName);
 
-            //RuleFor(x => x.DateOfBirth)
-            //    .Match()
+                RuleFor(x => x.FirstName)
+                .NotNull()
+                .NotEmpty()
+                .Matches(StringPattern.UserFirstName);
+
+                RuleFor(x => x.LastName)
+                    .NotNull()
+                    .NotEmpty()
+                    .Matches(StringPattern.UserLastName);
+            });
+
+            RuleFor(x => x.DateOfBirth)
+                .Must(BeOver18);
         }
 
         protected bool BeOver18(DateTime date)

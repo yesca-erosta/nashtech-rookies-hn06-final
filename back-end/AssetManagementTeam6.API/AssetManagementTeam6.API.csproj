@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.3.0" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.10" />
@@ -25,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Dtos\Models\" />
     <Folder Include="Extensions\" />
     <Folder Include="Heplers\" />
     <Folder Include="Middlewares\" />
