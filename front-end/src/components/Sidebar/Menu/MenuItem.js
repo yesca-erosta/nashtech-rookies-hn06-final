@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 
 function MenuItem({ title, to }) {
     return (
-        <NavLink className={(nav) => cx('menu-item', { active: nav.isActive })} to={to}>
+        <NavLink className={(nav) => cx('menu-item', { active: nav.isActive })} to={to.path}>
             {title}
         </NavLink>
     );
@@ -16,7 +16,7 @@ function MenuItem({ title, to }) {
 
 MenuItem.propTypes = {
     title: PropTypes.string.isRequired,
-    to: PropTypes.string.isRequired,
+    to: PropTypes.object.isRequired,
 };
 
 export default MenuItem;

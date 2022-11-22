@@ -1,8 +1,10 @@
+import RequiredAdmin from '../../context/RequiredAdmin/requiredAdmin';
+
 function Request() {
     return (
-        <div>
+        <RequiredAdmin>
             <h1>Request </h1>
-        </div>
+        </RequiredAdmin>
     );
 }
 

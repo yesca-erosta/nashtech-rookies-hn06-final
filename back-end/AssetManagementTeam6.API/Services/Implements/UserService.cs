@@ -1,7 +1,7 @@
-﻿using AssetManagementTeam6.API.Dtos.Models;
-using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
+using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 
 namespace AssetManagementTeam6.API.Services.Implements
@@ -15,42 +15,35 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-  
-
-        public async Task<UserModel?> GetUserById(int id)
+        public async Task<User?> Create(User user)
         {
-            var user = await _userRepository.GetOneAsync(user => user.Id == id);
+            user.NeedUpdatePwdOnLogin = true;
 
-            if (user != null)
-            {
-                return new UserModel
-                {
-                    Id = user.Id,
-                    UserName = user.Username
-                };
-            }
+            var createdUser = await _userRepository.Create(user);
 
-            return null;
+            return createdUser;
         }
 
-        public async Task<LoginResponse?> LoginUser(LoginRequest loginRequest)
+        public async Task<User?> GetUserById(int id)
         {
-            var user = await _userRepository
-               .GetOneAsync(user => user.Username == loginRequest.UserName &&
+            return await _userRepository.GetOneAsync(user => user.Id == id);
+        }
+
+        public async Task<User?> GetUserByUserAccount(string userName)
+        {
+            return await _userRepository.GetOneAsync(user => user.UserName == userName);
+        }
+
+        public async Task<User?> LoginUser(LoginRequest loginRequest)
+        {
+            return await _userRepository
+               .GetOneAsync(user => user.UserName == loginRequest.UserName &&
                                    user.Password == loginRequest.Password);
-
-            if (user == null)
-            {
-                return null;
-            }    
-
-            return new LoginResponse
-            {
-                Id = user.Id,
-                UserName = user.Username,
-                Type = user.Type.ToString()
-            };
         }
 
+        public async Task<User?> Update(User updateRequest)
+        {
+            return await _userRepository.Update(updateRequest);
+        }
     }
 }
