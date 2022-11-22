@@ -2,10 +2,9 @@
 
 namespace AssetManagementTeam6.Data.Entities
 {
-    public class Category : BaseEntity<int>
+    public class Category
     {
-        // TODO: Have confirm name
-        [Required]
-        public string? NameCategory { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

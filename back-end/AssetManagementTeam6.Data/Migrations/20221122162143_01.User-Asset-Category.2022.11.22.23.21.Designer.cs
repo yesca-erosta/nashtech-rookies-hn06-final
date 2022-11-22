@@ -4,6 +4,7 @@ using AssetManagementTeam6.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AssetManagementTeam6.Data.Migrations
 {
     [DbContext(typeof(AssetManagementContext))]
-    partial class AssetManagementContextModelSnapshot : ModelSnapshot
+    [Migration("20221122162143_01.User-Asset-Category.2022.11.22.23.21")]
+    partial class _01UserAssetCategory202211222321
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
