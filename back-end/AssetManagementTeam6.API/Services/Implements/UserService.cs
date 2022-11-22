@@ -17,23 +17,13 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-        public async Task<CreateUserResponse> Create(CreateUserRequest createRequest)
+        public async Task<User> Create(User user)
         {
-            var user = new User
-            {
-                IsFirst = true,
-                FirstName = createRequest.FirstName,
-                LastName = createRequest.LastName,
-                DateOfBirth = createRequest.DateOfBirth,
-                JoinedDate = createRequest.JoinedDate,
-                Gender = createRequest.Gender,
-                Type = createRequest.Type,
-                Location = LocationEnum.HN
-            };
+            user.NeedUpdatePwdOnLogin = true;
 
             var createdUser = await _userRepository.Create(user);
 
-            return new CreateUserResponse(createdUser);
+            return createdUser;
         }
 
         public async Task<UserModel?> GetUserById(int id)
@@ -45,7 +35,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 return new UserModel
                 {
                     Id = user.Id,
-                    UserName = user.Username
+                    UserName = user.UserName
                 };
             }
 
@@ -55,7 +45,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<LoginResponse?> LoginUser(LoginRequest loginRequest)
         {
             var user = await _userRepository
-               .GetOneAsync(user => user.Username == loginRequest.UserName &&
+               .GetOneAsync(user => user.UserName == loginRequest.UserName &&
                                    user.Password == loginRequest.Password);
 
             if (user == null)
@@ -66,7 +56,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             return new LoginResponse
             {
                 Id = user.Id,
-                UserName = user.Username,
+                UserName = user.UserName,
                 Type = user.Type.ToString()
             };
         }
