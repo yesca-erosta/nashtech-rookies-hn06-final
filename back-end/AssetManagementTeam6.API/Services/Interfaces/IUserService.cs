@@ -10,5 +10,6 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<UserModel?> GetUserById(int id);
         Task<LoginResponse?> LoginUser(LoginRequest loginRequest);
        // Task DeleteAll(int id);
+       Task<CreateUserResponse> Create(CreateUserRequest createRequest);
     }
 }

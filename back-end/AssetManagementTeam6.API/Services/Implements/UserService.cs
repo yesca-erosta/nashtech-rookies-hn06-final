@@ -2,7 +2,9 @@
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
+using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
+using Common.Enums;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
@@ -15,7 +17,24 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-  
+        public async Task<CreateUserResponse> Create(CreateUserRequest createRequest)
+        {
+            var user = new User
+            {
+                IsFirst = true,
+                FirstName = createRequest.FirstName,
+                LastName = createRequest.LastName,
+                DateOfBirth = createRequest.DateOfBirth,
+                JoinedDate = createRequest.JoinedDate,
+                Gender = createRequest.Gender,
+                Type = createRequest.Type,
+                Location = LocationEnum.HN
+            };
+
+            var createdUser = await _userRepository.Create(user);
+
+            return new CreateUserResponse(createdUser);
+        }
 
         public async Task<UserModel?> GetUserById(int id)
         {

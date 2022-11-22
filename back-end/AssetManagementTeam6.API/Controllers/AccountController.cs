@@ -2,7 +2,6 @@
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
 using Common.Constants;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

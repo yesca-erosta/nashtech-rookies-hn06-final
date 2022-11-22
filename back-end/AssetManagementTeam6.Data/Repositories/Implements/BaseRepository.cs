@@ -15,16 +15,55 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
             _dbSet = context.Set<T>();
             _context = context;
         }
-        public T Create(T entity)
+        public async Task<T> Create(T entity)
         {
-            return _dbSet.Add(entity).Entity;
+            if(entity == null)
+            {
+                throw new ArgumentNullException("null");
+            }
+
+            await _context.Database.BeginTransactionAsync();
+            
+            try
+            {
+                await _dbSet.AddAsync(entity);
+
+                await _context.SaveChangesAsync();
+
+                await _context.Database.CommitTransactionAsync();
+            }
+            catch (System.Exception)
+            {
+                await _context.Database.RollbackTransactionAsync();
+            }
+
+            return entity;
         }
 
-        public bool Delete(T? entity)
+        public async Task<bool> Delete(T? entity)
         {
-            _dbSet.Remove(entity);
+            if(entity == null)
+            {
+                throw new ArgumentException("entity");
+            }
 
-            return true;
+            await _context.Database.BeginTransactionAsync();
+
+            try {
+                _dbSet.Remove(entity);
+
+                await _context.SaveChangesAsync();
+
+                await _context.Database.CommitTransactionAsync();
+
+                return true;
+            }
+            catch
+            {
+                await _context.Database.RollbackTransactionAsync();
+
+                return false;
+            }               
         }
 
         public async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>>? predicate = null)
@@ -40,9 +79,30 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
 
             return await dbSet;
         }
-        public T Update(T entity)
+        public async Task<T> Update(T entity)
         {
-            return _dbSet.Update(entity).Entity;
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
+            await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                _dbSet.Update(entity);
+
+                await _context.SaveChangesAsync();
+
+                await _context.Database.CommitTransactionAsync();
+            }
+            catch (System.Exception)
+            {
+                await _context.Database.RollbackTransactionAsync();
+
+            }
+
+            return entity;
         }
 
     }
