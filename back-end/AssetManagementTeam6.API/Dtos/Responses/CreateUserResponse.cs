@@ -13,7 +13,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public CreateUserResponse (User user)
         {
             StaffCode = user.StaffCode;
-            UserName = user.Username;
+            UserName = user.UserName;
             Type = user.Type.ToString();
             Location = user.Location.ToString();
             PassWord = user.Password;
