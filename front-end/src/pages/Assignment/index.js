@@ -1,8 +1,10 @@
+import RequiredAdmin from '../../context/RequiredAdmin/requiredAdmin';
+
 function Assignment() {
     return (
-        <div>
+        <RequiredAdmin>
             <h1>Assignment </h1>
-        </div>
+        </RequiredAdmin>
     );
 }
 

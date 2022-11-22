@@ -1,17 +1,43 @@
 import './login.scss';
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import { useAuthContext } from '../../context/RequiredAuth/authContext';
 
-const Home = () => {
+const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
     const [isPasswordError, setIsPasswordError] = useState('');
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate();
+
+    const { setIsAuthenticated, setUser } = useAuthContext();
 
     const handleLogin = () => {
-        userName === '' ? setIsUserNameError('not be empty!') : setIsUserNameError('');
-        password === '' ? setIsPasswordError('not be empty!') : setIsPasswordError('');
+        let isAdmin = false;
+
+        userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
+        password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
+
+        if (userName === 'adminHN' && password === 'Admin@123') {
+            isAdmin = true;
+            localStorage.setItem('accessToken', true);
+            setIsAuthenticated(true);
+            navigate('/');
+        }
+
+        if (userName === 'user' && password === 'user@123') {
+            isAdmin = false;
+            localStorage.setItem('accessToken', true);
+            setIsAuthenticated(true);
+            navigate('/');
+        }
+
+        setUser({
+            name: userName,
+            isAdmin,
+        });
     };
 
     return (
@@ -28,13 +54,13 @@ const Home = () => {
                             placeholder="Enter username"
                             value={userName}
                             onChange={(e) => {
-                                e.target.value === '' ? setIsUserNameError('not be empty!') : setIsUserNameError('');
+                                e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                                 setUserName(e.target.value);
                             }}
                             onBlur={(e) => {
-                                e.target.value === '' ? setIsUserNameError('not be empty!!') : setIsUserNameError('');
+                                e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                             }}
-                            onFocus={(e) => {
+                            onFocus={() => {
                                 setIsUserNameError('');
                             }}
                         />
@@ -43,20 +69,20 @@ const Home = () => {
                     <div className="form_item">
                         <label>Password: </label>
                         <input
-                            type="text"
+                            type="password"
                             id="input-bar"
                             className={`${isPasswordError ? 'input-error' : ''}`}
                             placeholder="Enter password"
                             value={password}
                             onChange={(e) => {
-                                e.target.value === '' ? setIsPasswordError('not be empty!') : setIsPasswordError('');
+                                e.target.value === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
 
                                 setPassword(e.target.value);
                             }}
                             onBlur={(e) => {
-                                e.target.value === '' ? setIsPasswordError('not be empty!!') : setIsPasswordError('');
+                                e.target.value === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
                             }}
-                            onFocus={(e) => {
+                            onFocus={() => {
                                 setIsPasswordError('');
                             }}
                         />
@@ -66,14 +92,10 @@ const Home = () => {
                     <Button variant="danger" onClick={handleLogin}>
                         Login
                     </Button>
-
-                    <a className="sign-up" href="home">
-                        Sign Up
-                    </a>
                 </form>
             </div>
         </section>
     );
 };
 
-export default Home;
+export default Login;
