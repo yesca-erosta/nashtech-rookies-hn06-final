@@ -16,6 +16,18 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//Add cors
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api",
+                            "http://localhost:300");
+    });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -64,6 +76,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(x => x.AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true)
+                .AllowCredentials());
 
 app.UseHttpsRedirection();
 
