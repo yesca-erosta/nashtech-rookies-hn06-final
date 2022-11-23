@@ -8,11 +8,14 @@ import { useAuthContext } from '../../context/RequiredAuth/authContext';
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
     const [isPasswordError, setIsPasswordError] = useState('');
+    const [isLoginError, setIsLoginError] = useState(false);
+    const [isNoResponseError, setIsNoResponseError] = useState(false);
+
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const { setIsAuthenticated, setToken, setOldPassword } = useAuthContext();
+    const { setIsAuthenticated, setToken, setOldPasswordLogin } = useAuthContext();
 
     const handleLogin = async () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
@@ -40,8 +43,17 @@ const Login = () => {
             navigate('/');
         }
 
+        if (result.status === 400) {
+            setIsLoginError(true);
+        }
+
+        if (result.status === 500) {
+            setIsNoResponseError(true);
+            setIsLoginError(false);
+        }
+
         setToken(data);
-        setOldPassword(password);
+        setOldPasswordLogin(password);
     };
 
     return (
@@ -60,12 +72,14 @@ const Login = () => {
                             onChange={(e) => {
                                 e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                                 setUserName(e.target.value);
+                                setIsLoginError(false);
                             }}
                             onBlur={(e) => {
                                 e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                             }}
                             onFocus={() => {
                                 setIsUserNameError('');
+                                setIsLoginError(false);
                             }}
                         />
                         {isUserNameError && <label className="form_item_error">{isUserNameError}</label>}
@@ -80,7 +94,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => {
                                 e.target.value === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
-
+                                setIsLoginError(false);
                                 setPassword(e.target.value);
                             }}
                             onBlur={(e) => {
@@ -88,6 +102,7 @@ const Login = () => {
                             }}
                             onFocus={() => {
                                 setIsPasswordError('');
+                                setIsLoginError(false);
                             }}
                         />
                         {isPasswordError && <label className="form_item_error">{isPasswordError}</label>}
@@ -96,6 +111,9 @@ const Login = () => {
                     <Button variant="danger" onClick={handleLogin}>
                         Login
                     </Button>
+
+                    {isLoginError && <div className="login_false">Invalid login information!</div>}
+                    {isNoResponseError && <div className="login_false">Sorry the request failed!</div>}
                 </form>
             </div>
         </section>
