@@ -1,11 +1,5 @@
-import RequiredAdmin from '../../context/RequiredAdmin/requiredAdmin';
-
 function Request() {
-    return (
-        <RequiredAdmin>
-            <h1>Request </h1>
-        </RequiredAdmin>
-    );
+    return <h1>Request </h1>;
 }
 
 export default Request;

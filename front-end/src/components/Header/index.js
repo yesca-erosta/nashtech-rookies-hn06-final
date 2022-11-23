@@ -12,6 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
+import { useAuthContext } from '../../context/RequiredAuth/authContext';
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,11 @@ function Header() {
     const [hideOld, setHideOld] = useState(false);
     const [hideNew, setHideNew] = useState(false);
 
+    const [newPassword, setNewPassword] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [isNewPasswordError, setIsNewPasswordError] = useState('');
+    const [isOldPasswordError, setIsOldPasswordError] = useState('');
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -28,6 +34,8 @@ function Header() {
     const [showChangePassword, setShowChangePassword] = useState(false);
     const handleCloseChangePassword = () => setShowChangePassword(false);
     const handleShowChangePassWord = () => setShowChangePassword(true);
+
+    const { token } = useAuthContext();
 
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
@@ -54,13 +62,31 @@ function Header() {
         setName(result[0][1].name);
     }, [location]);
 
+    const handleSave = async () => {
+        await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+
+            body: JSON.stringify({
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+            }),
+        });
+        handleCloseChangePassword(false);
+    };
+
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
                 <div className={cx('inner-page')}>{name}</div>
 
                 <div className={cx('inner-name')}>
-                    <div>binhnv</div>
+                    <div>{token.userName}</div>
                     <div>
                         <Dropdown>
                             <Dropdown.Toggle variant="" style={{ color: 'white' }} />
@@ -100,7 +126,14 @@ function Header() {
                     <Form>
                         <h6>Old password:</h6>
                         <div className={cx('input-new-password')}>
-                            <Form.Control type={hideOld ? 'text' : 'password'} placeholder="Enter old password" />
+                            <Form.Control
+                                type={hideOld ? 'text' : 'password'}
+                                placeholder="Enter old password"
+                                value={oldPassword}
+                                onChange={(e) => {
+                                    setOldPassword(e.target.value);
+                                }}
+                            />
                             <div className={cx('icon-new')} onClick={toggleBtnOld}>
                                 {hideOld ? <AiFillEyeInvisible /> : <AiFillEye />}
                             </div>
@@ -110,7 +143,14 @@ function Header() {
                     <Form>
                         <h6>New password:</h6>
                         <div className={cx('input-new-password')}>
-                            <Form.Control type={hideNew ? 'text' : 'password'} placeholder="Enter new password" />
+                            <Form.Control
+                                type={hideNew ? 'text' : 'password'}
+                                placeholder="Enter new password"
+                                value={newPassword}
+                                onChange={(e) => {
+                                    setNewPassword(e.target.value);
+                                }}
+                            />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
                                 {hideNew ? <AiFillEyeInvisible /> : <AiFillEye />}
                             </div>
@@ -118,7 +158,9 @@ function Header() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger">Submit</Button>
+                    <Button variant="danger" onClick={handleSave}>
+                        Save
+                    </Button>
                     <Button variant="outline-primary" onClick={handleCloseChangePassword} href="">
                         Cancel
                     </Button>
