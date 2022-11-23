@@ -12,6 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
+import { useAuthContext } from '../../context/RequiredAuth/authContext';
 
 const cx = classNames.bind(styles);
 
@@ -21,13 +22,25 @@ function Header() {
     const [hideOld, setHideOld] = useState(false);
     const [hideNew, setHideNew] = useState(false);
 
+    const [newPassword, setNewPassword] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [isOldPasswordError, setIsOldPasswordError] = useState(false);
+    const [isEmptyPasswordError, setIsEmptyPasswordError] = useState(false);
+    const [isSamePasswordError, setIsSamePasswordError] = useState(false);
+    const [isComplexityPasswordError, setIsComplexityPasswordError] = useState(false);
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const [showSuccess, setShowSuccess] = useState(false);
+    const handleCloseSuccess = () => setShowSuccess(false);
+
     const [showChangePassword, setShowChangePassword] = useState(false);
     const handleCloseChangePassword = () => setShowChangePassword(false);
     const handleShowChangePassWord = () => setShowChangePassword(true);
+
+    const { token, oldPasswordLogin } = useAuthContext();
 
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
@@ -54,13 +67,45 @@ function Header() {
         setName(result[0][1].name);
     }, [location]);
 
+    const handleSave = async () => {
+        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+
+            body: JSON.stringify({
+                oldPassword: oldPassword,
+                newPassword: newPassword,
+            }),
+        });
+
+        oldPassword !== oldPasswordLogin ? setIsOldPasswordError(true) : setIsOldPasswordError(false);
+        !newPassword ? setIsEmptyPasswordError(true) : setIsEmptyPasswordError(false);
+        newPassword === oldPassword ? setIsSamePasswordError(true) : setIsSamePasswordError(false);
+
+        oldPassword === oldPasswordLogin && newPassword !== oldPassword && newPassword && result.status === 400
+            ? setIsComplexityPasswordError(true)
+            : setIsComplexityPasswordError(false);
+
+        if (result.status === 200) {
+            setShowChangePassword(false);
+            setShowSuccess(true);
+        } else {
+            setShowSuccess(false);
+        }
+    };
+
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
                 <div className={cx('inner-page')}>{name}</div>
 
                 <div className={cx('inner-name')}>
-                    <div>binhnv</div>
+                    <div>{token.userName}</div>
                     <div>
                         <Dropdown>
                             <Dropdown.Toggle variant="" style={{ color: 'white' }} />
@@ -100,27 +145,69 @@ function Header() {
                     <Form>
                         <h6>Old password:</h6>
                         <div className={cx('input-new-password')}>
-                            <Form.Control type={hideOld ? 'text' : 'password'} placeholder="Enter old password" />
+                            <Form.Control
+                                type={hideOld ? 'text' : 'password'}
+                                placeholder="Enter old password"
+                                value={oldPassword}
+                                onChange={(e) => {
+                                    setOldPassword(e.target.value);
+                                }}
+                            />
                             <div className={cx('icon-new')} onClick={toggleBtnOld}>
                                 {hideOld ? <AiFillEyeInvisible /> : <AiFillEye />}
                             </div>
                         </div>
                     </Form>
+                    {isOldPasswordError && <div className={cx('oldPassword_false')}>Password is incorrect!</div>}
                     <br></br>
                     <Form>
                         <h6>New password:</h6>
                         <div className={cx('input-new-password')}>
-                            <Form.Control type={hideNew ? 'text' : 'password'} placeholder="Enter new password" />
+                            <Form.Control
+                                type={hideNew ? 'text' : 'password'}
+                                placeholder="Enter new password"
+                                value={newPassword}
+                                onChange={(e) => {
+                                    setNewPassword(e.target.value);
+                                }}
+                            />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
                                 {hideNew ? <AiFillEyeInvisible /> : <AiFillEye />}
                             </div>
                         </div>
                     </Form>
+                    {isEmptyPasswordError && (
+                        <div className={cx('oldPassword_false')}>You should provide the new password!</div>
+                    )}
+
+                    {isSamePasswordError && (
+                        <div className={cx('oldPassword_false')}>
+                            The new password should not be the same with the old password!
+                        </div>
+                    )}
+
+                    {isComplexityPasswordError && (
+                        <div className={cx('oldPassword_false')}>The password should match the complexity!</div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger">Submit</Button>
+                    <Button variant="danger" onClick={handleSave}>
+                        Save
+                    </Button>
                     <Button variant="outline-primary" onClick={handleCloseChangePassword} href="">
                         Cancel
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showSuccess} onHide={handleCloseSuccess}>
+                <Modal.Header closeButton>
+                    <h3 className={cx('modal-title')}>Change password</h3>
+                </Modal.Header>
+                <Modal.Body>Your password has been changed successfilly!</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-primary" onClick={handleCloseSuccess}>
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>

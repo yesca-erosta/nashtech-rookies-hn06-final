@@ -8,36 +8,52 @@ import { useAuthContext } from '../../context/RequiredAuth/authContext';
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
     const [isPasswordError, setIsPasswordError] = useState('');
+    const [isLoginError, setIsLoginError] = useState(false);
+    const [isNoResponseError, setIsNoResponseError] = useState(false);
+
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const { setIsAuthenticated, setUser } = useAuthContext();
+    const { setIsAuthenticated, setToken, setOldPasswordLogin } = useAuthContext();
 
-    const handleLogin = () => {
-        let isAdmin = false;
-
+    const handleLogin = async () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
         password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
 
-        if (userName === 'adminHN' && password === 'Admin@123') {
-            isAdmin = true;
-            localStorage.setItem('accessToken', true);
-            setIsAuthenticated(true);
-            navigate('/');
-        }
+        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
 
-        if (userName === 'user' && password === 'user@123') {
-            isAdmin = false;
-            localStorage.setItem('accessToken', true);
-            setIsAuthenticated(true);
-            navigate('/');
-        }
-
-        setUser({
-            name: userName,
-            isAdmin,
+            body: JSON.stringify({
+                username: userName,
+                password: password,
+            }),
         });
+
+        const data = await result.json();
+        localStorage.setItem('accessToken', data.token);
+
+        if (data.token) {
+            setIsAuthenticated(true);
+            navigate('/');
+        }
+
+        if (result.status === 400) {
+            setIsLoginError(true);
+        }
+
+        if (result.status === 500) {
+            setIsNoResponseError(true);
+            setIsLoginError(false);
+        }
+
+        setToken(data);
+        setOldPasswordLogin(password);
     };
 
     return (
@@ -56,12 +72,14 @@ const Login = () => {
                             onChange={(e) => {
                                 e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                                 setUserName(e.target.value);
+                                setIsLoginError(false);
                             }}
                             onBlur={(e) => {
                                 e.target.value === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
                             }}
                             onFocus={() => {
                                 setIsUserNameError('');
+                                setIsLoginError(false);
                             }}
                         />
                         {isUserNameError && <label className="form_item_error">{isUserNameError}</label>}
@@ -76,7 +94,7 @@ const Login = () => {
                             value={password}
                             onChange={(e) => {
                                 e.target.value === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
-
+                                setIsLoginError(false);
                                 setPassword(e.target.value);
                             }}
                             onBlur={(e) => {
@@ -84,6 +102,7 @@ const Login = () => {
                             }}
                             onFocus={() => {
                                 setIsPasswordError('');
+                                setIsLoginError(false);
                             }}
                         />
                         {isPasswordError && <label className="form_item_error">{isPasswordError}</label>}
@@ -92,6 +111,9 @@ const Login = () => {
                     <Button variant="danger" onClick={handleLogin}>
                         Login
                     </Button>
+
+                    {isLoginError && <div className="login_false">Invalid login information!</div>}
+                    {isNoResponseError && <div className="login_false">Sorry the request failed!</div>}
                 </form>
             </div>
         </section>
