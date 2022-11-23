@@ -24,6 +24,20 @@ namespace AssetManagementTeam6.API.Services.Implements
             return createdUser;
         }
 
+        public async Task<bool> Delete(int id)
+        {
+            var deleteUser = await _userRepository.GetOneAsync(user => user.Id == id);
+
+            if(deleteUser == null)
+            {
+                return false;
+            }
+
+            await _userRepository.Delete(deleteUser);
+
+            return true;
+        }
+
         public async Task<User?> GetUserById(int id)
         {
             return await _userRepository.GetOneAsync(user => user.Id == id);

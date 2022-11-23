@@ -19,6 +19,7 @@ namespace AssetManagementTeam6.API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody][CustomizeValidator(RuleSet = "default, CreateUser")] User requestModel)
         {
             var user = await _userService.GetUserByUserAccount(requestModel.UserName);
+
             if (user != null)
                 return StatusCode(409, $"User name {requestModel.UserName} has already existed in the system");
 
@@ -28,6 +29,7 @@ namespace AssetManagementTeam6.API.Controllers
                 return StatusCode(500, "Sorry the Request failed");
 
             result.Password = null!;
+
             return Ok(result);
         }
 
@@ -38,6 +40,19 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]        
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var user = await _userService.GetUserById(id);
+
+            if (user == null)
+                return StatusCode(500, "Can't found user in the system");
+
+            await _userService.Delete(id);
 
             return Ok();
         }

@@ -9,8 +9,8 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<User?> GetUserById(int id);
         Task<User?> GetUserByUserAccount(string userName);
         Task<User?> LoginUser(LoginRequest loginRequest);
-        // Task DeleteAll(int id);
         Task<User?> Create(User createRequest);
         Task<User?> Update(User updateRequest);
+        Task<bool> Delete(int id);
     }
 }
