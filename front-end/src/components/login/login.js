@@ -21,7 +21,7 @@ const Login = () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
         password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
 
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`https://localhost:7060/api/Account`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

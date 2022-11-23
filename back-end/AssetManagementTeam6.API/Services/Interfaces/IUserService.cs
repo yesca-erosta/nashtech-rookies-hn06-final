@@ -1,4 +1,5 @@
-﻿using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.Data.Entities;
 
@@ -12,5 +13,6 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<User?> Create(User createRequest);
         Task<User?> Update(User updateRequest);
         Task<bool> Delete(int id);
+        Task<Pagination<GetUserResponse?>> GetPagination(PaginationQueryModel queryModel);
     }
 }

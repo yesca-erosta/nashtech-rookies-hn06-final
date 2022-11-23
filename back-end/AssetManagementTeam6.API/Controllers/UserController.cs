@@ -1,5 +1,7 @@
-﻿using AssetManagementTeam6.API.Services.Interfaces;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
+using Common.Enums;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 
@@ -56,6 +58,23 @@ namespace AssetManagementTeam6.API.Controllers
 
             return Ok();
         }
-        
+
+        [HttpGet("query")]
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? name, string? staffCode, StaffEnum? type, string? sort)
+        {
+            var queryModel = new PaginationQueryModel
+            {
+                Page = page,
+                PageSize = pageSize,
+                Name = name,
+                StaffCode = staffCode,
+                Type = type,
+                Sort = sort
+            };
+
+            var result = await _userService.GetPagination(queryModel);
+
+            return Ok(result);
+        }
     }
 }
