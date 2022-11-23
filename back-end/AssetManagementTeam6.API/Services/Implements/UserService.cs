@@ -3,6 +3,7 @@ using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
+using Common.Enums;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
@@ -22,6 +23,24 @@ namespace AssetManagementTeam6.API.Services.Implements
             var createdUser = await _userRepository.Create(user);
 
             return createdUser;
+        }
+
+        public async Task<IEnumerable<GetUserResponse>> GetAllAsync(LocationEnum location)
+        {
+            var users = await _userRepository.GetListAsync();
+
+            var userByLocation = users.Where(x => x.Location == location);
+
+            return userByLocation.Select(user => new GetUserResponse
+            {
+                Id = user.Id,
+                StaffCode = user.StaffCode,
+                FullName = user.FullName,
+                UserName = user.UserName,
+                JoinedDate = user.JoinedDate,
+                Type = user.Type.ToString(),
+                Location = user.Location.ToString(),
+            });
         }
 
         public async Task<User?> GetUserById(int id)

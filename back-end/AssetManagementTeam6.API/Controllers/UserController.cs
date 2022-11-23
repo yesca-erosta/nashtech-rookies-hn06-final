@@ -1,18 +1,47 @@
-﻿using AssetManagementTeam6.API.Services.Interfaces;
+﻿using AssetManagementTeam6.API.Attributes;
+using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
+using Common.Enums;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AssetManagementTeam6.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
         public UserController(IUserService userService)
         {
             _userService = userService;
+        }
+
+        [HttpGet()]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var userId = this.GetCurrentLoginUserId();
+
+            if (userId == null)
+                return NotFound();
+
+            var user = await _userService.GetUserById(userId.Value);
+
+            var location = user.Location;
+
+            try
+            {
+                var entities = await _userService.GetAllAsync(location);
+
+                return new JsonResult(entities);
+            }
+            catch
+            {
+                return BadRequest("Bad request");
+            }
         }
 
         [HttpPost]
