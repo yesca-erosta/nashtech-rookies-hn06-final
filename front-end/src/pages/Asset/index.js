@@ -1,11 +1,5 @@
-import RequiredAdmin from '../../context/RequiredAdmin/requiredAdmin';
-
 function Asset() {
-    return (
-        <RequiredAdmin>
-            <h1>Asset </h1>
-        </RequiredAdmin>
-    );
+    return <h1>Asset </h1>;
 }
 
 export default Asset;

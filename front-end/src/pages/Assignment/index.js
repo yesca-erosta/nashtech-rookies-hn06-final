@@ -1,11 +1,5 @@
-import RequiredAdmin from '../../context/RequiredAdmin/requiredAdmin';
-
 function Assignment() {
-    return (
-        <RequiredAdmin>
-            <h1>Assignment </h1>
-        </RequiredAdmin>
-    );
+    return <h1>Assignment </h1>;
 }
 
 export default Assignment;

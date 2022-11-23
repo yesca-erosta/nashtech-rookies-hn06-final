@@ -1,14 +1,14 @@
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+// import { useAuthContext } from '../../context/RequiredAuth/authContext';
 
-function RequiredAdmin({ children }) {
-    const { user } = useAuthContext();
+// function RequiredAdmin({ children }) {
+//     const { user } = useAuthContext();
 
-    console.log(user?.isAdmin);
-    if (!user?.isAdmin) {
-        return <h3>You are not allow to access</h3>;
-    }
+//     console.log(user?.isAdmin);
+//     if (!user?.isAdmin) {
+//         return <h3>You are not allow to access</h3>;
+//     }
 
-    return children;
-}
+//     return children;
+// }
 
-export default RequiredAdmin;
+// export default RequiredAdmin;
