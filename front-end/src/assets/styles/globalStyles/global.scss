@@ -32,3 +32,16 @@
 .tableExtensionRight {
   display: flex;
 }
+
+@media screen and (max-width: 767px) {
+  .tableExtension {
+    display: block;
+  }
+  .tableExtensionRight {
+    display: block;
+    margin-bottom: 10px;
+  }
+  .inputSearch {
+    margin-left: 0 !important;
+  }
+}

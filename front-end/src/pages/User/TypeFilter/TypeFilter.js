@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Button, Dropdown, DropdownButton, Form, InputGroup } from 'react-bootstrap';
-import { getAllData, getAllDataWithFilterBox } from '../../../apiServices';
+import { getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
-export const TypeFilter = ({ setDataState }) => {
+export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows }) => {
   const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -13,8 +13,12 @@ export const TypeFilter = ({ setDataState }) => {
     setShowDropdown(!showDropdown);
   };
 
-  const onCloseType = () => {
+  // TODO: still can't handle cancel
+  const onCancelType = async () => {
     setArrChecked({ admin: false, staff: false });
+    const data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+    setTotalRows(data.totalRecord);
+    setDataState(data.source);
     setShowDropdown(false);
   };
 
@@ -23,18 +27,23 @@ export const TypeFilter = ({ setDataState }) => {
   };
 
   const onSubmitType = async () => {
-    let data = await getAllData(`User`);
+    let data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+
     if (arrChecked.admin) {
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 1 }));
+      setQueryParams({ ...queryParams, types: 1 });
+
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: 1 }));
     }
     if (arrChecked.staff) {
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 0 }));
+      setQueryParams({ ...queryParams, types: 0 });
+
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: 0 }));
     }
     if (arrChecked.admin && arrChecked.staff) {
-      data = await getAllData(`User`);
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
     }
-    
-    setDataState(data);
+    setTotalRows(data.totalRecord);
+    setDataState(data.source);
     setShowDropdown(false);
   };
 
@@ -82,7 +91,7 @@ export const TypeFilter = ({ setDataState }) => {
               <Button variant="danger" size="sm" style={{ minWidth: '60px' }} onClick={onSubmitType}>
                 OK
               </Button>
-              <Button variant="light" size="sm" className={styles.btnCancel} onClick={onCloseType}>
+              <Button variant="light" size="sm" className={styles.btnCancel} onClick={onCancelType}>
                 Cancel
               </Button>
             </div>

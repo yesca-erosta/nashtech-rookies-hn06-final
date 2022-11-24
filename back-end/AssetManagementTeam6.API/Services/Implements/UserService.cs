@@ -88,19 +88,19 @@ namespace AssetManagementTeam6.API.Services.Implements
             // TODO: get list users not set with location
             var users = await _userRepository.GetListAsync(x => x.Location == location);
 
+            // filter by type
+            if (queryModel.Types != null)
+            {
+                users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
+            }
+
             // search user by staffcode or fullname
             var nameToQuery = "";
-
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
                 nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
-                users = users?.Where(u => u.FullName.ToLower().Contains(nameToQuery) || u.StaffCode.ToLower().Contains(nameToQuery)).ToList();
-            }
-
-            // filter by type
-            if (queryModel.Type != null)
-            {
-                users = users?.Where(u => u.Type == queryModel.Type).ToList();
+                users = users?.Where(u => u!.FullName!.ToLower().Contains(nameToQuery) ||
+                                        u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting
