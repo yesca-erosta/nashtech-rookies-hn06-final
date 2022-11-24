@@ -22,6 +22,8 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             user.NeedUpdatePwdOnLogin = true;
 
+            user.Password = SystemFunction.CreateMD5(user.Password);
+
             var createdUser = await _userRepository.Create(user);
 
             return createdUser;
@@ -59,6 +61,9 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<User?> LoginUser(LoginRequest loginRequest)
         {
+
+            loginRequest.Password = SystemFunction.CreateMD5(loginRequest.Password);
+
             return await _userRepository
                .GetOneAsync(user => user.UserName == loginRequest.UserName &&
                                    user.Password == loginRequest.Password);
@@ -85,25 +90,11 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             // search user by staffcode or fullname
             var nameToQuery = "";
-            var staffCodeToQuery = "";
-            if (!string.IsNullOrEmpty(queryModel.Name) || !string.IsNullOrEmpty(queryModel.StaffCode))
+
+            if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
-                if (!string.IsNullOrEmpty(queryModel.Name) && string.IsNullOrEmpty(queryModel.StaffCode))
-                {
-                    nameToQuery = queryModel.Name.Trim().ToLower();
-                    users = users?.Where(u => u.FullName.ToLower().Contains(nameToQuery)).ToList();
-                }
-                else if (!string.IsNullOrEmpty(queryModel.StaffCode) && string.IsNullOrEmpty(queryModel.Name))
-                {
-                    staffCodeToQuery = queryModel.StaffCode.Trim().ToLower();
-                    users = users?.Where(u => u.StaffCode.ToLower().Contains(staffCodeToQuery)).ToList();
-                }
-                else
-                {
-                    nameToQuery = queryModel.Name.Trim().ToLower();
-                    staffCodeToQuery = queryModel.StaffCode.Trim().ToLower();
-                    users = users?.Where(u => u.FullName.ToLower().Contains(nameToQuery) || u.StaffCode.ToLower().Contains(staffCodeToQuery)).ToList();
-                }
+                nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+                users = users?.Where(u => u.FullName.ToLower().Contains(nameToQuery) || u.StaffCode.ToLower().Contains(nameToQuery)).ToList();
             }
 
             // filter by type
@@ -183,6 +174,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<User?> Update(User updateRequest)
         {
+
             return await _userRepository.Update(updateRequest);
         }
     }

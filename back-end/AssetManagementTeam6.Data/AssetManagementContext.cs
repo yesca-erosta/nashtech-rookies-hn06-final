@@ -44,7 +44,7 @@ namespace AssetManagementTeam6.Data
                     JoinedDate = DateTime.UtcNow, 
                     Location = LocationEnum.HN, 
                     NeedUpdatePwdOnLogin = false,
-                    Password = "Admin@123",
+                    Password = "0E7517141FB53F21EE439B355B5A1D0A",
                     UserName = "adminhn"
                 },
                 new User
@@ -58,7 +58,7 @@ namespace AssetManagementTeam6.Data
                     JoinedDate = DateTime.UtcNow,
                     Location = LocationEnum.HCM,
                     NeedUpdatePwdOnLogin = false,
-                    Password = "Admin@123",
+                    Password = "0E7517141FB53F21EE439B355B5A1D0A",
                     UserName = "adminhcmc"
                 },
                 new User
@@ -72,7 +72,7 @@ namespace AssetManagementTeam6.Data
                     JoinedDate = DateTime.UtcNow,
                     Location = LocationEnum.HN,
                     NeedUpdatePwdOnLogin = false,
-                    Password = "Admin@123",
+                    Password = "0E7517141FB53F21EE439B355B5A1D0A",
                     UserName = "admindn"
                 }
                );

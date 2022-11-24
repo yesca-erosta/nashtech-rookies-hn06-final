@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { getAllData } from '../../apiServices';
-import { dateStrToStr } from '../../lib/helper';
+import { getAllData, getAllDataWithFilterBox } from '../../apiServices';
+import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
 import { ModalDetails } from './ModalDetails/ModalDetails';
 import { SearchUser } from './SearchUser/SearchUser';
@@ -85,20 +85,19 @@ function User() {
   ];
 
   const [searchValue, setSearchValue] = useState('');
-  const [data, setData] = useState('');
 
-  const onSearch = (value) => {
+  const onSearch = async (value) => {
     setSearchValue(value);
+    let data = await getAllData(`User`);
+    if (value) {
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ valueSearch: value }));
+    } else {
+      data = await getAllData(`User`);
+    }
+    setDataState(data);
   };
 
-  useEffect(() => {
-    const newData = dataState?.filter(
-      (value) =>
-        value.fullName.toLowerCase().includes(searchValue.toLowerCase()) ||
-        value.staffCode.toLowerCase().includes(searchValue.toLowerCase()),
-    );
-    setData(newData);
-  }, [dataState, searchValue]);
+  console.log('data', dataState);
 
   return (
     <div className="main tableMain">
@@ -116,7 +115,7 @@ function User() {
 
       <DataTable
         columns={columns}
-        data={data}
+        data={dataState}
         noHeader
         defaultSortField="id"
         defaultSortAsc={true}

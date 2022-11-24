@@ -78,6 +78,9 @@ namespace AssetManagementTeam6.API.Controllers
             if (user == null)
                 return BadRequest("Password is incorrect!");
 
+            requestModel.OldPassword = SystemFunction.CreateMD5(requestModel.OldPassword);
+            requestModel.NewPassword = SystemFunction.CreateMD5(requestModel.NewPassword);
+
             if (user.Password != requestModel.OldPassword)
                 return BadRequest("Password is incorrect!");
 
@@ -85,6 +88,7 @@ namespace AssetManagementTeam6.API.Controllers
                 return BadRequest("New password must not the same with the old password");
 
             user.Password = requestModel.NewPassword;
+
             user.NeedUpdatePwdOnLogin = false;
 
             user = await _userService.Update(user!);
