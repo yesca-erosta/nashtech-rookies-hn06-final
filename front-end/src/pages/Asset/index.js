@@ -16,17 +16,6 @@ import InputGroup from 'react-bootstrap/InputGroup';
 const cx = classNames.bind(styles);
 
 function Asset() {
-    let active = 1;
-
-    let items = [];
-    for (let number = 1; number <= 3; number++) {
-        items.push(
-            <Pagination.Item key={number} active={number === active}>
-                {number}
-            </Pagination.Item>,
-        );
-    }
-
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
@@ -78,63 +67,75 @@ function Asset() {
                     <thead>
                         <tr>
                             <th>
-                                <div className={cx('title')}>
-                                    <div>Asset Code</div>
-                                    <button className={cx('triagle')}>
-                                        <GoTriangleDown />
-                                    </button>
-                                </div>
+                                <>
+                                    <div className={cx('title')}>
+                                        <div>Asset Code</div>
+                                        <button className={cx('triagle')}>
+                                            <GoTriangleDown />
+                                        </button>
+                                    </div>
+                                </>
                             </th>
                             <th>
-                                <div className={cx('title')}>
-                                    <div>Asset Name</div>
-                                    <button className={cx('triagle')}>
-                                        <GoTriangleDown />
-                                    </button>
-                                </div>
+                                <>
+                                    <div className={cx('title')}>
+                                        <div>Asset Name</div>
+                                        <button className={cx('triagle')}>
+                                            <GoTriangleDown />
+                                        </button>
+                                    </div>
+                                </>
                             </th>
                             <th>
-                                <div className={cx('title')}>
-                                    <div> Category</div>
-                                    <button className={cx('triagle')}>
-                                        <GoTriangleDown />
-                                    </button>
-                                </div>
+                                <>
+                                    <div className={cx('title')}>
+                                        <div> Category</div>
+                                        <button className={cx('triagle')}>
+                                            <GoTriangleDown />
+                                        </button>
+                                    </div>
+                                </>
                             </th>
                             <th>
-                                <div className={cx('title')}>
-                                    <div> State</div>
-                                    <button className={cx('triagle')}>
-                                        <GoTriangleDown />
-                                    </button>
-                                </div>
+                                <>
+                                    <div className={cx('title')}>
+                                        <div> State</div>
+                                        <button className={cx('triagle')}>
+                                            <GoTriangleDown />
+                                        </button>
+                                    </div>
+                                </>
                             </th>
                             <th>
-                                <div className={cx('title')}>
-                                    <div> Asset</div>
-                                    <button className={cx('triagle')}>
-                                        <GoTriangleDown />
-                                    </button>
-                                </div>
+                                <>
+                                    <div className={cx('title')}>
+                                        <div> Asset</div>
+                                        <button className={cx('triagle')}>
+                                            <GoTriangleDown />
+                                        </button>
+                                    </div>
+                                </>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
-                            <td>Table cell</td>
+                            <td>LA100001</td>
+                            <td>Laptop HP Probook 450 G1</td>
+                            <td>Laptop</td>
+                            <td>Available</td>
                             <td>Table cell</td>
 
-                            <div className={cx('actions')}>
-                                <button className={cx('pen')} disabled={false}>
-                                    <BsFillPencilFill />
-                                </button>
-                                <button className={cx('delete')} disabled={false}>
-                                    <TiDeleteOutline />
-                                </button>
-                            </div>
+                            <td>
+                                <div className={cx('actions')}>
+                                    <button className={cx('pen')} disabled={false}>
+                                        <BsFillPencilFill />
+                                    </button>
+                                    <button className={cx('delete')} disabled={false}>
+                                        <TiDeleteOutline />
+                                    </button>
+                                </div>
+                            </td>
                         </tr>
                     </tbody>
                 </Table>
@@ -143,7 +144,9 @@ function Asset() {
             <div className={cx('paging')}>
                 <Pagination>
                     <Pagination.Item disabled>Previous</Pagination.Item>
-                    {items}
+                    <Pagination.Item active={1}>1</Pagination.Item>
+                    <Pagination.Item active={''}>2</Pagination.Item>
+                    <Pagination.Item active={''}>3</Pagination.Item>
                     <Pagination.Item>Next</Pagination.Item>
                 </Pagination>
             </div>

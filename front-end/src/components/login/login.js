@@ -67,9 +67,9 @@ const Login = () => {
         }
 
         setToken(data);
-        sessionStorage.setItem('localStorage', data.token);
+        localStorage.setItem('localStorage', data.token);
         setOldPasswordLogin(password);
-        sessionStorage.setItem('userInformation', JSON.stringify(data));
+        localStorage.setItem('userInformation', JSON.stringify(data));
     };
 
     return (
