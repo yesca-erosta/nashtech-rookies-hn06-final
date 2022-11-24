@@ -4,14 +4,17 @@ export const dateStrToStr = (date) => {
 
 export const queryToString = (query) => {
   const checkQuery = (queryParams, queryName) => {
-    if (queryParams === 0) {
-      return `${queryName}=0&`;
-    }
-    if (queryParams) {
-      return `${queryName}=${queryParams}&`;
-    } else {
-      return `${queryName}=&`;
-    }
+    // cach 1
+    // if (queryParams === 0) {
+    //   return `${queryName}=0&`;
+    // }
+    // if (queryParams) {
+    //   return `${queryName}=${queryParams}&`;
+    // } else {
+    //   return `${queryName}=&`;
+    // }
+
+    return queryParams === 0 ? `${queryName}=0&` : queryParams ? `${queryName}=${queryParams}&` : `${queryName}=&`;
   };
 
   return (
@@ -19,7 +22,7 @@ export const queryToString = (query) => {
     `page=${query.page ?? 1}&` +
     `pageSize=${query.pageSize ?? 10}&` +
     `${checkQuery(query.valueSearch, 'valueSearch')}` +
-    `${checkQuery(query.type, 'type')}` +
+    `${checkQuery(query.types, 'types')}` +
     `sort=${query.sort ?? 'StaffCodeAcsending'}`
   );
 };

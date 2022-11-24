@@ -10,7 +10,7 @@ export const getAllDataWithFilterBox = async (url) => {
     data: null,
   })
     .then((response) => {
-      data = [...response.data.source];
+      data = response.data;
     })
     .catch((err) => {
       console.log({ err });

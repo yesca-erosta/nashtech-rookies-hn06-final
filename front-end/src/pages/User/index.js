@@ -16,16 +16,28 @@ function User() {
 
   const [userDetails, setUserDetails] = useState('');
   const [dataState, setDataState] = useState([]);
+  const [searchValue, setSearchValue] = useState('');
+  const [queryParams, setQueryParams] = useState({
+    page: 1,
+    pageSize: 10,
+    types: [0, 1],
+    sort: 'StaffCodeAcsending',
+  });
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [perPage, setPerPage] = useState(10);
 
   const handleClose = () => {
     setShow(false);
     setUserDetails('');
   };
+
   const handleShow = (staffCode) => {
     setShow(true);
     setUserDetails(dataState.find((c) => c.staffCode === staffCode));
   };
 
+  // Get Data
   const getData = async () => {
     const data = await getAllData('User');
     setDataState(data);
@@ -84,27 +96,73 @@ function User() {
     },
   ];
 
-  const [searchValue, setSearchValue] = useState('');
-
+  // Search
   const onSearch = async (value) => {
     setSearchValue(value);
-    let data = await getAllData(`User`);
+
+    let data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
     if (value) {
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ valueSearch: value }));
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
+      data = await getAllDataWithFilterBox(
+        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
+      );
     } else {
-      data = await getAllData(`User`);
+      delete queryParams.valueSearch;
+      setQueryParams(queryParams);
+      data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
     }
-    setDataState(data);
+
+    setDataState(data.source);
   };
 
-  console.log('data', dataState);
+  // Paging
+  const fetchUsers = async (page) => {
+    setLoading(true);
+    setQueryParams({ ...queryParams, page: page, pageSize: perPage });
+
+    const data = await getAllDataWithFilterBox(
+      `User/query` + queryToString({ ...queryParams, page: page, pageSize: perPage }),
+    );
+
+    setDataState(data.source);
+
+    setTotalRows(data.totalRecord);
+    setLoading(false);
+  };
+
+  const handlePageChange = (page) => {
+    fetchUsers(page);
+  };
+
+  const handlePerRowsChange = async (newPerPage, page) => {
+    setLoading(true);
+    setQueryParams({ ...queryParams, page: page, pageSize: newPerPage });
+
+    const data = await getAllDataWithFilterBox(
+      `User/query` + queryToString({ ...queryParams, page: page, pageSize: newPerPage }),
+    );
+
+    setDataState(data.source);
+    setPerPage(newPerPage);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchUsers(1); // fetch page 1 of users
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="main tableMain">
       <h1 className="tableTitle">User List</h1>
       <div className="tableExtension">
         <div className="tableExtensionLeft">
-          <TypeFilter setDataState={setDataState} />
+          <TypeFilter
+            setDataState={setDataState}
+            setTotalRows={setTotalRows}
+            setQueryParams={setQueryParams}
+            queryParams={queryParams}
+          />
         </div>
 
         <div className="tableExtensionRight">
@@ -113,16 +171,26 @@ function User() {
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={dataState}
-        noHeader
-        defaultSortField="id"
-        defaultSortAsc={true}
-        pagination
-        highlightOnHover
-        dense
-      />
+      {dataState ? (
+        <DataTable
+          title="Users"
+          columns={columns}
+          data={dataState}
+          noHeader
+          defaultSortField="id"
+          defaultSortAsc={true}
+          highlightOnHover
+          dense
+          progressPending={loading}
+          pagination
+          paginationServer
+          paginationTotalRows={totalRows ?? totalRows}
+          onChangeRowsPerPage={handlePerRowsChange}
+          onChangePage={handlePageChange}
+        />
+      ) : (
+        <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>There are no records to display</div>
+      )}
 
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
     </div>
