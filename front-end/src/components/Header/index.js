@@ -13,6 +13,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -21,6 +22,7 @@ function Header() {
     const [name, setName] = useState();
     const [hideOld, setHideOld] = useState(false);
     const [hideNew, setHideNew] = useState(false);
+    const [disable, setDisable] = useState(true);
 
     const [newPassword, setNewPassword] = useState('');
     const [oldPassword, setOldPassword] = useState('');
@@ -40,11 +42,20 @@ function Header() {
     const handleCloseChangePassword = () => setShowChangePassword(false);
     const handleShowChangePassWord = () => setShowChangePassword(true);
 
-    const { token, oldPasswordLogin } = useAuthContext();
+    const { token, oldPasswordLogin, setToken } = useAuthContext();
+
+    useEffect(() => {
+        const user = localStorage.getItem(USER_INFORMATION);
+        if (user) {
+            try {
+                setToken(JSON.parse(user));
+            } catch (error) {}
+        }
+    }, [setToken]);
 
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem(TOKEN_KEY);
     };
 
     const toggleBtnOld = () => {
@@ -54,6 +65,21 @@ function Header() {
     const toggleBtnNew = () => {
         setHideNew((pre) => !pre);
     };
+
+    useEffect(() => {
+        if (!Boolean(oldPassword) || !Boolean(newPassword)) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+
+        return;
+    }, [oldPassword, newPassword]);
+
+    setTimeout(() => {
+        localStorage.removeItem(TOKEN_KEY);
+        window.location.reload();
+    }, 60000000);
 
     useEffect(() => {
         const result = Object.entries(routes).filter(([key, value]) => {
@@ -68,7 +94,7 @@ function Header() {
     }, [location]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
@@ -97,6 +123,11 @@ function Header() {
         } else {
             setShowSuccess(false);
         }
+
+        if (showChangePassword === false) {
+            setOldPassword('');
+            setNewPassword('');
+        }
     };
 
     return (
@@ -123,11 +154,11 @@ function Header() {
             </div>
 
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Are you sure</h3>
                 </Modal.Header>
                 <Modal.Body>Do you want to log out?</Modal.Body>
-                <Modal.Footer>
+                <Modal.Footer style={{ justifyContent: 'flex-start' }}>
                     <Button variant="danger" onClick={handleCloseRemoveAccessToken} href="/">
                         Log out
                     </Button>
@@ -138,7 +169,7 @@ function Header() {
             </Modal>
 
             <Modal show={showChangePassword} onHide={handleCloseChangePassword}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
                 <Modal.Body>
@@ -152,9 +183,14 @@ function Header() {
                                 onChange={(e) => {
                                     setOldPassword(e.target.value);
                                 }}
+                                onFocus={() => {
+                                    setIsOldPasswordError(false);
+                                    setIsEmptyPasswordError(false);
+                                    setIsSamePasswordError(false);
+                                }}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnOld}>
-                                {hideOld ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                {hideOld ? <AiFillEye /> : <AiFillEyeInvisible />}
                             </div>
                         </div>
                     </Form>
@@ -170,9 +206,14 @@ function Header() {
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
                                 }}
+                                onFocus={() => {
+                                    setIsEmptyPasswordError(false);
+                                    setIsSamePasswordError(false);
+                                    setIsComplexityPasswordError(false);
+                                }}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
-                                {hideNew ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                {hideNew ? <AiFillEye /> : <AiFillEyeInvisible />}
                             </div>
                         </div>
                     </Form>
@@ -191,7 +232,7 @@ function Header() {
                     )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleSave}>
+                    <Button variant="danger" onClick={handleSave} disabled={disable}>
                         Save
                     </Button>
                     <Button variant="outline-primary" onClick={handleCloseChangePassword} href="">
@@ -201,10 +242,10 @@ function Header() {
             </Modal>
 
             <Modal show={showSuccess} onHide={handleCloseSuccess}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change password</h3>
                 </Modal.Header>
-                <Modal.Body>Your password has been changed successfilly!</Modal.Body>
+                <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-primary" onClick={handleCloseSuccess}>
                         Close

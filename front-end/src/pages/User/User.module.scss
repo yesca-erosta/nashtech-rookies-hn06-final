@@ -1,0 +1,28 @@
+.customPen {
+  color: rgb(102, 101, 101);
+}
+
+.btnCreate {
+  background-color: #e4010b !important;
+  color: white !important;
+  border-color: grey !important;
+  width: fit-content !important;
+  min-width: 80px !important;
+}
+
+.btnCreate:hover {
+  background-color: #ff2828 !important;
+}
+
+.tableCreate {
+  min-width: 170px;
+  align-self: center;
+}
+
+.btnCancel {
+  border: solid 1px #000 !important;
+}
+
+.modalTitle {
+  font-size: 20px !important;
+}

@@ -9,6 +9,7 @@ import './home.scss';
 
 import classNames from 'classnames/bind';
 import styles from '../../components/Header/header.module.scss';
+import { BASE_URL } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -17,9 +18,11 @@ function Home() {
     const { token, oldPasswordLogin } = useAuthContext();
     const [showFirstChangePassword, setShowFirstChangePassWord] = useState(false);
     const [newPassword, setNewPassword] = useState('');
+    const [disable, setDisable] = useState(true);
 
     const [isEmptyPasswordError, setIsEmptyPasswordError] = useState(false);
     const [isSamePasswordError, setIsSamePasswordError] = useState(false);
+    const [isComplexityPasswordError, setIsComplexityPasswordError] = useState(false);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -36,8 +39,18 @@ function Home() {
         }
     }, [token]);
 
+    useEffect(() => {
+        if (!Boolean(newPassword)) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+
+        return;
+    }, [newPassword]);
+
     const handleSave = async () => {
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
@@ -57,6 +70,10 @@ function Home() {
             setShow(true);
         }
 
+        if (result.status === 400) {
+            setIsComplexityPasswordError(true);
+        }
+
         !newPassword ? setIsEmptyPasswordError(true) : setIsEmptyPasswordError(false);
         newPassword === oldPasswordLogin ? setIsSamePasswordError(true) : setIsSamePasswordError(false);
     };
@@ -73,7 +90,7 @@ function Home() {
                     }
                 }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
                 <Modal.Body>
@@ -90,9 +107,14 @@ function Home() {
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
                                 }}
+                                onFocus={() => {
+                                    setIsEmptyPasswordError(false);
+                                    setIsSamePasswordError(false);
+                                    setIsComplexityPasswordError(false);
+                                }}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
-                                {hideNew ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                {hideNew ? <AiFillEye /> : <AiFillEyeInvisible />}
                             </div>
                         </div>
                     </Form>
@@ -106,19 +128,22 @@ function Home() {
                             The new password should not be the same with the old password!
                         </div>
                     )}
+                    {isComplexityPasswordError && (
+                        <div className={cx('oldPassword_false')}>The password should match the complexity!</div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleSave}>
+                    <Button variant="danger" onClick={handleSave} disabled={disable}>
                         Save
                     </Button>
                 </Modal.Footer>
             </Modal>
 
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change password</h3>
                 </Modal.Header>
-                <Modal.Body>Your password has been changed successfilly!</Modal.Body>
+                <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-primary" onClick={handleClose}>
                         Close
