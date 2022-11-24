@@ -40,6 +40,7 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
       data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: 0 }));
     }
     if (arrChecked.admin && arrChecked.staff) {
+      setQueryParams({ ...queryParams, types: [0, 1] });
       data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
     }
     setTotalRows(data.totalRecord);
