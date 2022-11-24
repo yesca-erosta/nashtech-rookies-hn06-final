@@ -13,6 +13,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { BASE_URL } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -68,7 +69,7 @@ function Header() {
     }, [location]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',

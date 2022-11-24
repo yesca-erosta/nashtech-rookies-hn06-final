@@ -41,7 +41,10 @@ namespace AssetManagementTeam6.API.Services.Implements
                 JoinedDate = user.JoinedDate,
                 Type = user.Type.ToString(),
                 Location = user.Location.ToString(),
-            });
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = user.DateOfBirth
+        });
         }
 
         public async Task<User?> GetUserById(int id)
@@ -110,7 +113,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
 
             //sorting
-            var sortOption = queryModel.Sort ??= Constants.NameAcsending;
+            var sortOption = queryModel.Sort ??= Constants.StaffCodeAcsending;
 
             switch (sortOption)
             {

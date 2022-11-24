@@ -10,7 +10,10 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public string Type { get; set; }
         public string Location { get; set; }
         public string FullName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime? JoinedDate { get; set; }
+        public DateTime? DateOfBirth { get; set; }
 
         public GetUserResponse(User user)
         {
@@ -21,6 +24,9 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             Location = user.Location.ToString();
             FullName = user.FullName;
             JoinedDate = user.JoinedDate;
+            FirstName = user.FirstName;
+            LastName = user.LastName;
+            DateOfBirth = user.DateOfBirth;
         }
     }
 }

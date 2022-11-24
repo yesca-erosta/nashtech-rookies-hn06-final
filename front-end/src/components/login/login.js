@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { BASE_URL } from '../../constants';
 
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
@@ -21,7 +22,7 @@ const Login = () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
         password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
 
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

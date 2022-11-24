@@ -9,6 +9,7 @@ import './home.scss';
 
 import classNames from 'classnames/bind';
 import styles from '../../components/Header/header.module.scss';
+import { BASE_URL } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -37,7 +38,7 @@ function Home() {
     }, [token]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
