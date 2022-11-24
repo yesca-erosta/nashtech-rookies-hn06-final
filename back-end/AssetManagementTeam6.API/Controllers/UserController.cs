@@ -88,9 +88,8 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("query")]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, StaffEnum? type, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
-
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)
@@ -98,14 +97,27 @@ namespace AssetManagementTeam6.API.Controllers
 
             var user = await _userService.GetUserById(userId.Value);
 
-            var location = user.Location;
+            var location = user!.Location;
+
+            var listTypes = new List<StaffEnum>();
+
+            if (!string.IsNullOrWhiteSpace(types)) 
+               {
+                var typeArr = types.Split(",");
+                foreach (string typeValue in typeArr)
+                {
+                    var tryParseOk = (Enum.TryParse(typeValue, out StaffEnum enumValue)) ;
+                    if (tryParseOk)
+                        listTypes.Add(enumValue); ;
+                }
+            }
 
             var queryModel = new PaginationQueryModel
             {
                 Page = page,
                 PageSize = pageSize,
                 StaffCodeOrName = valueSearch,
-                Type = type,
+                Types = listTypes.Count != 0 ? listTypes : null,
                 Sort = sort
             };
 
