@@ -1,5 +1,5 @@
 import './login.scss';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
@@ -10,12 +10,23 @@ const Login = () => {
     const [isPasswordError, setIsPasswordError] = useState('');
     const [isLoginError, setIsLoginError] = useState(false);
     const [isNoResponseError, setIsNoResponseError] = useState(false);
+    const [disable, setDisable] = useState(true);
 
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
     const { setIsAuthenticated, setToken, setOldPasswordLogin } = useAuthContext();
+
+    useEffect(() => {
+        if (!Boolean(userName) || !Boolean(password)) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+
+        return;
+    }, [userName, password]);
 
     const handleLogin = async () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
@@ -36,7 +47,6 @@ const Login = () => {
         });
 
         const data = await result.json();
-        localStorage.setItem('accessToken', data.token);
 
         if (data.token) {
             setIsAuthenticated(true);
@@ -52,8 +62,14 @@ const Login = () => {
             setIsLoginError(false);
         }
 
+        if (!userName || !password) {
+            setIsLoginError(false);
+        }
+
         setToken(data);
+        localStorage.setItem('localStorage', data.token);
         setOldPasswordLogin(password);
+        localStorage.setItem('userInformation', JSON.stringify(data));
     };
 
     return (
@@ -63,7 +79,7 @@ const Login = () => {
                     <img src={logo} alt="" className="logo"></img>
 
                     <div className="form_item">
-                        <label>User name:</label>
+                        <label>Username:</label>
                         <input
                             className={`${isUserNameError ? 'input-error' : ''}`}
                             type="text"
@@ -108,11 +124,16 @@ const Login = () => {
                         {isPasswordError && <label className="form_item_error">{isPasswordError}</label>}
                     </div>
 
-                    <Button variant="danger" onClick={handleLogin}>
+                    <Button variant="danger" onClick={handleLogin} disabled={disable}>
                         Login
                     </Button>
 
-                    {isLoginError && <div className="login_false">Invalid login information!</div>}
+                    {isLoginError && (
+                        <div className="login_false">
+                            <div>Username or password is incorrect.</div>
+                            <div>Please try again!</div>
+                        </div>
+                    )}
                     {isNoResponseError && <div className="login_false">Sorry the request failed!</div>}
                 </form>
             </div>
