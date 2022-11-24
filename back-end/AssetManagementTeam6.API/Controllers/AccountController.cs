@@ -33,7 +33,7 @@ namespace AssetManagementTeam6.API.Controllers
                 {
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                    new Claim("Role", user.Type.ToString()),
+                    new Claim(ClaimTypes.Role, user.Type.ToString()),
                     new Claim("UserId", user.Id.ToString()),
                     new Claim("UserName", user.UserName)
                 };
@@ -78,6 +78,9 @@ namespace AssetManagementTeam6.API.Controllers
             if (user == null)
                 return BadRequest("Password is incorrect!");
 
+            requestModel.OldPassword = SystemFunction.CreateMD5(requestModel.OldPassword);
+            requestModel.NewPassword = SystemFunction.CreateMD5(requestModel.NewPassword);
+
             if (user.Password != requestModel.OldPassword)
                 return BadRequest("Password is incorrect!");
 
@@ -85,6 +88,7 @@ namespace AssetManagementTeam6.API.Controllers
                 return BadRequest("New password must not the same with the old password");
 
             user.Password = requestModel.NewPassword;
+
             user.NeedUpdatePwdOnLogin = false;
 
             user = await _userService.Update(user!);
