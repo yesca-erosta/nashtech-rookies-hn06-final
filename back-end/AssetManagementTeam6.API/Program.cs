@@ -23,8 +23,8 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api",
-                            "http://localhost:300");
+        policy.WithOrigins("https://localhost:7060/api",
+                            "http://localhost:3000");
     });
 });
 
@@ -48,7 +48,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IValidator<User>, UserValidator>();
+builder.Services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();

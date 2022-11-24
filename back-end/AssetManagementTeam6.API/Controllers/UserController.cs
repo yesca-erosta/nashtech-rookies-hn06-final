@@ -1,5 +1,6 @@
 using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
@@ -46,7 +47,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody][CustomizeValidator(RuleSet = "default, CreateUser")] User requestModel)
+        public async Task<IActionResult> CreateAsync([FromBody][CustomizeValidator(RuleSet = "default, CreateUser")] CreateUserRequest requestModel)
         {
             var user = await _userService.GetUserByUserAccount(requestModel.UserName);
 

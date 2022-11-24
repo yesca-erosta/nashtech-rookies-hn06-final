@@ -18,11 +18,25 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-        public async Task<User?> Create(User user)
+        public async Task<User?> Create(CreateUserRequest user)
         {
             user.NeedUpdatePwdOnLogin = true;
 
-            var createdUser = await _userRepository.Create(user);
+            var newUser = new User
+            {
+                UserName = user.UserName,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
+                Location = user.Location,
+                JoinedDate = user.JoinedDate,
+                Type = user.Type,
+                NeedUpdatePwdOnLogin = (bool)user.NeedUpdatePwdOnLogin
+            };
+
+            var createdUser = await _userRepository.Create(newUser);
 
             return createdUser;
         }

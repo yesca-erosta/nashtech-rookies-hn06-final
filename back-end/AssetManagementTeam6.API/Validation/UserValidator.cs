@@ -1,16 +1,16 @@
-﻿using AssetManagementTeam6.Data.Entities;
+﻿using AssetManagementTeam6.API.Dtos.Requests;
 using Common.Constants;
 using FluentValidation;
 
 namespace AssetManagementTeam6.API.Validation
 {
-    public class UserValidator : AbstractValidator<User>
+    public class CreateUserValidator : AbstractValidator<CreateUserRequest>
     {
-        public UserValidator()
+        public CreateUserValidator()
         {
             RuleSet("UpdateUser", () =>
             {
-                RuleFor(x => x.Id).GreaterThan(0);
+               // RuleFor(x => x.Id).GreaterThan(0);
             });
 
             RuleSet("CreateUser", () =>
