@@ -43,9 +43,18 @@ function Header() {
 
     const { token, oldPasswordLogin, setToken } = useAuthContext();
 
+    useEffect(() => {
+        const user = localStorage.getItem('userInformation');
+        if (user) {
+            try {
+                setToken(JSON.parse(user));
+            } catch (error) {}
+        }
+    }, [setToken]);
+
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
-        sessionStorage.removeItem('localStorage');
+        localStorage.removeItem('localStorage');
     };
 
     const toggleBtnOld = () => {
@@ -66,17 +75,8 @@ function Header() {
         return;
     }, [oldPassword, newPassword]);
 
-    useEffect(() => {
-        const user = sessionStorage.getItem('userInformation');
-        if (user) {
-            try {
-                setToken(JSON.parse(user));
-            } catch (error) {}
-        }
-    }, []);
-
     setTimeout(() => {
-        sessionStorage.removeItem('localStorage');
+        localStorage.removeItem('localStorage');
         window.location.reload();
     }, 6000000);
 
