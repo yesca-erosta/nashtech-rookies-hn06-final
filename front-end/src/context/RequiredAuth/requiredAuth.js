@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 function RequiredAuth(props) {
     const { children } = props;
     const { isAuthenticated } = useAuthContext();
-    return isAuthenticated || localStorage.getItem('accessToken') ? children : <Navigate to="/login" />;
+    return isAuthenticated || sessionStorage.getItem('localStorage') ? children : <Navigate to="/login" />;
 }
 
 export default RequiredAuth;

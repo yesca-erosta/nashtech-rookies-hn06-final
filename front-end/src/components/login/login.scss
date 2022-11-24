@@ -10,6 +10,7 @@
         flex: 1;
         justify-content: center;
         align-items: center;
+        margin-top: 80px;
 
         .form {
             transform: translateY(-20%);
@@ -18,13 +19,15 @@
             border: solid 1px #a2a2a2;
             padding: 24px;
             border-radius: 10px;
-            min-width: 360px;
+            width: 360px;
             background-color: white;
+            height: 582px;
 
             .form_item {
                 display: flex;
                 flex-direction: column;
-                margin: 8px 0;
+                height: 90px;
+                margin-top: 20px;
             }
 
             .logo {
@@ -71,7 +74,7 @@
 }
 
 .login_false {
-    margin-top: 16px;
+    margin-top: 6px;
     text-align: center;
     color: red;
     font-style: italic;
