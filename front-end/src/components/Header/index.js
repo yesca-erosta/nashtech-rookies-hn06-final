@@ -79,7 +79,7 @@ function Header() {
     setTimeout(() => {
         localStorage.removeItem(TOKEN_KEY);
         window.location.reload();
-    }, 6000000);
+    }, 60000000);
 
     useEffect(() => {
         const result = Object.entries(routes).filter(([key, value]) => {
@@ -122,6 +122,11 @@ function Header() {
             setShowSuccess(true);
         } else {
             setShowSuccess(false);
+        }
+
+        if (showChangePassword === false) {
+            setOldPassword('');
+            setNewPassword('');
         }
     };
 
@@ -204,6 +209,7 @@ function Header() {
                                 onFocus={() => {
                                     setIsEmptyPasswordError(false);
                                     setIsSamePasswordError(false);
+                                    setIsComplexityPasswordError(false);
                                 }}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
@@ -236,7 +242,7 @@ function Header() {
             </Modal>
 
             <Modal show={showSuccess} onHide={handleCloseSuccess}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change password</h3>
                 </Modal.Header>
                 <Modal.Body>Your password has been changed successfully!</Modal.Body>
