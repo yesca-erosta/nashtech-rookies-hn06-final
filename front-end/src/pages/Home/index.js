@@ -18,9 +18,11 @@ function Home() {
     const { token, oldPasswordLogin } = useAuthContext();
     const [showFirstChangePassword, setShowFirstChangePassWord] = useState(false);
     const [newPassword, setNewPassword] = useState('');
+    const [disable, setDisable] = useState(true);
 
     const [isEmptyPasswordError, setIsEmptyPasswordError] = useState(false);
     const [isSamePasswordError, setIsSamePasswordError] = useState(false);
+    const [isComplexityPasswordError, setIsComplexityPasswordError] = useState(false);
 
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
@@ -36,6 +38,16 @@ function Home() {
             setShowFirstChangePassWord(false);
         }
     }, [token]);
+
+    useEffect(() => {
+        if (!Boolean(newPassword)) {
+            setDisable(true);
+        } else {
+            setDisable(false);
+        }
+
+        return;
+    }, [newPassword]);
 
     const handleSave = async () => {
         const result = await fetch(`${BASE_URL}/Account`, {
@@ -56,6 +68,10 @@ function Home() {
         if (result.status === 200) {
             setShowFirstChangePassWord(false);
             setShow(true);
+        }
+
+        if (result.status === 400) {
+            setIsComplexityPasswordError(true);
         }
 
         !newPassword ? setIsEmptyPasswordError(true) : setIsEmptyPasswordError(false);
@@ -91,9 +107,14 @@ function Home() {
                                 onChange={(e) => {
                                     setNewPassword(e.target.value);
                                 }}
+                                onFocus={() => {
+                                    setIsEmptyPasswordError(false);
+                                    setIsSamePasswordError(false);
+                                    setIsComplexityPasswordError(false);
+                                }}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
-                                {hideNew ? <AiFillEyeInvisible /> : <AiFillEye />}
+                                {hideNew ? <AiFillEye /> : <AiFillEyeInvisible />}
                             </div>
                         </div>
                     </Form>
@@ -107,9 +128,12 @@ function Home() {
                             The new password should not be the same with the old password!
                         </div>
                     )}
+                    {isComplexityPasswordError && (
+                        <div className={cx('oldPassword_false')}>The password should match the complexity!</div>
+                    )}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={handleSave}>
+                    <Button variant="danger" onClick={handleSave} disabled={disable}>
                         Save
                     </Button>
                 </Modal.Footer>
@@ -119,7 +143,7 @@ function Home() {
                 <Modal.Header closeButton>
                     <h3 className={cx('modal-title')}>Change password</h3>
                 </Modal.Header>
-                <Modal.Body>Your password has been changed successfilly!</Modal.Body>
+                <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
                     <Button variant="outline-primary" onClick={handleClose}>
                         Close
