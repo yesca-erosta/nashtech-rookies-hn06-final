@@ -89,7 +89,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("query")]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? name, string? staffCode, StaffEnum? type, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, StaffEnum? type, string? sort)
         {
 
             var userId = this.GetCurrentLoginUserId();
@@ -105,8 +105,7 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 Page = page,
                 PageSize = pageSize,
-                Name = name,
-                StaffCode = staffCode,
+                StaffCodeOrName = valueSearch,
                 Type = type,
                 Sort = sort
             };

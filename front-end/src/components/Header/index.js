@@ -13,7 +13,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
-import { BASE_URL } from '../../constants';
+import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -45,7 +45,7 @@ function Header() {
     const { token, oldPasswordLogin, setToken } = useAuthContext();
 
     useEffect(() => {
-        const user = localStorage.getItem('userInformation');
+        const user = localStorage.getItem(USER_INFORMATION);
         if (user) {
             try {
                 setToken(JSON.parse(user));
@@ -55,7 +55,7 @@ function Header() {
 
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
-        localStorage.removeItem('localStorage');
+        localStorage.removeItem(TOKEN_KEY);
     };
 
     const toggleBtnOld = () => {
@@ -77,7 +77,7 @@ function Header() {
     }, [oldPassword, newPassword]);
 
     setTimeout(() => {
-        localStorage.removeItem('localStorage');
+        localStorage.removeItem(TOKEN_KEY);
         window.location.reload();
     }, 6000000);
 

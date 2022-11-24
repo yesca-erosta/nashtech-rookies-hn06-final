@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
-import { BASE_URL } from '../../constants';
+import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
 
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
@@ -68,9 +68,9 @@ const Login = () => {
         }
 
         setToken(data);
-        localStorage.setItem('localStorage', data.token);
+        localStorage.setItem(TOKEN_KEY, data.token);
         setOldPasswordLogin(password);
-        localStorage.setItem('userInformation', JSON.stringify(data));
+        localStorage.setItem(USER_INFORMATION, JSON.stringify(data));
     };
 
     return (
