@@ -68,7 +68,7 @@ function Header() {
     }, [location]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://localhost:7060/api/Account`, {
+        const result = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
