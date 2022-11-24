@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Button, Dropdown, DropdownButton, Form, InputGroup } from 'react-bootstrap';
+import { getAllData, getAllDataWithFilterBox } from '../../../apiServices';
+import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
-export const TypeFilter = () => {
+export const TypeFilter = ({ setDataState }) => {
   const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
-
-  const [arrCheckedConfirm, setArrCheckedConfirm] = useState({ admin: false, staff: false });
 
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -15,7 +15,6 @@ export const TypeFilter = () => {
 
   const onCloseType = () => {
     setArrChecked({ admin: false, staff: false });
-    setArrCheckedConfirm({ admin: false, staff: false });
     setShowDropdown(false);
   };
 
@@ -23,9 +22,33 @@ export const TypeFilter = () => {
     setArrChecked({ ...arrChecked, [type]: e.target.checked });
   };
 
-  const onSubmitType = () => {
-    setArrCheckedConfirm(arrChecked);
+  const onSubmitType = async () => {
+    let data = await getAllData(`User`);
+    if (arrChecked.admin) {
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 1 }));
+    }
+    if (arrChecked.staff) {
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 0 }));
+    }
+    if (arrChecked.admin && arrChecked.staff) {
+      data = await getAllData(`User`);
+    }
+    
+    setDataState(data);
     setShowDropdown(false);
+  };
+
+  const displayTitleType = () => {
+    if (arrChecked.admin && arrChecked.staff) {
+      return 'All';
+    }
+    if (arrChecked.admin) {
+      return 'Admin';
+    }
+    if (arrChecked.staff) {
+      return 'Staff';
+    }
+    return 'Type';
   };
 
   return (
@@ -33,7 +56,7 @@ export const TypeFilter = () => {
       <Dropdown>
         <DropdownButton
           variant="outline-dark"
-          title="Type"
+          title={displayTitleType()}
           id="dropdown-basic"
           onToggle={toggleDropdown}
           show={showDropdown}

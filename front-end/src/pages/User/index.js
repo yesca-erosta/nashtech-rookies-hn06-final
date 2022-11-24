@@ -1,18 +1,21 @@
 import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Link } from 'react-router-dom';
-import { TypeFilter } from './TypeFilter/TypeFilter';
+import { getAllData } from '../../apiServices';
+import { dateStrToStr } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
+import { ModalDetails } from './ModalDetails/ModalDetails';
 import { SearchUser } from './SearchUser/SearchUser';
+import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
 
 function User() {
   const [show, setShow] = useState(false);
 
   const [userDetails, setUserDetails] = useState('');
+  const [dataState, setDataState] = useState([]);
 
   const handleClose = () => {
     setShow(false);
@@ -20,10 +23,17 @@ function User() {
   };
   const handleShow = (staffCode) => {
     setShow(true);
-    setUserDetails(data.find((c) => c.staffCode === staffCode));
+    setUserDetails(dataState.find((c) => c.staffCode === staffCode));
   };
 
-  console.log('userDetails', userDetails);
+  const getData = async () => {
+    const data = await getAllData('User');
+    setDataState(data);
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const columns = [
     {
@@ -41,14 +51,14 @@ function User() {
     },
     {
       name: 'Username',
-      selector: (row) => row.username,
+      selector: (row) => row.userName,
     },
     {
       name: 'Joined Date',
       selector: (row) => row.joinedDate,
       sortable: true,
       cell: (row) => {
-        return <div>{row.joinedDate}</div>;
+        return <div>{dateStrToStr(row.joinedDate)}</div>;
       },
     },
     {
@@ -59,79 +69,47 @@ function User() {
     {
       name: 'Action',
       selector: (row) => row.null,
-      cell: (row, index) => [
-        <Link key={index} to={`#`} className={styles.customPen}>
+      cell: (row) => [
+        <Link key={row.staffCode} to={`#`} className={styles.customPen}>
           <FontAwesomeIcon icon={faPen} />
         </Link>,
-        <Link to={'#'} style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}>
+        <Link
+          key={`keyDelete_${row.staffCode}`}
+          to={'#'}
+          style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
+        >
           <FontAwesomeIcon icon={faRemove} />
         </Link>,
       ],
     },
   ];
 
-  const data = [
-    {
-      staffCode: 'SD1901',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-    {
-      staffCode: 'SD1902',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-    {
-      staffCode: 'SD1903',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-    {
-      staffCode: 'SD1904',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Admin',
-    },
-    {
-      staffCode: 'SD1905',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-    {
-      staffCode: 'SD1906',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-    {
-      staffCode: 'SD1907',
-      fullName: 'Hoan Nguyen Van',
-      username: 'hoannv',
-      joinedDate: '09/11/2000',
-      type: 'Staff',
-    },
-  ];
+  const [searchValue, setSearchValue] = useState('');
+  const [data, setData] = useState('');
+
+  const onSearch = (value) => {
+    setSearchValue(value);
+  };
+
+  useEffect(() => {
+    const newData = dataState?.filter(
+      (value) =>
+        value.fullName.toLowerCase().includes(searchValue.toLowerCase()) ||
+        value.staffCode.toLowerCase().includes(searchValue.toLowerCase()),
+    );
+    setData(newData);
+  }, [dataState, searchValue]);
 
   return (
     <div className="main tableMain">
       <h1 className="tableTitle">User List</h1>
       <div className="tableExtension">
         <div className="tableExtensionLeft">
-          <TypeFilter />
+          <TypeFilter setDataState={setDataState} />
         </div>
 
         <div className="tableExtensionRight">
-          <SearchUser />
+          <SearchUser onSearch={onSearch} searchValue={searchValue} />
           <ButtonCreate />
         </div>
       </div>
@@ -147,51 +125,7 @@ function User() {
         dense
       />
 
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header>
-          <Modal.Title className={styles.modalTitle}>User Information</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Row>
-            <Form.Label column="sm" lg={3}>
-              Staff Code
-            </Form.Label>
-            <Col>
-              <Form.Control size="sm" type="text" placeholder={userDetails.staffCode} readOnly disabled />
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Form.Label column="sm" lg={3}>
-              Full Name
-            </Form.Label>
-            <Col>
-              <Form.Control size="sm" type="text" placeholder={userDetails.fullName} readOnly disabled />
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Form.Label column="sm" lg={3}>
-              Date of Birth
-            </Form.Label>
-            <Col>
-              <Form.Control size="sm" type="text" placeholder={userDetails.joinedDate} readOnly disabled />
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Form.Label column="sm" lg={3}>
-              Gender
-            </Form.Label>
-            <Col>
-              <Form.Check inline disabled label="Female" type={'radio'} id={`inline-radio-1`} />
-              <Form.Check inline disabled label="Male" type={'radio'} id={`inline-radio-2`} checked />
-            </Col>
-          </Row>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="light" size="sm" className={styles.btnCancel} onClick={handleClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
+      <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
     </div>
   );
 }

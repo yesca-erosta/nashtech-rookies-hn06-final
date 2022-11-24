@@ -13,6 +13,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { BASE_URL } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -43,9 +44,18 @@ function Header() {
 
     const { token, oldPasswordLogin, setToken } = useAuthContext();
 
+    useEffect(() => {
+        const user = localStorage.getItem('userInformation');
+        if (user) {
+            try {
+                setToken(JSON.parse(user));
+            } catch (error) {}
+        }
+    }, [setToken]);
+
     const handleCloseRemoveAccessToken = () => {
         setShow(false);
-        sessionStorage.removeItem('localStorage');
+        localStorage.removeItem('localStorage');
     };
 
     const toggleBtnOld = () => {
@@ -66,17 +76,8 @@ function Header() {
         return;
     }, [oldPassword, newPassword]);
 
-    useEffect(() => {
-        const user = sessionStorage.getItem('userInformation');
-        if (user) {
-            try {
-                setToken(JSON.parse(user));
-            } catch (error) {}
-        }
-    }, []);
-
     setTimeout(() => {
-        sessionStorage.removeItem('localStorage');
+        localStorage.removeItem('localStorage');
         window.location.reload();
     }, 6000000);
 
@@ -93,7 +94,7 @@ function Header() {
     }, [location]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://localhost:7060/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',

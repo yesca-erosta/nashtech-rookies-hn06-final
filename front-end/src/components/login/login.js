@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { BASE_URL } from '../../constants';
 
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
@@ -32,7 +33,7 @@ const Login = () => {
         userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
         password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
 
-        const result = await fetch(`https://localhost:7060/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -67,9 +68,9 @@ const Login = () => {
         }
 
         setToken(data);
-        sessionStorage.setItem('localStorage', data.token);
+        localStorage.setItem('localStorage', data.token);
         setOldPasswordLogin(password);
-        sessionStorage.setItem('userInformation', JSON.stringify(data));
+        localStorage.setItem('userInformation', JSON.stringify(data));
     };
 
     return (

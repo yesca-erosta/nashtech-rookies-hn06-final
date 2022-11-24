@@ -3,16 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
 import { Button, Form, InputGroup } from 'react-bootstrap';
 
-export const SearchUser = () => {
+export const SearchUser = ({ onSearch }) => {
   const [value, setValue] = useState('');
 
   const onChange = (e) => {
     setValue(e.target.value);
   };
-
-  const onSubmit = () => {
-    console.log('value', value);
-  };
+  
   return (
     <InputGroup className="m-3">
       <Form.Control
@@ -22,7 +19,7 @@ export const SearchUser = () => {
         value={value}
         onChange={onChange}
       />
-      <Button variant="outline-secondary" id="button-addon2" type="submit" onClick={onSubmit}>
+      <Button variant="outline-secondary" id="button-addon2" type="submit" onClick={() => onSearch(value)}>
         <FontAwesomeIcon icon={faSearch} />
       </Button>
     </InputGroup>

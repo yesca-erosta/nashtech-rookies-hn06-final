@@ -9,6 +9,7 @@ import './home.scss';
 
 import classNames from 'classnames/bind';
 import styles from '../../components/Header/header.module.scss';
+import { BASE_URL } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -49,7 +50,7 @@ function Home() {
     }, [newPassword]);
 
     const handleSave = async () => {
-        const result = await fetch(`https://localhost:7060/api/Account`, {
+        const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
                 Accept: 'application/json',
