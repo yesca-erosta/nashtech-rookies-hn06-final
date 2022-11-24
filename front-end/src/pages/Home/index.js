@@ -90,7 +90,7 @@ function Home() {
                     }
                 }}
             >
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
                 <Modal.Body>
@@ -140,7 +140,7 @@ function Home() {
             </Modal>
 
             <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
+                <Modal.Header>
                     <h3 className={cx('modal-title')}>Change password</h3>
                 </Modal.Header>
                 <Modal.Body>Your password has been changed successfully!</Modal.Body>
