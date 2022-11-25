@@ -7,6 +7,8 @@ import Report from '../pages/Report';
 import config from '../config';
 import CreateUser from '../pages/User/CreateUser/createUser';
 import EditUser from '../pages/User/EditUser/editUser';
+import CreateAsset from '../pages/Asset/CreateAsset/createAsset';
+import EditAsset from '../pages/Asset/EditAsset/editAsset';
 
 // route public
 export const publicRoutes = [
@@ -18,6 +20,8 @@ export const publicRoutes = [
     { path: config.routes.report.path, component: Report },
     { path: config.routes.createUser.path, component: CreateUser },
     { path: config.routes.editUser.path, component: EditUser },
+    { path: config.routes.createNewAsset.path, component: CreateAsset },
+    { path: config.routes.editAset.path, component: EditAsset },
 ];
 
 export const privateRoutes = [];

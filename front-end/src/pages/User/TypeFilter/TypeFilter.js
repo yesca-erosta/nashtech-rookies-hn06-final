@@ -4,7 +4,7 @@ import { getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
-export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows }) => {
+export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows, setLoading }) => {
   const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
 
   const [showDropdown, setShowDropdown] = useState(false);
@@ -15,11 +15,20 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
 
   // TODO: still can't handle cancel
   const onCancelType = async () => {
+    setLoading(true);
+
     setArrChecked({ admin: false, staff: false });
-    const data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+    setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+    
+    const data = await getAllDataWithFilterBox(
+      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+    );
+
     setTotalRows(data.totalRecord);
     setDataState(data.source);
     setShowDropdown(false);
+
+    setLoading(false);
   };
 
   const handleChangeCheckbox = (e, type) => {
@@ -27,25 +36,37 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
   };
 
   const onSubmitType = async () => {
-    let data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+    setLoading(true);
+
+    let data = await getAllDataWithFilterBox(
+      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+    );
 
     if (arrChecked.admin) {
-      setQueryParams({ ...queryParams, types: 1 });
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 1 });
 
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: 1 }));
+      data = await getAllDataWithFilterBox(
+        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 1 }),
+      );
     }
     if (arrChecked.staff) {
-      setQueryParams({ ...queryParams, types: 0 });
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 0 });
 
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: 0 }));
+      data = await getAllDataWithFilterBox(
+        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 0 }),
+      );
     }
     if (arrChecked.admin && arrChecked.staff) {
-      setQueryParams({ ...queryParams, types: [0, 1] });
-      data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+      data = await getAllDataWithFilterBox(
+        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+      );
     }
     setTotalRows(data.totalRecord);
     setDataState(data.source);
     setShowDropdown(false);
+
+    setLoading(false);
   };
 
   const displayTitleType = () => {
