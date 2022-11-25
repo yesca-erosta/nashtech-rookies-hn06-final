@@ -1,7 +1,10 @@
 .container {
-    .table {
-        width: 1300px;
+    min-width: 900px;
+    position: relative;
 
+    .table {
+        margin-top: 80px;
+        width: 1190px;
         .actions {
             display: flex;
 
@@ -27,6 +30,7 @@
             }
         }
     }
+
     .title {
         display: flex;
 
@@ -41,6 +45,7 @@
         display: flex;
         justify-content: flex-end;
         margin-right: 110px;
+        position: relative;
     }
 
     .title_asset {
@@ -53,10 +58,42 @@
         flex-direction: row;
         justify-content: space-between;
         width: 1190px;
+        position: absolute;
 
         .input {
             border: none;
             background-color: transparent;
+        }
+    }
+
+    .dropdown {
+        position: absolute;
+        border: 1px solid #b7b7b7;
+        border-radius: 6px;
+        width: 186px;
+        background-color: #fff;
+        margin: 60px 0 0 62px;
+
+        .dropdown_container {
+            margin: 16px;
+
+            .dropdown_title {
+                font-weight: 700;
+                margin-bottom: 10px;
+                color: #cf2338;
+            }
+
+            .button {
+                margin-top: 10px;
+
+                .button_ok {
+                    width: 50px;
+                }
+
+                .button_cancel {
+                    margin-left: 10px;
+                }
+            }
         }
     }
 }

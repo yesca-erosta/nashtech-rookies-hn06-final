@@ -120,13 +120,11 @@ function Header() {
         if (result.status === 200) {
             setShowChangePassword(false);
             setShowSuccess(true);
-        } else {
-            setShowSuccess(false);
-        }
-
-        if (showChangePassword === false) {
             setOldPassword('');
             setNewPassword('');
+            setIsOldPasswordError(false);
+        } else {
+            setShowSuccess(false);
         }
     };
 

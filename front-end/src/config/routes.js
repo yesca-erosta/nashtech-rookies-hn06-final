@@ -7,6 +7,8 @@ const routes = {
     report: { path: '/report', name: 'Report' },
     createUser: { path: '/manageruser/createuser', name: 'Manage User > Create New User' },
     editUser: { path: '/manageruser/edituser', name: 'Manage User > Edit User' },
+    createNewAsset: { path: '/manageasset/createnewasset', name: 'Manage Asset > Create New Asset' },
+    editAset: { path: '/manageasset/editasset', name: 'Manage Asset > Edit Asset' },
 };
 
 export default routes;
