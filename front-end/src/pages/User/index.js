@@ -22,7 +22,7 @@ function User() {
   const [queryParams, setQueryParams] = useState({
     page: 1,
     pageSize: 10,
-    types: [0, 1],
+    types: '0,1',
     sort: 'StaffCodeAcsending',
   });
   const [loading, setLoading] = useState(false);
@@ -47,6 +47,8 @@ function User() {
 
   useEffect(() => {
     getData();
+    // I want call a function when first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const columns = [
