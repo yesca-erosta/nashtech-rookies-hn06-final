@@ -1,0 +1,47 @@
+.container {
+    width: 680px;
+
+    .title {
+        color: #cf2338;
+        margin-bottom: 30px;
+    }
+
+    .common-form {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .title_input {
+        width: 150px;
+    }
+
+    .input {
+        height: 40px;
+    }
+
+    .input-specification {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        appearance: none;
+        border-radius: 0.375rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .input-radio-state {
+        width: 680px;
+    }
+    .button {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .cancel-button {
+        margin-left: 10px;
+    }
+}
