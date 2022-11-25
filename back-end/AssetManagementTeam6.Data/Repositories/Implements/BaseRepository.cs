@@ -6,8 +6,10 @@ using System.Threading;
 
 namespace AssetManagementTeam6.Data.Repositories.Implements
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity<int>
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
+        // implement interface User 
+
         protected readonly DbSet<T> _dbSet;
         protected readonly AssetManagementContext _context;
         public BaseRepository(AssetManagementContext context)
