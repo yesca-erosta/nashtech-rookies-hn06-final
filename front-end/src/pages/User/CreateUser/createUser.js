@@ -1,167 +1,135 @@
-import axios from "axios";
 import Button from 'react-bootstrap/Button';
-import { React, useEffect, useState } from "react";
+import { React, useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import classNames from 'classnames/bind';
-import styles from "./createUser.module.scss"
-import { useAuthContext } from '../../../context/RequiredAuth/authContext';
+import styles from './createUser.module.scss';
+import { createData, getAllData } from '../../../apiServices';
+import { USER } from '../../../constants';
 
-const cx = classNames.bind(styles)
+const cx = classNames.bind(styles);
 
 function CreateUser() {
-  const [user, setUser] = useState({});
-  const [dataAdd, setDataAdd] = useState({
-    userName: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
-    joinedDate: '',
-    location : '',
-    type: '',
-    
-  });
-  const { token } = useAuthContext();
-  const createData = async (data) => {
-    let response = [];
-    await axios({
-      method: 'post',
-      url: "https://localhost:7060/api/User",
-      headers: { Authorization: `Bearer ${token.token}` },
-      data: data,
-    })
-      .then((res) => {
-        response = [...res.data];
-      })
-      .catch((err) => {
-        response = err;
-      });
-    return response;
-  };
-
-  const handleOkAdd = async () => {
-   
-    await createData(dataAdd);
-    //getData();
-    setDataAdd({
-      name: '',
-      author: '',
-      summary: '',
-      categoryIds: [],
+    const [user, setUser] = useState({});
+    const [dataAdd, setDataAdd] = useState({
+        userName: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: '',
+        joinedDate: '',
+        type: '',
     });
-  };
-  useEffect(() => {
-    axios({
-      method: "get",
-      url: "https://localhost:7060/api/User",
-      data: null,
-      headers: { Authorization: `Bearer ${token.token}` },
-    })
-      .then((data) => {
-        setUser(data.data);
-        console.log(data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [token]);
 
-  const handleChangeAdd = (e) => {
-  //   setError({ userName: '',
-  //   firstName: '',
-  //   password: '',
-  //   lastName: '',
-  //   joinedDate: '',
-  //   location : '',
-  //   type: '',
-  //   dateOfBirth: ''
-  // });
-    setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
-};
+    const getData = async () => {
+        const dataUser = await getAllData(USER);
+        setUser(dataUser);
+        console.log(user);
+    };
+    useEffect(() => {
+        getData();
+    }, []);
 
-  return (
-    <div className={cx('container')} >
-      <h3 className={cx('title')}>Create New User</h3>
+    const onSaveAdd = async () => {
+        await createData(USER, dataAdd);
+        getData();
+        console.log(user);
+        setDataAdd({
+            userName: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+            dateOfBirth: '',
+            gender: '',
+            joinedDate: '',
+            type: '',
+        });
+    };
+    console.log(dataAdd);
 
-      <Form onSubmit={handleOkAdd} >
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>User Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} onChange={handleChangeAdd} />
-        </Form.Group>
+    const handleChangeAdd = (e) => {
+        setDataAdd({ ...dataAdd, [e.target.name]: e.target.value, "type": +e.target.value, "gender": +e.target.value });
+        console.log(e.target.value);
+    };
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Password</Form.Label>
-          <Form.Control type="password" className={cx('input')} onChange={handleChangeAdd} />
-        </Form.Group>
+    return (
+        <div className={cx('container')}>
+            <h3 className={cx('title')}>Create New User</h3>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>First Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} onChange={handleChangeAdd}/>
-        </Form.Group>
+            <Form>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>User Name</Form.Label>
+                    <Form.Control type="text" className={cx('input')} name="userName" onChange={handleChangeAdd} />
+                </Form.Group>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Last Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} onChange={handleChangeAdd}/>
-        </Form.Group>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Password</Form.Label>
+                    <Form.Control type="password" className={cx('input')} name="password" onChange={handleChangeAdd} />
+                </Form.Group>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-          <Form.Control type="date" className={cx('input')} onChange={handleChangeAdd}/>
-        </Form.Group>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>First Name</Form.Label>
+                    <Form.Control type="text" className={cx('input')} name="firstName" onChange={handleChangeAdd} />
+                </Form.Group>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Gender</Form.Label>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Last Name</Form.Label>
+                    <Form.Control type="text" className={cx('input')} name="lastName" onChange={handleChangeAdd} />
+                </Form.Group>
 
-          <div key={`gender-radio`} className={cx('input-radio-gender')}>
-            <Form.Check
-              inline
-              label="Male"
-              name="gender"
-              type="radio"
-              id={`gender-radio-1`}
-            />
-            <Form.Check
-              inline
-              label="Female"
-              name="gender"
-              type="radio"
-              id={`gender-radio-2`}
-            />
-          </div>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
+                    <Form.Control type="date" className={cx('input')} name="dateOfBirth" onChange={handleChangeAdd} />
+                </Form.Group>
 
-        </Form.Group>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Gender</Form.Label>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-          <Form.Control type="date" className={cx('input')} onChange={handleChangeAdd}/>
-        </Form.Group>
+                    <div key={`gender-radio`} className={cx('input-radio-gender')}>
+                        <Form.Check
+                            inline
+                            label="Male"
+                            name="gender"
+                            type="radio"
+                            value={1}
+                            id={`gender-radio-1`}
+                            onChange={handleChangeAdd}
+                        />
+                        <Form.Check
+                            inline
+                            label="Female"
+                            name="gender"
+                            type="radio"
+                            value={2}
+                            id={`gender-radio-2`}
+                            onChange={handleChangeAdd}
+                        />
+                    </div>
+                </Form.Group>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Type</Form.Label>
-          <Form.Select >
-            <option value="0">Staff</option>
-            <option value="1">Admin</option>
-          </Form.Select>
-        </Form.Group>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
+                    <Form.Control type="date" className={cx('input')} name="joinedDate" onChange={handleChangeAdd} />
+                </Form.Group>
 
-        <Form.Group className={cx('common-form')} >
-          <Form.Label className={cx('title_input')}>Location</Form.Label>
-          <Form.Control type="text" className={cx('input')} />
-        </Form.Group>
-
-        <div className={cx('button')}>
-          <Button variant="danger" type="submit" >
-            Save
-          </Button>
-
-          <Button variant="outline-success" type="submit" className={cx('cancel-button')}>
-            Cancel
-          </Button>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Type</Form.Label>
+                    <Form.Select onChange={handleChangeAdd} name="type">
+                        <option value={0}>Staff</option>
+                        <option value={1}>Admin</option>
+                    </Form.Select>
+                </Form.Group>
+                <div className={cx('button')}>
+                    <Button variant="danger" onClick={onSaveAdd}>
+                        Save
+                    </Button>
+                    <Button variant="outline-success" className={cx('cancel-button')}>
+                        Cancel
+                    </Button>
+                </div>
+            </Form>
         </div>
-      </Form>
-    </div>
-  );
+    );
 }
 
 export default CreateUser;
