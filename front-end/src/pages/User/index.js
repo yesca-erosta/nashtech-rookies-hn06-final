@@ -201,6 +201,7 @@ function User() {
     if (column.id === 5) {
       return 'Type';
     }
+    return 'StaffCode';
   };
 
   const getDataSort = async (column, sortDirection) => {
