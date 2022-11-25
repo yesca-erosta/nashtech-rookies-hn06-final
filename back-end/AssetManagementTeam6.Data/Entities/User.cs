@@ -24,11 +24,6 @@ namespace AssetManagementTeam6.Data.Entities
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string? StaffCode { get; private set; }
-        //{
-        //    //get => _staffCode;
-        //    //private set { _staffCode = $"SD{Id.ToString("D4")}"; }
-        //}
-
 
     }
 }
