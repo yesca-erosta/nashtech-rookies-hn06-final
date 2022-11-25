@@ -18,7 +18,12 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
     setLoading(true);
 
     setArrChecked({ admin: false, staff: false });
-    const data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, types: [0, 1] }));
+    setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+    
+    const data = await getAllDataWithFilterBox(
+      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+    );
+
     setTotalRows(data.totalRecord);
     setDataState(data.source);
     setShowDropdown(false);
@@ -34,7 +39,7 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
     setLoading(true);
 
     let data = await getAllDataWithFilterBox(
-      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: [0, 1] }),
+      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
     );
 
     if (arrChecked.admin) {
@@ -52,9 +57,9 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
       );
     }
     if (arrChecked.admin && arrChecked.staff) {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: [0, 1] });
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
       data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: [0, 1] }),
+        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
       );
     }
     setTotalRows(data.totalRecord);
