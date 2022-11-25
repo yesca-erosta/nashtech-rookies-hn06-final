@@ -12,8 +12,9 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<User?> GetUserById(int id);
         Task<User?> GetUserByUserAccount(string userName);
         Task<User?> LoginUser(LoginRequest loginRequest);
-        Task<User?> Create(CreateUserRequest createRequest);
-        Task<User?> Update(User updateRequest);
+        Task<User?> Create(UserRequest createRequest);
+        Task<User?> ChangePassword(User updateRequest);
+        Task<User?> Update(UserRequest updateRequest);
         Task<bool> Delete(int id);
         Task<Pagination<GetUserResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location);
     }

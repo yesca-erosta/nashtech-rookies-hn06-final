@@ -18,7 +18,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-        public async Task<User?> Create(CreateUserRequest user)
+        public async Task<User?> Create(UserRequest user)
         {
             user.NeedUpdatePwdOnLogin = true;
 
@@ -35,7 +35,9 @@ namespace AssetManagementTeam6.API.Services.Implements
                 Type = user.Type,
                 NeedUpdatePwdOnLogin = (bool)user.NeedUpdatePwdOnLogin
             };
+
             newUser.Password = SystemFunction.CreateMD5(user.Password);
+
             var createdUser = await _userRepository.Create(newUser);
 
             return createdUser;
@@ -184,10 +186,33 @@ namespace AssetManagementTeam6.API.Services.Implements
             return output;
         }
 
-        public async Task<User?> Update(User updateRequest)
+        public async Task<User?> ChangePassword(User updateRequest)
         {
 
             return await _userRepository.Update(updateRequest);
+        }
+
+        public async Task<User?> Update(UserRequest updateRequest)
+        {
+            var newUser = new User
+            {
+                UserName = updateRequest.UserName,
+                Password = updateRequest.Password,
+                FirstName = updateRequest.FirstName,
+                LastName = updateRequest.LastName,
+                Gender = updateRequest.Gender,
+                DateOfBirth = updateRequest.DateOfBirth,
+                Location = updateRequest.Location,
+                JoinedDate = updateRequest.JoinedDate,
+                Type = updateRequest.Type,
+                NeedUpdatePwdOnLogin = (bool)updateRequest.NeedUpdatePwdOnLogin
+            };
+
+            newUser.Password = SystemFunction.CreateMD5(updateRequest.Password);
+
+            var updatedUser = await _userRepository.Update(newUser);
+
+            return updatedUser;
         }
     }
 }

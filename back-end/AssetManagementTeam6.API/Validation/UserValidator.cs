@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace AssetManagementTeam6.API.Validation
 {
-    public class CreateUserValidator : AbstractValidator<CreateUserRequest>
+    public class UserValidator : AbstractValidator<UserRequest>
     {
-        public CreateUserValidator()
+        public UserValidator()
         {
             RuleSet("UpdateUser", () =>
             {

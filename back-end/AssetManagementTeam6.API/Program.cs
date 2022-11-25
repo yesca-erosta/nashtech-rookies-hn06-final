@@ -3,7 +3,6 @@ using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.API.Validation;
 using AssetManagementTeam6.Data;
-using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Implements;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Constants;
@@ -48,7 +47,7 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IValidator<CreateUserRequest>, CreateUserValidator>();
+builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
