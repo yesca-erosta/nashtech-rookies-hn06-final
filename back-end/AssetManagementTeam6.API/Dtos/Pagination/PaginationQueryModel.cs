@@ -25,7 +25,8 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
 
         // filter 
         public List<StaffEnum>? Types { get; set; }
-
+        public List<string>? Category { get; set; }
+        public List<StateEnum>? State { get; set; }
         //sorting
         public string? Sort { get; set; }
     }
