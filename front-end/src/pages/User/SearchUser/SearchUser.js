@@ -11,7 +11,7 @@ export const SearchUser = ({ onSearch }) => {
   };
   
   return (
-    <InputGroup className="m-3">
+    <InputGroup className="m-3 inputSearch">
       <Form.Control
         id="dhv-page-header-functions-search-input"
         aria-label="Recipient's username"
