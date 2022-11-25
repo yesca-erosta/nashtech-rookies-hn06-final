@@ -9,7 +9,6 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public bool NeedUpdatePwdOnLogin { get; set; }
         public StaffEnum Type { get; set; }
         public LocationEnum Location { get; set; }
-
         public string? Token { get; set; }
     }
 }

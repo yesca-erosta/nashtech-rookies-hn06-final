@@ -33,6 +33,15 @@
   display: flex;
 }
 
+.text-color {
+  color: #e4010b;
+}
+
+.page-item.text-color.active .page-link.text-color {
+  color: #fff !important;
+  background-color: #e4010b !important;
+}
+
 @media screen and (max-width: 767px) {
   .tableExtension {
     display: block;
