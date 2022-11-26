@@ -29,4 +29,17 @@
     .cancel-button{
         margin-left: 10px;
     }
+    .input-new-password {
+        display: flex;
+        width: 680px;
+    }
+    .icon-new {
+        border: none;
+        outline: none;
+        font-size: 1.5rem;
+        margin-left: -2rem;
+        background-color: transparent;
+        cursor: pointer;
+    }
+   
 }
