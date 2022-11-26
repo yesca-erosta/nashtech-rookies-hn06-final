@@ -8,6 +8,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public int Id { get; set; }
         public string AssetName { get; set; }
         public string CategoryId { get; set; }     
+        public Category Category { get; set; }
         public string Specification { get; set; }
         public DateTime? InstalledDate { get; set; }
         public string State { get; set; }
@@ -15,6 +16,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public GetAssetResponse(Asset asset)
         {
+            Category = asset.Category;
             Id = asset.Id;
             AssetName = asset.AssetName;
             CategoryId = asset.CategoryId;

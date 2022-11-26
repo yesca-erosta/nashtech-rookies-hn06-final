@@ -65,7 +65,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (user == null) return StatusCode(500, "Sorry the request failed");
 
-            user.Location = requestModel.Location;
+            requestModel.Location = user.Location;
 
             if (((int)requestModel.State) > 2) return BadRequest($"invalid {requestModel.State} state ");
 
