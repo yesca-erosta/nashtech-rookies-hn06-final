@@ -3,7 +3,6 @@ using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.API.Validation;
 using AssetManagementTeam6.Data;
-using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Implements;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Constants;
@@ -46,6 +45,8 @@ builder.Services.AddTransient<IUserRepository, UserRepository>();
 builder.Services.AddTransient<IAssetService, AssetService>();
 builder.Services.AddTransient<IAssetRepository, AssetRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

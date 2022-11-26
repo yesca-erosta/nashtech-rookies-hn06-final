@@ -68,14 +68,14 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
             }               
         }
 
-        public async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>>? predicate = null)
         {
             var dbSet = predicate == null ? _dbSet : _dbSet.Where(predicate);
 
             return await dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetOneAsync(Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<T?> GetOneAsync(Expression<Func<T, bool>>? predicate = null)
         {
             var dbSet = predicate == null ? _dbSet.FirstOrDefaultAsync() : _dbSet.FirstOrDefaultAsync(predicate);
 

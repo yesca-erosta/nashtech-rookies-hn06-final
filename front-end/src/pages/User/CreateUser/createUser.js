@@ -20,7 +20,7 @@ function CreateUser() {
     dateOfBirth: '',
     gender: '',
     joinedDate: '',
-    type: '',
+    type: 0,
   });
 
   const [error, setError] = useState({
@@ -29,29 +29,27 @@ function CreateUser() {
     firstName: '',
     lastName: '',
     dateOfBirth: '',
-    gender: '',
     joinedDate: '',
-    type: '',
   });
 
   const getData = async () => {
     const dataUser = await getAllData(USER);
     setUser(dataUser);
-    console.log(user);
   };
 
   const toggleBtnOld = () => {
     setHidePass((pre) => !pre);
   };
-
   useEffect(() => {
     getData();
-  }, []);
+  }, [user]);
 
+  useEffect(() => {
+    console.log(dataAdd)
+  }, [dataAdd]);
   const onSaveAdd = async () => {
     await createData(USER, dataAdd);
     getData();
-    console.log(user);
     setDataAdd({
       userName: '',
       password: '',
@@ -64,7 +62,16 @@ function CreateUser() {
     });
   };
 
+  const handleBlurAdd = (e) => {
+    if (e.target.value) {
+      setError({ userName: '', password: '', firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
+    } else {
+      setError({ ...error, [e.target.name]: 'This field is required' });
+    }
+  };
+
   const handleChangeAdd = (e) => {
+    setError({ userName: '', password: '', firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
     if (e.target.name === 'gender' || e.target.name === 'type') {
       setDataAdd({ ...dataAdd, [e.target.name]: parseInt(e.target.value) });
     } else {
@@ -79,9 +86,15 @@ function CreateUser() {
       <Form>
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>User Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} name="userName" onChange={handleChangeAdd} />
+          <Form.Control
+            type="text"
+            className={cx('input')}
+            name="userName"
+            onChange={handleChangeAdd}
+            onBlur={handleBlurAdd}
+          />
         </Form.Group>
-
+        {error.userName && <p className={cx('msgError')}>{error.userName}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Password</Form.Label>
           <div className={cx('input-new-password')}>
@@ -90,28 +103,47 @@ function CreateUser() {
               className={cx('input')}
               name="password"
               onChange={handleChangeAdd}
+              onBlur={handleBlurAdd}
             />
             <div className={cx('icon-new')} onClick={toggleBtnOld}>
               {!hidePass ? <AiFillEye /> : <AiFillEyeInvisible />}
             </div>
           </div>
         </Form.Group>
-
+        {error.password && <p className={cx('msgError')}>{error.password}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>First Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} name="firstName" onChange={handleChangeAdd} />
+          <Form.Control
+            type="text"
+            className={cx('input')}
+            name="firstName"
+            onChange={handleChangeAdd}
+            onBlur={handleBlurAdd}
+          />
         </Form.Group>
-
+        {error.firstName && <p className={cx('msgError')}>{error.firstName}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Last Name</Form.Label>
-          <Form.Control type="text" className={cx('input')} name="lastName" onChange={handleChangeAdd} />
+          <Form.Control
+            type="text"
+            className={cx('input')}
+            name="lastName"
+            onChange={handleChangeAdd}
+            onBlur={handleBlurAdd}
+          />
         </Form.Group>
-
+        {error.lastName && <p className={cx('msgError')}>{error.lastName}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-          <Form.Control type="date" className={cx('input')} name="dateOfBirth" onChange={handleChangeAdd} />
+          <Form.Control
+            type="date"
+            className={cx('input')}
+            name="dateOfBirth"
+            onChange={handleChangeAdd}
+            onBlur={handleBlurAdd}
+          />
         </Form.Group>
-
+        {error.dateOfBirth && <p className={cx('msgError')}>{error.dateOfBirth}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Gender</Form.Label>
 
@@ -136,12 +168,18 @@ function CreateUser() {
             />
           </div>
         </Form.Group>
-
+        
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-          <Form.Control type="date" className={cx('input')} name="joinedDate" onChange={handleChangeAdd} />
+          <Form.Control
+            type="date"
+            className={cx('input')}
+            name="joinedDate"
+            onChange={handleChangeAdd}
+            onBlur={handleBlurAdd}
+          />
         </Form.Group>
-
+        {error.joinedDate && <p className={cx('msgError')}>{error.joinedDate}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Type</Form.Label>
           <Form.Select onChange={handleChangeAdd} name="type">
