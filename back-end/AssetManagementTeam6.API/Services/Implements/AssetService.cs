@@ -18,7 +18,6 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             _assetRepository = assetRepository;
             _categoryRepository = categoryRepository;
-          
         }
             
         public async Task<Asset?> Create(AssetRequest asset)
@@ -50,14 +49,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assetByLocation = assets.Where(x => x.Location == location);
 
-            return assetByLocation.Select(asset => new GetAssetResponse(asset)
-            {
-                AssetName = asset.AssetName,
-                CategoryId = asset.CategoryId,
-                Specification = asset.Specification,
-                InstalledDate = asset.InstalledDate,  
-                AssetCode = asset.AssetCode,
-            });
+            return assetByLocation.Select(asset => new GetAssetResponse(asset));
         }
 
         public async Task<Asset?> GetAssetByName(string assetName)
@@ -89,11 +81,11 @@ namespace AssetManagementTeam6.API.Services.Implements
             {
                 assets = assets?.Where(u => queryModel.State.Contains(u.State))?.ToList();
             }
-            
-            //if(queryModel.Category != null)
-            //{
-            //    assets = assets.Where(u => queryModel.Category.Contains(u.CategoryId))?.ToList();
-            //}
+
+            if (queryModel.Category != null)
+            {
+                assets = assets.Where(u => queryModel.Category.Contains(u.CategoryId))?.ToList();
+            }
 
             // search asset by staffcode or fullname
             var nameToQuery = "";
@@ -174,10 +166,11 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Asset?> Update(AssetRequest updateRequest)
         {
-            var updatedAssert =await _assetRepository.GetOneAsync();
+            var updatedAssert =await _assetRepository.GetOneAsync(x => x.Id ==updateRequest.Id);
             if (updatedAssert == null) return null;
 
             {
+                updatedAssert.Location = updateRequest.Location;    
                 updatedAssert.AssetName = updateRequest.AssetName;
                 updatedAssert.InstalledDate = updateRequest.InstalledDate;
                 updatedAssert.State = updateRequest.State;
