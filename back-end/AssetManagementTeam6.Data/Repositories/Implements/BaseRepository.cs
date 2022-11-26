@@ -6,8 +6,10 @@ using System.Threading;
 
 namespace AssetManagementTeam6.Data.Repositories.Implements
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity<int>
+    public class BaseRepository<T> : IBaseRepository<T> where T : class
     {
+        // implement interface User 
+
         protected readonly DbSet<T> _dbSet;
         protected readonly AssetManagementContext _context;
         public BaseRepository(AssetManagementContext context)
@@ -66,14 +68,14 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
             }               
         }
 
-        public async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<IEnumerable<T>> GetListAsync(Expression<Func<T, bool>>? predicate = null)
         {
             var dbSet = predicate == null ? _dbSet : _dbSet.Where(predicate);
 
             return await dbSet.ToListAsync();
         }
 
-        public async Task<T?> GetOneAsync(Expression<Func<T, bool>>? predicate = null)
+        public virtual async Task<T?> GetOneAsync(Expression<Func<T, bool>>? predicate = null)
         {
             var dbSet = predicate == null ? _dbSet.FirstOrDefaultAsync() : _dbSet.FirstOrDefaultAsync(predicate);
 
