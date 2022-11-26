@@ -33,6 +33,7 @@ namespace AssetManagementTeam6.API.Controllers
                 return NotFound();
 
             var user = await _userService.GetUserById(userId.Value);
+
             if (user == null) return NotFound();
             var location = user.Location;
 
@@ -67,7 +68,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             requestModel.Location = user.Location;
 
-            if (((int)requestModel.State) > 2) return BadRequest($"invalid {requestModel.State} state ");
+            if (((int)requestModel.State) > 1) return BadRequest($"State invalid");
 
             var result = await _assetService.Create(requestModel);
 
@@ -78,23 +79,30 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody][CustomizeValidator(RuleSet = "default, Updateasset")] AssetRequest requestModel)
+        public async Task<IActionResult> UpdateAsync([FromBody] AssetRequest requestModel)
         {
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)
                 return NotFound();
 
-            var user = _userService.GetUserById(userId.Value);
+            var asset = await _assetService.GetAssetById(requestModel.Id);
+            if (asset == null)
+                return NotFound();
 
-            var asset = _assetService.GetAssetByName(requestModel.AssetName);
+            var user = await _userService.GetUserById((int)userId);
 
+            requestModel.Location = user.Location;
+
+            if ((int)requestModel.State == 4)
+                    return BadRequest("State Invalid");
+            
             var result = await _assetService.Update(requestModel);
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
 
-            return Ok();
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
@@ -107,7 +115,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             await _assetService.Delete(id);
 
-            return Ok();
+            return Ok(asset);
         }
 
         [HttpGet("query")]
