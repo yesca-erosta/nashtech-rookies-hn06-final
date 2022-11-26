@@ -5,17 +5,17 @@ import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
 export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows, setLoading }) => {
-  const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
+    const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
 
-  const [showDropdown, setShowDropdown] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
 
-  const toggleDropdown = () => {
-    setShowDropdown(!showDropdown);
-  };
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
+    };
 
-  // TODO: still can't handle cancel
-  const onCancelType = async () => {
-    setLoading(true);
+    // TODO: still can't handle cancel
+    const onCancelType = async () => {
+        setLoading(true);
 
     setArrChecked({ admin: false, staff: false });
     setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
@@ -28,15 +28,15 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
     setDataState(data.source);
     setShowDropdown(false);
 
-    setLoading(false);
-  };
+        setLoading(false);
+    };
 
-  const handleChangeCheckbox = (e, type) => {
-    setArrChecked({ ...arrChecked, [type]: e.target.checked });
-  };
+    const handleChangeCheckbox = (e, type) => {
+        setArrChecked({ ...arrChecked, [type]: e.target.checked });
+    };
 
-  const onSubmitType = async () => {
-    setLoading(true);
+    const onSubmitType = async () => {
+        setLoading(true);
 
     let data = await getAllDataWithFilterBox(
       `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
