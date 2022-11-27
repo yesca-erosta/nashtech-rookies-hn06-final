@@ -30,13 +30,13 @@ const EditUser = () => {
     console.log('submit');
   };
 
-  const handleBlurAdd = (e) => {
-    if (e.target.value) {
-      setError({ firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
-    } else {
-      setError({ ...error, [e.target.name]: 'This field is required' });
-    }
-  };
+  // const handleBlurAdd = (e) => {
+  //   if (e.target.value) {
+  //     setError({ firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
+  //   } else {
+  //     setError({ ...error, [e.target.name]: 'This field is required' });
+  //   }
+  // };
 
   const handleChangeAdd = (e) => {
     setError({ firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });

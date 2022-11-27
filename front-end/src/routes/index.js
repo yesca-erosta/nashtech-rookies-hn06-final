@@ -6,7 +6,7 @@ import Request from '../pages/Request';
 import Report from '../pages/Report';
 import config from '../config';
 import CreateUser from '../pages/User/CreateUser/createUser';
-import EditUser from '../pages/User/EditUser/EditUser';
+import EditUser from '../pages/User/EditUser/editUser';
 import CreateAsset from '../pages/Asset/CreateAsset/createAsset';
 import EditAsset from '../pages/Asset/EditAsset/editAsset';
 
