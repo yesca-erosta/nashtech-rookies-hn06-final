@@ -6,11 +6,13 @@ import styles from './createUser.module.scss';
 import { createData, getAllData } from '../../../apiServices';
 import { USER } from '../../../constants';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function CreateUser() {
-  const [user, setUser] = useState({});
+  let navigate = useNavigate();
+
   const [hidePass, setHidePass] = useState(true);
   const [dataAdd, setDataAdd] = useState({
     userName: '',
@@ -32,24 +34,12 @@ function CreateUser() {
     joinedDate: '',
   });
 
-  const getData = async () => {
-    const dataUser = await getAllData(USER);
-    setUser(dataUser);
-  };
-
   const toggleBtnOld = () => {
     setHidePass((pre) => !pre);
   };
-  useEffect(() => {
-    getData();
-  }, [user]);
-
-  useEffect(() => {
-    console.log(dataAdd)
-  }, [dataAdd]);
+  
   const onSaveAdd = async () => {
-    await createData(USER, dataAdd);
-    getData();
+    const res = await createData(USER, dataAdd);
     setDataAdd({
       userName: '',
       password: '',
@@ -60,6 +50,22 @@ function CreateUser() {
       joinedDate: '',
       type: '',
     });
+    if (res.code === 'ERR_BAD_REQUEST') {
+      alert('Somthing wrong. Cant create user');
+    } else {
+      setDataAdd({
+        userName: '',
+        password: '',
+        firstName: '',
+        lastName: '',
+        dateOfBirth: '',
+        gender: '',
+        joinedDate: '',
+        type: 0,
+      });
+
+      navigate('/manageruser');
+    }
   };
 
   const handleBlurAdd = (e) => {
@@ -79,6 +85,10 @@ function CreateUser() {
     }
   };
 
+  const onCancelAdd = () => {
+    navigate('/manageruser');
+  };
+
   return (
     <div className={cx('container')}>
       <h3 className={cx('title')}>Create New User</h3>
@@ -88,6 +98,7 @@ function CreateUser() {
           <Form.Label className={cx('title_input')}>User Name</Form.Label>
           <Form.Control
             type="text"
+            placeholder="Enter username"
             className={cx('input')}
             name="userName"
             onChange={handleChangeAdd}
@@ -102,6 +113,7 @@ function CreateUser() {
               type={hidePass ? 'password' : 'text'}
               className={cx('input')}
               name="password"
+              placeholder="Enter password"
               onChange={handleChangeAdd}
               onBlur={handleBlurAdd}
             />
@@ -162,13 +174,14 @@ function CreateUser() {
               label="Female"
               name="gender"
               type="radio"
+              className={cx('form-check-input:checked')}
               value={2}
               id={`gender-radio-2`}
               onChange={handleChangeAdd}
             />
           </div>
         </Form.Group>
-        
+
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
           <Form.Control
@@ -191,7 +204,7 @@ function CreateUser() {
           <Button variant="danger" onClick={onSaveAdd}>
             Save
           </Button>
-          <Button variant="outline-success" className={cx('cancel-button')}>
+          <Button variant="outline-success" className={cx('cancel-button')} onClick={onCancelAdd}>
             Cancel
           </Button>
         </div>

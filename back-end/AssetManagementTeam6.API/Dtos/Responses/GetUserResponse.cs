@@ -4,7 +4,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 {
     public class GetUserResponse
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
         public string UserName { get; set; }
         public string StaffCode { get; set; }
         public string Type { get; set; }
@@ -17,7 +17,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public GetUserResponse(User user)
         {
-            //Id = user.Id;
+            Id = user.Id;
             UserName = user.UserName;
             StaffCode = user.StaffCode;
             Type = user.Type.ToString();
