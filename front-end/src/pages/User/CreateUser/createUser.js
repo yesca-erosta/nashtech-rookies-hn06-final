@@ -1,12 +1,12 @@
-import classNames from 'classnames/bind';
-import { React, useState } from 'react';
 import Button from 'react-bootstrap/Button';
+import { React, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
+import classNames from 'classnames/bind';
+import styles from './createUser.module.scss';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
-import styles from './createUser.module.scss';
+import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
@@ -40,16 +40,7 @@ function CreateUser() {
 
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
-    setDataAdd({
-      userName: '',
-      password: '',
-      firstName: '',
-      lastName: '',
-      dateOfBirth: '',
-      gender: '',
-      joinedDate: '',
-      type: '',
-    });
+
     if (res.code === 'ERR_BAD_REQUEST') {
       alert('Somthing wrong. Cant create user');
     } else {
@@ -131,6 +122,7 @@ function CreateUser() {
             name="firstName"
             onChange={handleChangeAdd}
             onBlur={handleBlurAdd}
+            placeholder="Enter first name"
           />
         </Form.Group>
         {error.firstName && <p className={cx('msgError')}>{error.firstName}</p>}
@@ -140,6 +132,7 @@ function CreateUser() {
             type="text"
             className={cx('input')}
             name="lastName"
+            placeholder="Enter last name"
             onChange={handleChangeAdd}
             onBlur={handleBlurAdd}
           />
