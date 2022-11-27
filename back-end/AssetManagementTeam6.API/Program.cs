@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:7060/api",
+        policy.WithOrigins("https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api",
                             "http://localhost:3000");
     });
 });
