@@ -37,7 +37,7 @@ function CreateUser() {
   const toggleBtnOld = () => {
     setHidePass((pre) => !pre);
   };
-  
+
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
 
