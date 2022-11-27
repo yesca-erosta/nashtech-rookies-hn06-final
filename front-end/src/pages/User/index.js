@@ -5,17 +5,22 @@ import { Col, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
 import { ModalDetails } from './ModalDetails/ModalDetails';
 import { SearchUser } from './SearchUser/SearchUser';
 import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { USER } from '../../constants';
 
 function User() {
   const [show, setShow] = useState(false);
 
+  const [showRemove, setShowRemove] = useState(false);
   const [userDetails, setUserDetails] = useState('');
   const [dataState, setDataState] = useState([]);
   const [searchValue, setSearchValue] = useState('');
@@ -28,10 +33,17 @@ function User() {
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
   const [perPage, setPerPage] = useState(10);
+  const [userId, setUserId] = useState('');
 
   const handleClose = () => {
     setShow(false);
     setUserDetails('');
+  };
+
+  // Get Data
+  const getData = async () => {
+    const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+    setDataState(data);
   };
 
   const handleShow = (staffCode) => {
@@ -39,10 +51,20 @@ function User() {
     setUserDetails(dataState.find((c) => c.staffCode === staffCode));
   };
 
-  // Get Data
-  const getData = async () => {
-    const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    setDataState(data);
+  const handleShowRemove = (row) => {
+    setUserId(row.id);
+    setShowRemove(true);
+  };
+
+  const handleCloseRemove = () => setShowRemove(false);
+
+  const handleDisable = async (id) => {
+    setLoading(true);
+    await deleteData(USER, id);
+    getData();
+    setShowRemove(false);
+    setUserId('');
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -94,7 +116,7 @@ function User() {
           to={'#'}
           style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
         >
-          <FontAwesomeIcon icon={faRemove} />
+          <FontAwesomeIcon icon={faRemove} onClick={() => handleShowRemove(row)} />
         </Link>,
       ],
     },
@@ -263,7 +285,6 @@ function User() {
           <ButtonCreate />
         </div>
       </div>
-
       {dataState ? (
         <DataTable
           title="Users"
@@ -285,8 +306,26 @@ function User() {
       ) : (
         msgNoData()
       )}
-
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
+      <Modal show={showRemove}>
+        <Modal.Header>
+          <Modal.Title>Are you sure?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Label>Do you want to disable this user</Form.Label>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={() => handleDisable(userId)}>
+            Disable
+          </Button>
+          <Button variant="secondary" onClick={handleCloseRemove}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      ,
     </div>
   );
 }
