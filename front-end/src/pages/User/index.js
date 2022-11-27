@@ -42,7 +42,7 @@ function User() {
   // Get Data
   const getData = async () => {
     const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    setDataState(data);
+    setDataState(data.source);
   };
 
   useEffect(() => {
@@ -86,7 +86,7 @@ function User() {
       name: 'Action',
       selector: (row) => row.null,
       cell: (row) => [
-        <Link key={row.staffCode} to={`#`} className={styles.customPen}>
+        <Link key={row.staffCode} to={`./edituser`} state={{ user: row }} className={styles.customPen}>
           <FontAwesomeIcon icon={faPen} />
         </Link>,
         <Link
@@ -136,7 +136,7 @@ function User() {
     setTotalRows(data.totalRecord);
     setLoading(false);
   };
-
+  console.log('DataState', dataState);
   useEffect(() => {
     fetchUsers(1); // fetch page 1 of users
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -45,7 +45,7 @@ function CreateUser() {
   }, [user]);
 
   useEffect(() => {
-    console.log(dataAdd)
+    console.log(dataAdd);
   }, [dataAdd]);
   const onSaveAdd = async () => {
     await createData(USER, dataAdd);
@@ -168,7 +168,7 @@ function CreateUser() {
             />
           </div>
         </Form.Group>
-        
+
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
           <Form.Control
