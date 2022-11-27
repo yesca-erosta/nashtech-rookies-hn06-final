@@ -86,21 +86,14 @@ namespace AssetManagementTeam6.API.Controllers
 
             var userAdmin = await _userService.GetUserById(userId.Value);
 
-            var userUpdate = await _userService.GetUserById(id);
-
-            if(id < 0)
+            if (id < 0)
             {
                 return BadRequest("Invalid user");
             }
+            
+            requestModel.Location = userAdmin!.Location;
 
-            requestModel.UserName = userUpdate.UserName;
-            requestModel.Password = userUpdate.Password;
-            requestModel.FirstName = userUpdate.FirstName;
-            requestModel.LastName = userUpdate.LastName;
-            requestModel.NeedUpdatePwdOnLogin = userUpdate.NeedUpdatePwdOnLogin;
-            requestModel.Location = userAdmin.Location;
-
-            var result = await _userService.Update(requestModel);
+            var result = await _userService.Update(id, requestModel);
            
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
