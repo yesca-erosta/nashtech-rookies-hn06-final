@@ -2,9 +2,7 @@ using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Services.Interfaces;
-using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
