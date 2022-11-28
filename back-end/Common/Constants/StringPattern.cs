@@ -8,5 +8,15 @@
         public const string UserPassword = @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).{8,16}$";
         public const string UserName = @"^[a-zA-Z]([a-zA-Z0-9]{5,49})$";
         #endregion
+
+        public const string Name = @"^[a-zA-Z]([ a-zA-Z0-9]{5,49})$";
+        #region Category
+        public const string CategoryID = "^([A-Z]{0,7})$";
+        #endregion
+
+        #region Asset
+        //public const string 
+        #endregion
+
     }
 }

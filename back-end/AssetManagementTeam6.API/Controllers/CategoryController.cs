@@ -16,11 +16,9 @@ namespace AssetManagementTeam6.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        private readonly IUserService _userService;
-        public CategoryController(ICategoryService categoryService, IUserService userService)
+        public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
-            _userService = userService;
         }
 
         [HttpGet()]
@@ -45,12 +43,16 @@ namespace AssetManagementTeam6.API.Controllers
 
         [HttpPost]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> CreateAsync(Category requestModel)
+        public async Task<IActionResult> CreateAsync(CategoryRequest requestModel)
         {
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)
                 return NotFound();
+            var category = await _categoryService.GetCategoryById(requestModel.Id);
+
+            if(category != null)
+                return BadRequest("Category is already existed.Please enter a different category");
 
             var data = await _categoryService.Create(requestModel);
 
