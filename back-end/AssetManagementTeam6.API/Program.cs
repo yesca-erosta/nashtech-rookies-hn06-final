@@ -46,6 +46,8 @@ builder.Services.AddTransient<IAssetService, AssetService>();
 builder.Services.AddTransient<IAssetRepository, AssetRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddTransient<IAssignmentService, AssignmentService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
