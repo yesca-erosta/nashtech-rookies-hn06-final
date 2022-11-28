@@ -15,10 +15,12 @@ namespace AssetManagementTeam6.API.Controllers
     {
         private readonly IAssetService _assetService;
         private readonly IUserService _userService;
-        public AssetController(IAssetService assetService,IUserService userService)
+        private readonly IAssignmentService _assignmentService;
+        public AssetController(IAssetService assetService,IUserService userService, IAssignmentService assignmentService)
         {
             _assetService = assetService;
-            _userService = userService; 
+            _userService = userService;
+            _assignmentService = assignmentService;
         }
 
         [HttpGet()]
@@ -106,6 +108,13 @@ namespace AssetManagementTeam6.API.Controllers
             if (asset == null)
                 return StatusCode(500, "Can't found asset in the system");
 
+            var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(id);
+
+            if (assignedAsset != null)
+            {
+                return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments");
+            }
+                
             await _assetService.Delete(id);
 
             return Ok(asset);
