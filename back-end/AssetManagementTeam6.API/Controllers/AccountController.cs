@@ -91,7 +91,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             user.NeedUpdatePwdOnLogin = false;
 
-            user = await _userService.Update(user!);
+            user = await _userService.ChangePassword(user!);
 
             if (user == null)
                 return StatusCode(500, "Sorry the Request failed");
@@ -125,13 +125,6 @@ namespace AssetManagementTeam6.API.Controllers
         //    }
 
         //    return Ok(userId);
-        //}
-
-        //[HttpGet("logout")]
-        //public IActionResult Logout()
-        //{
-        //    HttpContext.Session.Clear();
-        //    return Ok("Logout");
         //}
     }
 }

@@ -2,10 +2,10 @@
 {
     public enum StateEnum
     {
-        Assigned,
-        Available,
         NotAvailable,   
+        Available,
         Recycled,
-        WaitingForRecycling
+        WaitingForRecycling,
+        Assigned
     }
 }

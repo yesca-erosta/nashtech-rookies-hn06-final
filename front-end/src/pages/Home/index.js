@@ -74,8 +74,12 @@ function Home() {
             setIsComplexityPasswordError(true);
         }
 
-        !newPassword ? setIsEmptyPasswordError(true) : setIsEmptyPasswordError(false);
-        newPassword === oldPasswordLogin ? setIsSamePasswordError(true) : setIsSamePasswordError(false);
+        if (newPassword === oldPasswordLogin) {
+            setIsSamePasswordError(true);
+            setIsComplexityPasswordError(false);
+        } else {
+            setIsSamePasswordError(false);
+        }
     };
 
     return (
@@ -128,6 +132,7 @@ function Home() {
                             The new password should not be the same with the old password!
                         </div>
                     )}
+
                     {isComplexityPasswordError && (
                         <div className={cx('oldPassword_false')}>The password should match the complexity!</div>
                     )}

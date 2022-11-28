@@ -18,13 +18,27 @@ namespace AssetManagementTeam6.API.Services.Implements
             _userRepository = userRepository;
         }
 
-        public async Task<User?> Create(User user)
+        public async Task<User?> Create(UserRequest user)
         {
             user.NeedUpdatePwdOnLogin = true;
 
-            user.Password = SystemFunction.CreateMD5(user.Password);
+            var newUser = new User
+            {
+                UserName = user.UserName,
+                Password = user.Password,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Gender = user.Gender,
+                DateOfBirth = user.DateOfBirth,
+                Location = user.Location,
+                JoinedDate = user.JoinedDate,
+                Type = user.Type,
+                NeedUpdatePwdOnLogin = (bool)user.NeedUpdatePwdOnLogin
+            };
 
-            var createdUser = await _userRepository.Create(user);
+            newUser.Password = SystemFunction.CreateMD5(user.Password);
+
+            var createdUser = await _userRepository.Create(newUser);
 
             return createdUser;
         }
@@ -88,19 +102,19 @@ namespace AssetManagementTeam6.API.Services.Implements
             // TODO: get list users not set with location
             var users = await _userRepository.GetListAsync(x => x.Location == location);
 
+            // filter by type
+            if (queryModel.Types != null)
+            {
+                users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
+            }
+
             // search user by staffcode or fullname
             var nameToQuery = "";
-
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
                 nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
-                users = users?.Where(u => u.FullName.ToLower().Contains(nameToQuery) || u.StaffCode.ToLower().Contains(nameToQuery)).ToList();
-            }
-
-            // filter by type
-            if (queryModel.Type != null)
-            {
-                users = users?.Where(u => u.Type == queryModel.Type).ToList();
+                users = users?.Where(u => u!.FullName!.ToLower().Contains(nameToQuery) ||
+                                        u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting
@@ -172,10 +186,33 @@ namespace AssetManagementTeam6.API.Services.Implements
             return output;
         }
 
-        public async Task<User?> Update(User updateRequest)
+        public async Task<User?> ChangePassword(User updateRequest)
         {
 
             return await _userRepository.Update(updateRequest);
+        }
+
+        public async Task<User?> Update(UserRequest updateRequest)
+        {
+            var newUser = new User
+            {
+                UserName = updateRequest.UserName,
+                Password = updateRequest.Password,
+                FirstName = updateRequest.FirstName,
+                LastName = updateRequest.LastName,
+                Gender = updateRequest.Gender,
+                DateOfBirth = updateRequest.DateOfBirth,
+                Location = updateRequest.Location,
+                JoinedDate = updateRequest.JoinedDate,
+                Type = updateRequest.Type,
+                NeedUpdatePwdOnLogin = (bool)updateRequest.NeedUpdatePwdOnLogin
+            };
+
+            newUser.Password = SystemFunction.CreateMD5(updateRequest.Password);
+
+            var updatedUser = await _userRepository.Update(newUser);
+
+            return updatedUser;
         }
     }
 }

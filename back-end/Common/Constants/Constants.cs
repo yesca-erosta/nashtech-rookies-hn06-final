@@ -15,5 +15,15 @@
         public const string JoinedDateDescending = "JoinedDateDescending";
         public const string TypeAcsending = "TypeAcsending";
         public const string TypeDescending = "TypeDescending";
+
+        //AssetSorting
+        public const string AssetNameAcsending = "AssetNameAcsending";
+        public const string AssetNameDescending = "AssetNameDescending";
+        public const string AssetCodeAcsending = "AssetCodeAcsending";
+        public const string AssetCodeDescending = "AssetCodeDescending";
+        public const string AssetInstalledDateAcsending = "AssetInstalledDateAcsending";
+        public const string AssetInstalledDateDescending = "AssetInstalledDateDescending";
+        public const string AssetStateAcsending = "AssetStateAcsending";
+        public const string AssetStateDescending = "AssetStateDescending";
     }
 }

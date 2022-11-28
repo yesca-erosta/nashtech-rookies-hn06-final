@@ -24,8 +24,9 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         public string? StaffCodeOrName { get; set; }
 
         // filter 
-        public StaffEnum? Type { get; set; }
-
+        public List<StaffEnum>? Types { get; set; }
+        public List<string>? Category { get; set; }
+        public List<StateEnum>? State { get; set; }
         //sorting
         public string? Sort { get; set; }
     }

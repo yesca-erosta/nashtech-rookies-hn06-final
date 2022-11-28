@@ -30,9 +30,6 @@ const Login = () => {
     }, [userName, password]);
 
     const handleLogin = async () => {
-        userName === '' ? setIsUserNameError('User name is required') : setIsUserNameError('');
-        password === '' ? setIsPasswordError('Password is required') : setIsPasswordError('');
-
         const result = await fetch(`${BASE_URL}/Account`, {
             method: 'POST',
             headers: {

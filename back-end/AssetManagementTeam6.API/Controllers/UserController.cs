@@ -1,5 +1,6 @@
 using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
@@ -45,13 +46,23 @@ namespace AssetManagementTeam6.API.Controllers
             }
         }
 
+        [AuthorizeRoles(StaffRoles.Admin)]
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody][CustomizeValidator(RuleSet = "default, CreateUser")] User requestModel)
+        public async Task<IActionResult> CreateAsync([FromBody][CustomizeValidator(RuleSet = "default, CreateUser")] UserRequest requestModel)
         {
-            var user = await _userService.GetUserByUserAccount(requestModel.UserName);
+            var isExistedUser = await _userService.GetUserByUserAccount(requestModel.UserName);
 
-            if (user != null)
+            if (isExistedUser != null)
                 return StatusCode(409, $"User name {requestModel.UserName} has already existed in the system");
+
+            var userId = this.GetCurrentLoginUserId();
+
+            if (userId == null)
+                return NotFound();
+
+            var user = await _userService.GetUserById(userId.Value);
+
+            requestModel.Location = user.Location;
 
             var result = await _userService.Create(requestModel);
 
@@ -63,17 +74,43 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody][CustomizeValidator(RuleSet = "default, UpdateUser")] User requestModel)
+        [AuthorizeRoles(StaffRoles.Admin)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody][CustomizeValidator(RuleSet = "default, UpdateUser")] UserRequest requestModel)
         {
-            var result = await _userService.Update(requestModel);
 
+            var userId = this.GetCurrentLoginUserId();
+
+            if (userId == null)
+                return NotFound();
+
+            var userAdmin = await _userService.GetUserById(userId.Value);
+
+            var userUpdate = await _userService.GetUserById(id);
+
+            if(id < 0)
+            {
+                return BadRequest("Invalid user");
+            }
+
+            requestModel.UserName = userUpdate.UserName;
+            requestModel.Password = userUpdate.Password;
+            requestModel.FirstName = userUpdate.FirstName;
+            requestModel.LastName = userUpdate.LastName;
+            requestModel.NeedUpdatePwdOnLogin = userUpdate.NeedUpdatePwdOnLogin;
+            requestModel.Location = userAdmin.Location;
+
+            var result = await _userService.Update(requestModel);
+           
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
 
-            return Ok();
+            result.Password = null;
+
+            return Ok(result);
         }
 
+        [AuthorizeRoles(StaffRoles.Admin)]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
@@ -88,9 +125,8 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("query")]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, StaffEnum? type, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
-
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)
@@ -98,14 +134,27 @@ namespace AssetManagementTeam6.API.Controllers
 
             var user = await _userService.GetUserById(userId.Value);
 
-            var location = user.Location;
+            var location = user!.Location;
+
+            var listTypes = new List<StaffEnum>();
+
+            if (!string.IsNullOrWhiteSpace(types)) 
+               {
+                var typeArr = types.Split(",");
+                foreach (string typeValue in typeArr)
+                {
+                    var tryParseOk = (Enum.TryParse(typeValue, out StaffEnum enumValue)) ;
+                    if (tryParseOk)
+                        listTypes.Add(enumValue); ;
+                }
+            }
 
             var queryModel = new PaginationQueryModel
             {
                 Page = page,
                 PageSize = pageSize,
                 StaffCodeOrName = valueSearch,
-                Type = type,
+                Types = listTypes.Count != 0 ? listTypes : null,
                 Sort = sort
             };
 
