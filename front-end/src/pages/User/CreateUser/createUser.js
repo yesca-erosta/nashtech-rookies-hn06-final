@@ -1,12 +1,12 @@
-import Button from 'react-bootstrap/Button';
-import { React, useState } from 'react';
-import Form from 'react-bootstrap/Form';
 import classNames from 'classnames/bind';
-import styles from './createUser.module.scss';
+import { React, useState } from 'react';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
-import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
+import styles from './createUser.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -38,11 +38,28 @@ function CreateUser() {
     setHidePass((pre) => !pre);
   };
 
+  const [arrMsg, setArrMsg] = useState({
+    UserName: '',
+    Password: '',
+    FirstName: '',
+    LastName: '',
+    DateOfBirth: '',
+    JoinedDate: '',
+  });
+
+  console.log('arrMsg', arrMsg);
+
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
 
     if (res.code === 'ERR_BAD_REQUEST') {
-      alert('Somthing wrong. Cant create user');
+      setArrMsg(res?.response?.data?.errors);
+      if (res?.response?.status === 409) {
+        setArrMsg({ UserName: [res?.response?.data] });
+      }
+      if (res?.response?.data?.errors?.requestModel) {
+        alert('Please input all fields');
+      }
     } else {
       setDataAdd({
         userName: '',
@@ -96,7 +113,7 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {error.userName && <p className={cx('msgError')}>{error.userName}</p>}
+        {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Password</Form.Label>
           <div className={cx('input-new-password')}>
@@ -113,7 +130,7 @@ function CreateUser() {
             </div>
           </div>
         </Form.Group>
-        {error.password && <p className={cx('msgError')}>{error.password}</p>}
+        {arrMsg.Password && <p className={cx('msgError')}>{arrMsg.Password[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>First Name</Form.Label>
           <Form.Control
@@ -125,7 +142,7 @@ function CreateUser() {
             placeholder="Enter first name"
           />
         </Form.Group>
-        {error.firstName && <p className={cx('msgError')}>{error.firstName}</p>}
+        {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Last Name</Form.Label>
           <Form.Control
@@ -137,7 +154,7 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {error.lastName && <p className={cx('msgError')}>{error.lastName}</p>}
+        {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
           <Form.Control
@@ -148,7 +165,7 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {error.dateOfBirth && <p className={cx('msgError')}>{error.dateOfBirth}</p>}
+        {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Gender</Form.Label>
 
@@ -185,7 +202,7 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {error.joinedDate && <p className={cx('msgError')}>{error.joinedDate}</p>}
+        {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Type</Form.Label>
           <Form.Select onChange={handleChangeAdd} name="type">
