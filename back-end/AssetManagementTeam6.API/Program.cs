@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:7060/api",
+        policy.WithOrigins("https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api",
                             "http://localhost:3000");
     });
 });
@@ -52,7 +52,7 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddScoped<IValidator<User>, UserValidator>();
+builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 builder.Services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidatior>();
 builder.Services.AddScoped<IValidator<AssetRequest>, AssetRequestValidator>();

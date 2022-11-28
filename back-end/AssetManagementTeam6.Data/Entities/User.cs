@@ -6,6 +6,10 @@ namespace AssetManagementTeam6.Data.Entities
 {
     public class User : BaseEntity<int>
     {
+        private string _fullName;
+
+        private string _staffcode;
+
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
@@ -16,14 +20,24 @@ namespace AssetManagementTeam6.Data.Entities
         public bool NeedUpdatePwdOnLogin { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public string? FullName { get; private set; } // => $"{FirstName} {LastName}";
+        public string? FullName
+        {
+            get { return _fullName; }
+            set { _fullName = $"{FirstName} {LastName}"; }
+        } // => $"{FirstName} {LastName}";
         public string UserName { get; set; }
 
         // TODO: type hash password
         public string Password { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public string? StaffCode { get; private set; }
+        //public string? StaffCode { get; private set; }
+
+        public string? StaffCode
+        {
+            get { return _staffcode; }
+            set { _staffcode = $"SD{Id.ToString("D4")}"; }
+        }
 
     }
 }

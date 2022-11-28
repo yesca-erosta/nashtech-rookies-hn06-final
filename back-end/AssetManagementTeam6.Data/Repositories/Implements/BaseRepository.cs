@@ -81,6 +81,7 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
 
             return await dbSet;
         }
+
         public async Task<T> Update(T entity)
         {
             if (entity == null)

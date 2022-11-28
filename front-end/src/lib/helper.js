@@ -2,6 +2,10 @@ export const dateStrToStr = (date) => {
   return date ? date.slice(8, 10) + '/' + date.slice(5, 7) + '/' + date.slice(0, 4) : '';
 };
 
+export const dateStrToDate = (date) => {
+  return date ? date.slice(0, 10) : '';
+};
+
 export const queryToString = (query) => {
   const checkQuery = (queryParams, queryName) => {
     // cach 1
