@@ -1,21 +1,26 @@
-import Table from 'react-bootstrap/Table';
+import axios from 'axios';
 import classNames from 'classnames/bind';
-import styles from './asset.module.scss';
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { BASE_URL } from '../../constants';
+import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import styles from './asset.module.scss';
 
-import { BsFillPencilFill, BsSearch } from 'react-icons/bs';
-import { TiDeleteOutline } from 'react-icons/ti';
-import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
-import { FaFilter } from 'react-icons/fa';
 import { Button, Form, InputGroup } from 'react-bootstrap';
+import Modal from 'react-bootstrap/Modal';
 import Pagination from 'react-bootstrap/Pagination';
+import Table from 'react-bootstrap/Table';
+import { BsFillPencilFill, BsSearch } from 'react-icons/bs';
+import { FaFilter } from 'react-icons/fa';
+import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
+import { TiDeleteOutline } from 'react-icons/ti';
 
 const cx = classNames.bind(styles);
 
 function Asset() {
+    const { setId } = useAuthContext();
     const ref = useRef();
-    const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false });
+    const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false, assigned: false });
     const [checkedCategory, setCheckedCategory] = useState({ laptop: false, monitor: false, personalComputer: false });
     const [showState, setShowState] = useState(false);
     const [showCategory, setShowCategory] = useState(false);
@@ -26,21 +31,45 @@ function Asset() {
     const [isAssetName, setIsAssetName] = useState(false);
     const [isCategory, setIsCategory] = useState(false);
     const [isState, setIsState] = useState(false);
+    const [showDelete, setShowDelete] = useState(false);
+    const [activeDeleteId, setactiveDeleteId] = useState();
+    const [deleteSuccess, setDeleteSuccess] = useState(false);
+    const [search, setSearch] = useState('');
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPage, setTotalPage] = useState();
+
+    const [dataList, setDataList] = useState([]);
+
+    let location = useLocation();
+    let navigate = useNavigate();
+    const { token } = useAuthContext();
 
     const handleIsAssetCode = () => {
         setIsAssetCode((pre) => !pre);
+
+        if (dataList) {
+            dataList.reverse();
+        }
     };
     const handleIsAssetName = () => {
         setIsAssetName((pre) => !pre);
+        if (dataList) {
+            dataList.reverse();
+        }
     };
     const handleIsCategory = () => {
         setIsCategory((pre) => !pre);
+        if (dataList) {
+            dataList.reverse();
+        }
     };
     const handleIsState = () => {
         setIsState((pre) => !pre);
+        if (dataList) {
+            dataList.reverse();
+        }
     };
-
-    let navigate = useNavigate();
 
     useEffect(() => {
         const checkIfClickedOutside = (e) => {
@@ -63,7 +92,8 @@ function Asset() {
         navigate('createnewasset');
     };
 
-    const navigateToEditAsset = () => {
+    const navigateToEditAsset = (id) => {
+        setId(id);
         navigate('editasset');
     };
 
@@ -80,14 +110,26 @@ function Asset() {
 
     const handleOkState = () => {
         setShowState((pre) => !pre);
+        if (checkedState.available && checkedState.notAvailable && checkedState.assigned) {
+            return setPlaceholderState('Available, Not available, Assigned');
+        }
         if (checkedState.available && checkedState.notAvailable) {
             return setPlaceholderState('Available, Not available');
+        }
+        if (checkedState.available && checkedState.assigned) {
+            return setPlaceholderState('Available, Assigned');
+        }
+        if (checkedState.notAvailable && checkedState.assigned) {
+            return setPlaceholderState('Not available, Assigned');
         }
         if (checkedState.available) {
             return setPlaceholderState('Available');
         }
         if (checkedState.notAvailable) {
             return setPlaceholderState('Not available');
+        }
+        if (checkedState.assigned) {
+            return setPlaceholderState('Assigned');
         }
 
         return setPlaceholderState('State');
@@ -132,6 +174,100 @@ function Asset() {
         setShowCategory((pre) => !pre);
     };
 
+    const showModalDelete = (id) => {
+        setactiveDeleteId(id);
+        setShowDelete(true);
+    };
+    const handleCloseDelete = () => setShowDelete(false);
+    const handleDelete = async (id) => {
+        await axios({
+            method: 'DELETE',
+            url: `${BASE_URL}/Asset/${id}`,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    setShowDelete(false);
+                    setDeleteSuccess((pre) => !pre);
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    useEffect(() => {
+        if (!location.search) {
+            navigate('?p=1');
+        }
+
+        return;
+    }, [location, navigate]);
+
+    const handlePage = (item) => {
+        setCurrentPage(item);
+        navigate(`?p=${item}`);
+    };
+
+    useEffect(() => {
+        const currentSearchPage = location.search?.slice(-1);
+        if (currentSearchPage && Number(currentSearchPage)) {
+            setCurrentPage(Number(currentSearchPage));
+        }
+    }, [currentPage, location.pathname, location.search]);
+
+    useEffect(() => {
+        axios({
+            method: 'GET',
+            url: `${BASE_URL}/Asset/query?page=${currentPage}&pageSize=2`,
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+        })
+            .then((response) => {
+                setDataList(response.data.source);
+                setTotalPage(response.data.totalPage);
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }, [currentPage, token.token, deleteSuccess]);
+
+    const handleSearch = async () => {
+        try {
+            const response = await fetch(
+                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=2&pageSize=2&valueSearch=${search}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${token.token}`,
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                },
+            );
+
+            const data = Promise.resolve(response);
+
+            if (response.status === 200) {
+                console.log(data);
+            }
+        } catch (error) {
+            console.log('error');
+        }
+
+        return null;
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
@@ -168,7 +304,14 @@ function Asset() {
                         <Form.Control />
 
                         <InputGroup.Text>
-                            <button className={cx('input')}>
+                            <button
+                                className={cx('input')}
+                                onClick={handleSearch}
+                                value={search}
+                                onChange={(e) => {
+                                    setSearch(e.target.value);
+                                }}
+                            >
                                 <BsSearch />
                             </button>
                         </InputGroup.Text>
@@ -199,6 +342,13 @@ function Asset() {
                                 onChange={(e) => handleChangeCheckboxState(e, 'notAvailable')}
                                 checked={checkedState.notAvailable}
                             />
+                            <Form.Check
+                                type={'checkbox'}
+                                label={`Assigned`}
+                                id={`assigned`}
+                                onChange={(e) => handleChangeCheckboxState(e, 'assigned')}
+                                checked={checkedState.assigned}
+                            />
                         </div>
 
                         <div className={cx('button')}>
@@ -214,7 +364,7 @@ function Asset() {
             )}
 
             {showCategory && (
-                <div className={cx('dropdown')} style={{ marginLeft: 410 }} ref={ref}>
+                <div className={cx('dropdown')} style={{ marginLeft: 398, width: 198 }} ref={ref}>
                     <div className={cx('dropdown_container')}>
                         <div className={cx('dropdown_title')}>Select type(s)</div>
                         <div>
@@ -259,7 +409,7 @@ function Asset() {
                                     <div className={cx('title')}>
                                         <div>Asset Code</div>
                                         <button className={cx('triagle')} onClick={handleIsAssetCode}>
-                                            {isAssetCode ? <GoTriangleDown /> : <GoTriangleUp />}
+                                            {isAssetCode ? <GoTriangleUp /> : <GoTriangleDown />}
                                         </button>
                                     </div>
                                 </>
@@ -269,7 +419,7 @@ function Asset() {
                                     <div className={cx('title')}>
                                         <div>Asset Name</div>
                                         <button className={cx('triagle')} onClick={handleIsAssetName}>
-                                            {isAssetName ? <GoTriangleDown /> : <GoTriangleUp />}
+                                            {isAssetName ? <GoTriangleUp /> : <GoTriangleDown />}
                                         </button>
                                     </div>
                                 </>
@@ -279,7 +429,7 @@ function Asset() {
                                     <div className={cx('title')}>
                                         <div> Category</div>
                                         <button className={cx('triagle')} onClick={handleIsCategory}>
-                                            {isCategory ? <GoTriangleDown /> : <GoTriangleUp />}
+                                            {isCategory ? <GoTriangleUp /> : <GoTriangleDown />}
                                         </button>
                                     </div>
                                 </>
@@ -289,78 +439,89 @@ function Asset() {
                                     <div className={cx('title')}>
                                         <div> State</div>
                                         <button className={cx('triagle')} onClick={handleIsState}>
-                                            {isState ? <GoTriangleDown /> : <GoTriangleUp />}
+                                            {isState ? <GoTriangleUp /> : <GoTriangleDown />}
                                         </button>
                                     </div>
                                 </>
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td>LA100001</td>
-                            <td>Laptop HP Probook 450 G1</td>
-                            <td>Laptop</td>
-                            <td>Available</td>
 
-                            <td>
-                                <div className={cx('actions')}>
-                                    <button className={cx('pen')} disabled={false} onClick={navigateToEditAsset}>
-                                        <BsFillPencilFill />
-                                    </button>
-                                    <button className={cx('delete')} disabled={false}>
-                                        <TiDeleteOutline />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>LA100001</td>
-                            <td>Monitor Dell UltraSharp</td>
-                            <td>Monitor</td>
-                            <td>Not Available</td>
+                    {dataList.length > 0
+                        ? dataList.map((item) => (
+                              <tbody key={item.id}>
+                                  <tr>
+                                      <td>{item.assetCode}</td>
+                                      <td>{item.assetName}</td>
+                                      <td>{item.category.name}</td>
+                                      <td>{item.state}</td>
 
-                            <td>
-                                <div className={cx('actions')}>
-                                    <button className={cx('pen')} disabled={false} onClick={navigateToEditAsset}>
-                                        <BsFillPencilFill />
-                                    </button>
-                                    <button className={cx('delete')} disabled={false}>
-                                        <TiDeleteOutline />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>LA100001</td>
-                            <td>Personal Computer</td>
-                            <td>Personal Computer</td>
-                            <td>Available</td>
-
-                            <td>
-                                <div className={cx('actions')}>
-                                    <button className={cx('pen')} disabled={false} onClick={navigateToEditAsset}>
-                                        <BsFillPencilFill />
-                                    </button>
-                                    <button className={cx('delete')} disabled={false}>
-                                        <TiDeleteOutline />
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
+                                      <td>
+                                          <div className={cx('actions')}>
+                                              <button
+                                                  className={cx('pen')}
+                                                  disabled={false}
+                                                  onClick={() => navigateToEditAsset(item.id)}
+                                              >
+                                                  <BsFillPencilFill />
+                                              </button>
+                                              <button
+                                                  className={cx('delete')}
+                                                  disabled={false}
+                                                  onClick={() => showModalDelete(item.id)}
+                                              >
+                                                  <TiDeleteOutline />
+                                              </button>
+                                          </div>
+                                      </td>
+                                  </tr>
+                              </tbody>
+                          ))
+                        : null}
                 </Table>
             </div>
 
             <div className={cx('paging')}>
                 <Pagination>
-                    <Pagination.Item disabled>Previous</Pagination.Item>
-                    <Pagination.Item active={1}>1</Pagination.Item>
-                    <Pagination.Item active={''}>2</Pagination.Item>
-                    <Pagination.Item active={''}>3</Pagination.Item>
-                    <Pagination.Item>Next</Pagination.Item>
+                    <Pagination.Item disabled={currentPage === 1} onClick={() => handlePage(currentPage - 1)}>
+                        Previous
+                    </Pagination.Item>
+                    {[...Array(totalPage)].map((_, pageNumberIndex) => (
+                        <Pagination.Item
+                            key={pageNumberIndex}
+                            onClick={() => handlePage(pageNumberIndex + 1)}
+                            active={pageNumberIndex + 1 === currentPage}
+                        >
+                            {pageNumberIndex + 1}
+                        </Pagination.Item>
+                    ))}
+                    <Pagination.Item
+                        disabled={totalPage && totalPage === currentPage}
+                        onClick={() => handlePage(currentPage + 1)}
+                    >
+                        Next
+                    </Pagination.Item>
                 </Pagination>
             </div>
+
+            <Modal show={showDelete}>
+                <Modal.Header>
+                    <Modal.Title>Are you sure?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Label>Do you want to delete asset?</Form.Label>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="outline-secondary" onClick={handleCloseDelete}>
+                        Close
+                    </Button>
+                    <Button variant="danger" onClick={() => handleDelete(activeDeleteId)}>
+                        Delete
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </div>
     );
 }
