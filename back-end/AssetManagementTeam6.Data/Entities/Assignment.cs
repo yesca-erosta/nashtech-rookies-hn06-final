@@ -1,31 +1,44 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Common.Enums;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetManagementTeam6.Data.Entities
 {
     public class Assignment : BaseEntity<int>
     {
-        [Required]
-        public string? AssignedTo { get; set; }
-        [Required]
-        public string? AssignedBy { get; set; }
-        [Required]
-        public DateTime? AssignedDate { get; set; }
+        private string _assetCode;
+        private string _assetName;
+        public int AssetId { get; set; }
+        public Asset Asset { get; set; }
+        public int AssignedToID { get; set; }
+        public User AssignedTo { get; set; }
+        public int? AssignedById { get; set; }
+        public User? AssignedBy { get; set; }
+        public DateTime AssignedDate { get; set; }
+        public AssignmentStateEnum State { get; set; }
+        public string? Note { get; set; }
+        public string? AssetCode
+        {
+            get
+            {
+                return _assetCode;
+            }
+            private set
+            {
+                _assetCode = Asset.AssetCode!;
+            }
+        }
+        public string? AssetName
+        {
+            get
+            {
+                return _assetName;
+            }
+            private set
+            {
+                _assetName = Asset.AssetName!;
+            }
+        }
 
-        // TODO: type State
-        [Required]
-        public string? State { get; set; } 
-
-        /*[Required]
-        public string? AcceptedBy { get; set; }
-        [Required]
-        public string? ReturnDate { get; set; }
-        [Required]
-        public string? RequestedBy { get; set; }
-        [Required]
-        public string? AssetCode { get; set; }
-        [Required]
-        public string? AssetName { get; set; }
-        [Required]
-        public string? Specification { get; set; }*/
     }
 }

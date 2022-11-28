@@ -16,9 +16,11 @@ namespace AssetManagementTeam6.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IAssignmentService _assignmentService;
+        public UserController(IUserService userService, IAssignmentService assignmentService)
         {
             _userService = userService;
+            _assignmentService = assignmentService;
         }
 
         [HttpGet()]
@@ -111,6 +113,13 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (user == null)
                 return StatusCode(500, "Can't found user in the system");
+
+            var assignedUser = await _assignmentService.GetAssignmentByAssignedUser(id);
+
+            if (assignedUser != null)
+            {
+                return StatusCode(500, "Can not delete user because there are valid assignments belonging to this user");
+            }
 
             await _userService.Delete(id);
 
