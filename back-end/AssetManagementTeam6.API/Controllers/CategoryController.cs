@@ -52,7 +52,7 @@ namespace AssetManagementTeam6.API.Controllers
             var category = await _categoryService.GetCategoryById(requestModel.Id);
 
             if(category != null)
-                return BadRequest("Category is already existed.Please enter a different category");
+                return BadRequest("Category is already existed. Please enter a different category. Prefix is already existed. Please enter a different prefix");
 
             var data = await _categoryService.Create(requestModel);
 
