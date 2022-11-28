@@ -53,5 +53,28 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return  createdAssignment;
         }
+
+        public async Task<Assignment> GetAssignmentByAssignedAsset(int assetId)
+        {
+            var result = await _assignmentRepository.GetOneAsync(a => a.AssetId == assetId);
+
+            if (result == null)
+            {
+                return null!;
+            }
+
+            return result;
+        }
+
+        public async Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId)
+        {
+            var result = await _assignmentRepository.GetOneAsync(a => a.AssignedToID == assignedUserId);
+            if (result == null)
+            {
+                return null!;
+            }
+
+            return result;
+        }
     }
 }

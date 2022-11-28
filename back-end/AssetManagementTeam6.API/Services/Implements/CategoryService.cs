@@ -28,7 +28,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Category> GetCategoryById(string id)
         {
-            return await _categoryRepository.GetOneAsync(x=> x.Id ==id);
+            return await _categoryRepository.GetOneAsync(x => x.Id == id);
         }
     }
 }
