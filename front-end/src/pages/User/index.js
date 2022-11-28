@@ -158,7 +158,6 @@ function User() {
     setTotalRows(data.totalRecord);
     setLoading(false);
   };
-  console.log('DataState', dataState);
   useEffect(() => {
     fetchUsers(1); // fetch page 1 of users
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -325,7 +324,6 @@ function User() {
           </Button>
         </Modal.Footer>
       </Modal>
-      ,
     </div>
   );
 }

@@ -81,7 +81,7 @@ export const updateData = async (url, data) => {
       response = [...res.data];
     })
     .catch((err) => {
-      console.log({ err });
+      response = err;
     });
   return response;
 };
