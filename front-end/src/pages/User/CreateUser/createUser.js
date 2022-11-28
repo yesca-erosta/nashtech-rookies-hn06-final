@@ -47,8 +47,6 @@ function CreateUser() {
     JoinedDate: '',
   });
 
-  console.log('arrMsg', arrMsg);
-
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
 
