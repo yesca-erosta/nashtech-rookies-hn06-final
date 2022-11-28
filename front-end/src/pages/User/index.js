@@ -306,7 +306,8 @@ function User() {
         msgNoData()
       )}
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
-      <Modal show={showRemove}>
+      
+      <Modal show={showRemove} onHide={handleCloseRemove}>
         <Modal.Header>
           <Modal.Title>Are you sure?</Modal.Title>
         </Modal.Header>
