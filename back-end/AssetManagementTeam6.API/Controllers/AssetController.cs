@@ -52,11 +52,6 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] AssetRequest requestModel)
         {
-            var asset = await _assetService.GetAssetByName(requestModel.AssetName);
-
-            if (asset != null)
-                return StatusCode(409, $"asset name {requestModel.AssetName} has already existed in the system");
-
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)

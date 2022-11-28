@@ -26,20 +26,29 @@ const EditUser = () => {
   const [data, setData] = useState(initUser);
 
   const [isShowToast, setIsShowToast] = useState(false);
-  const [error, setError] = useState({
-    dateOfBirth: '',
-    gender: '',
-    joinedDate: '',
-    type: '',
+
+  const [arrMsg, setArrMsg] = useState({
+    UserName: '',
+    Password: '',
+    FirstName: '',
+    LastName: '',
+    DateOfBirth: '',
+    JoinedDate: '',
   });
+
   const navigate = useNavigate();
 
   const onSubmit = async () => {
     const res = await updateData(`${USER}/${user.id}`, data);
 
-    console.log('res', res);
     if (res.code === 'ERR_BAD_REQUEST') {
-      alert('Somthing wrong. Cant update user');
+      setArrMsg(res?.response?.data?.errors);
+      if (res?.response?.status === 409) {
+        setArrMsg({ UserName: [res?.response?.data] });
+      }
+      if (res?.response?.data?.errors?.requestModel) {
+        alert('Please input all fields');
+      }
     } else {
       setData(initUser);
 
@@ -52,16 +61,8 @@ const EditUser = () => {
     }
   };
 
-  const onBlur = (e) => {
-    if (e.target.value) {
-      setError({ firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
-    } else {
-      setError({ ...error, [e.target.name]: 'This field is required' });
-    }
-  };
-
   const onChange = (e) => {
-    setError({ dateOfBirth: '', gender: '', joinedDate: '', type: '' });
+    setArrMsg('');
     if (e.target.name === 'gender' || e.target.name === 'type') {
       setData({ ...data, [e.target.name]: parseInt(e.target.value) ?? 0 });
     } else {
@@ -69,9 +70,8 @@ const EditUser = () => {
     }
   };
 
-  console.log('dataAdd', data);
-  const isInputValidateComplete = useMemo(() => Object.values(error).every((x) => x === null || x === ''), [error]);
-  console.log('isShowToast', isShowToast);
+  const isInputValidateComplete = useMemo(() => Object.values(arrMsg).every((x) => x === null || x === ''), [arrMsg]);
+  
   return (
     <>
       <div className={cx('container')}>
@@ -109,10 +109,9 @@ const EditUser = () => {
               name="dateOfBirth"
               value={dateStrToDate(data.dateOfBirth)}
               onChange={onChange}
-              onBlur={onBlur}
             />
           </Form.Group>
-          {error.dateOfBirth && <p className={cx('msgError')}>{error.dateOfBirth}</p>}
+          {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
           <Form.Group className={cx('common-form')}>
             <Form.Label className={cx('title_input')}>Gender</Form.Label>
             <div key={`gender-radio`} onChange={onChange} className={cx('input-radio-gender')}>
@@ -145,10 +144,9 @@ const EditUser = () => {
               name="joinedDate"
               value={dateStrToDate(data.joinedDate)}
               onChange={onChange}
-              onBlur={onBlur}
             />
           </Form.Group>
-          {error.joinedDate && <p className={cx('msgError')}>{error.joinedDate}</p>}
+          {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
           <Form.Group className={cx('common-form')}>
             <Form.Label className={cx('title_input')}>Type</Form.Label>
             <Form.Select onChange={onChange} name="type" value={data.type}>

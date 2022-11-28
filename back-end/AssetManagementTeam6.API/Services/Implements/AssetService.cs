@@ -19,17 +19,29 @@ namespace AssetManagementTeam6.API.Services.Implements
             _categoryRepository = categoryRepository;
         }
             
-        public async Task<Asset?> Create(AssetRequest asset)
+        public async Task<Asset?> Create(AssetRequest requestModel)
         {
+            var category = await _categoryRepository.GetOneAsync(x => x.Id == requestModel.CategoryId);
+            if (category == null) return null;
+
+            var now = DateTime.Now;
+
+            var dateCompare = DateTime.Compare(now, requestModel.InstalledDate);
+
+            if (dateCompare < 0)
+            {
+                requestModel.State = StateEnum.NotAvailable;
+            }
+
             var newAsset = new Asset
             {
-                AssetName = asset.AssetName,
-                CategoryId = asset.CategoryId,
-                Category = await _categoryRepository.GetOneAsync(x => x.Id == asset.CategoryId),
-                State = asset.State,
-                InstalledDate = asset.InstalledDate,
-                Specification = asset.Specification,
-                Location = asset.Location
+                AssetName = requestModel.AssetName,
+                CategoryId = requestModel.CategoryId,
+                Category = category,
+                State = requestModel.State,
+                InstalledDate = requestModel.InstalledDate,
+                Specification = requestModel.Specification,
+                Location = requestModel.Location
             };
 
             var createdAsset = await _assetRepository.Create(newAsset);
@@ -86,7 +98,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 assets = assets.Where(u => queryModel.Category.Contains(u.CategoryId))?.ToList();
             }
 
-            // search asset by staffcode or fullname
+            // search asset by assetcode or name
             var nameToQuery = "";
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
