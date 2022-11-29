@@ -112,7 +112,8 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (assignedAsset != null)
             {
-                return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments");
+                return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments.\n" +
+                                        "If the asset is not able to used anymore, please update its state in Edit Asset page");
             }
                 
             await _assetService.Delete(id);
