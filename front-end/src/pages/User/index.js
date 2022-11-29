@@ -122,7 +122,6 @@ function User() {
     },
   ];
 
-  // Search
   const onSearch = async (value) => {
     setLoading(true);
 
