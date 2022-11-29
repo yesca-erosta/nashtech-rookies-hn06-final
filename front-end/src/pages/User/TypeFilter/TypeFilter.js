@@ -1,72 +1,41 @@
 import { useState } from 'react';
 import { Button, Dropdown, DropdownButton, Form, InputGroup } from 'react-bootstrap';
-import { getAllDataWithFilterBox } from '../../../apiServices';
+import { getAllData, getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
-export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows, setLoading }) => {
-    const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
+export const TypeFilter = ({ setDataState }) => {
+  const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
 
-    const [showDropdown, setShowDropdown] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
-    };
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
+  };
 
-    // TODO: still can't handle cancel
-    const onCancelType = async () => {
-        setLoading(true);
-
+  const onCloseType = () => {
     setArrChecked({ admin: false, staff: false });
-    setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
-    
-    const data = await getAllDataWithFilterBox(
-      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
-    );
-
-    setTotalRows(data.totalRecord);
-    setDataState(data.source);
     setShowDropdown(false);
+  };
 
-        setLoading(false);
-    };
+  const handleChangeCheckbox = (e, type) => {
+    setArrChecked({ ...arrChecked, [type]: e.target.checked });
+  };
 
-    const handleChangeCheckbox = (e, type) => {
-        setArrChecked({ ...arrChecked, [type]: e.target.checked });
-    };
-
-    const onSubmitType = async () => {
-        setLoading(true);
-
-    let data = await getAllDataWithFilterBox(
-      `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
-    );
-
+  const onSubmitType = async () => {
+    let data = await getAllData(`User`);
     if (arrChecked.admin) {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 1 });
-
-      data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 1 }),
-      );
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 1 }));
     }
     if (arrChecked.staff) {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 0 });
-
-      data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 0 }),
-      );
+      data = await getAllDataWithFilterBox(`User/query` + queryToString({ type: 0 }));
     }
     if (arrChecked.admin && arrChecked.staff) {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
-      data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
-      );
+      data = await getAllData(`User`);
     }
-    setTotalRows(data.totalRecord);
-    setDataState(data.source);
+    
+    setDataState(data);
     setShowDropdown(false);
-
-    setLoading(false);
   };
 
   const displayTitleType = () => {
@@ -113,7 +82,7 @@ export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotal
               <Button variant="danger" size="sm" style={{ minWidth: '60px' }} onClick={onSubmitType}>
                 OK
               </Button>
-              <Button variant="light" size="sm" className={styles.btnCancel} onClick={onCancelType}>
+              <Button variant="light" size="sm" className={styles.btnCancel} onClick={onCloseType}>
                 Cancel
               </Button>
             </div>

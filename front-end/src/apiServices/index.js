@@ -10,7 +10,7 @@ export const getAllDataWithFilterBox = async (url) => {
     data: null,
   })
     .then((response) => {
-      data = response.data;
+      data = [...response.data.source];
     })
     .catch((err) => {
       console.log({ err });
@@ -81,7 +81,7 @@ export const updateData = async (url, data) => {
       response = [...res.data];
     })
     .catch((err) => {
-      response = err;
+      console.log({ err });
     });
   return response;
 };

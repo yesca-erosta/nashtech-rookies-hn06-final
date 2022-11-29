@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 import AuthProvider from './context/RequiredAuth/authContext';
 import RequiredAuth from './context/RequiredAuth/requiredAuth';
 import Login from './components/login/login';
+import NotFound from './pages/NotFound/notFound';
 
 function App() {
     return (
@@ -13,6 +14,7 @@ function App() {
                 <Router>
                     <Routes>
                         <Route path="/login" element={<Login />} />
+                        <Route path="*" element={<NotFound />} />
 
                         {publicRoutes.map((route, index) => {
                             const Page = route.component;
