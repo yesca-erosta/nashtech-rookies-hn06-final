@@ -16,9 +16,9 @@ namespace AssetManagementTeam6.API.Validation
              .Matches(StringPattern.CategoryID);
 
             RuleFor(x => x.Name)
-                .NotNull()
-                .NotEmpty()
-                .Matches(StringPattern.Name);           
+            .NotNull()
+            .NotEmpty()
+            .Matches(StringPattern.Name);
         }
     }
 }
