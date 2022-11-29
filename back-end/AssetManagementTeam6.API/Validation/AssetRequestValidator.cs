@@ -7,18 +7,18 @@ namespace AssetManagementTeam6.API.Validation
     public class AssetRequestValidator : AbstractValidator<AssetRequest>
     {
         public AssetRequestValidator()
-        {   
-            // RuleFor(x => x.AssetName)
-            //     .Cascade(CascadeMode.StopOnFirstFailure)
-            //     .NotNull()
-            //     .NotEmpty()
-            //     .Matches(StringPattern.Name);
+        {
+            RuleFor(x => x.AssetName)
+                .Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull()
+                .NotEmpty()
+                .Matches(StringPattern.Name);
 
-            //RuleFor(x => x.Specification)
-            //    .Cascade(CascadeMode.StopOnFirstFailure)
-            //    .NotNull()
-            //    .NotEmpty()
-            //    .Matches(StringPattern.Name);
+            RuleFor(x => x.Specification)
+                .Cascade(CascadeMode.StopOnFirstFailure)
+                .NotNull()
+                .NotEmpty()
+                .Matches(StringPattern.Name);
 
             RuleFor(x => x.InstalledDate)
                 .Must(Over1Month)

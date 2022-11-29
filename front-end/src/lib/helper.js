@@ -27,6 +27,6 @@ export const queryToString = (query) => {
     `pageSize=${query.pageSize ?? 10}&` +
     `${checkQuery(query.valueSearch, 'valueSearch')}` +
     `${checkQuery(query.types, 'types')}` +
-    `sort=${query.sort ?? 'StaffCodeAcsending'}`
+    `sort=${query.sort ?? 'NameAcsending'}`
   );
 };
