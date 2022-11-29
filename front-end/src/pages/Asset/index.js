@@ -244,7 +244,7 @@ function Asset() {
     const handleSearch = async () => {
         try {
             const response = await fetch(
-                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=2&pageSize=2&valueSearch=${search}`,
+                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=1&pageSize=2&valueSearch=${search}`,
                 {
                     method: 'GET',
                     headers: {
@@ -256,16 +256,27 @@ function Asset() {
                 },
             );
 
-            const data = Promise.resolve(response);
+            const data = await response.json();
 
             if (response.status === 200) {
-                console.log(data);
+                setDataList(data.source);
+                setTotalPage(data.totalPage);
             }
         } catch (error) {
             console.log('error');
         }
 
         return null;
+    };
+
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(search);
+        }
+    };
+
+    const onChange = (e) => {
+        setSearch(e.target.value);
     };
 
     return (
@@ -301,16 +312,15 @@ function Asset() {
 
                 <div>
                     <InputGroup>
-                        <Form.Control />
+                        <Form.Control onKeyUp={handleOnChangeEnter} />
 
                         <InputGroup.Text>
                             <button
                                 className={cx('input')}
                                 onClick={handleSearch}
                                 value={search}
-                                onChange={(e) => {
-                                    setSearch(e.target.value);
-                                }}
+                                onChange={onChange}
+                                onKeyUp={handleOnChangeEnter}
                             >
                                 <BsSearch />
                             </button>

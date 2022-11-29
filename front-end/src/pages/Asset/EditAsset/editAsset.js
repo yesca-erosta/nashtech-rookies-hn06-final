@@ -3,18 +3,23 @@ import Form from 'react-bootstrap/Form';
 import classNames from 'classnames/bind';
 import styles from '../CreateAsset/createAsset.module.scss';
 import { useAuthContext } from '../../../context/RequiredAuth/authContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getAllData } from '../../../apiServices';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
     const { token, id } = useAuthContext();
+    const navigate = useNavigate();
 
     const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
+    const [category, setCategory] = useState('LA');
     const [specification, setSpecification] = useState('');
     const [installed, setInstalled] = useState('');
-    const [state, setState] = useState();
+    const [state, setState] = useState(0);
+
+    const [dataCategory, setDataCategory] = useState([]);
 
     const handleChecked = (e) => {
         if (e.target.id === '2') {
@@ -34,7 +39,7 @@ function CreateAsset() {
     const handleUpdate = async () => {
         try {
             const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset`, {
-                method: 'POST',
+                method: 'PUT',
                 body: JSON.stringify({
                     Id: id,
                     assetName: name,
@@ -51,10 +56,8 @@ function CreateAsset() {
                 },
             });
 
-            console.log(category);
-
             if (response.status === 200) {
-                console.log('sucsses');
+                navigate('/manageasset');
             }
         } catch (error) {
             console.log('error');
@@ -62,6 +65,15 @@ function CreateAsset() {
 
         return null;
     };
+
+    const getData = async () => {
+        const data = await getAllData('Category');
+        setDataCategory(data);
+    };
+
+    useEffect(() => {
+        getData();
+    }, []);
 
     return (
         <div className={cx('container')}>
@@ -82,15 +94,12 @@ function CreateAsset() {
                 </Form.Group>
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
-                    <Form.Select
-                        className={cx('input')}
-                        onChange={(e) => {
-                            setCategory(e);
-                        }}
-                    >
-                        <option>Laptop</option>
-                        <option>Monitor</option>
-                        <option>Personal Computer</option>
+                    <Form.Select className={cx('input')} onChange={(e) => setCategory(e.target.value)}>
+                        {dataCategory?.map((item) => (
+                            <option key={item.id} name={'categoryId'} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
                     </Form.Select>
                 </Form.Group>
 
