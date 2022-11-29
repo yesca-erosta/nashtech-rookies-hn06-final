@@ -12,7 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
 
 const cx = classNames.bind(styles);
@@ -42,7 +42,7 @@ function Header() {
     const handleCloseChangePassword = () => setShowChangePassword(false);
     const handleShowChangePassWord = () => setShowChangePassword(true);
 
-    const { token, oldPasswordLogin, setToken } = useAuthContext();
+    const { token, oldPasswordLogin, setToken } = useAppContext();
 
     useEffect(() => {
         const user = localStorage.getItem(USER_INFORMATION);

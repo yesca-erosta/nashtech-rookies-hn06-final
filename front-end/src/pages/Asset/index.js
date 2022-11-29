@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../../constants';
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 import styles from './asset.module.scss';
 
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -18,7 +18,7 @@ import { TiDeleteOutline } from 'react-icons/ti';
 const cx = classNames.bind(styles);
 
 function Asset() {
-    const { setId } = useAuthContext();
+    const { setId, newAsset, setNewAsset } = useAppContext();
     const ref = useRef();
     const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false, assigned: false });
     const [checkedCategory, setCheckedCategory] = useState({ laptop: false, monitor: false, personalComputer: false });
@@ -39,35 +39,42 @@ function Asset() {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState();
 
-    const [dataList, setDataList] = useState([]);
+    const [assets, setAssets] = useState([]);
 
     let location = useLocation();
     let navigate = useNavigate();
-    const { token } = useAuthContext();
+    const { token } = useAppContext();
+
+    useEffect(() => {
+        if (newAsset) {
+            setAssets((prevAsset) => [newAsset, ...prevAsset]);
+            setNewAsset(null);
+        }
+    }, [newAsset, setNewAsset]);
 
     const handleIsAssetCode = () => {
         setIsAssetCode((pre) => !pre);
 
-        if (dataList) {
-            dataList.reverse();
+        if (assets) {
+            assets.reverse();
         }
     };
     const handleIsAssetName = () => {
         setIsAssetName((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
+        if (assets) {
+            assets.reverse();
         }
     };
     const handleIsCategory = () => {
         setIsCategory((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
+        if (assets) {
+            assets.reverse();
         }
     };
     const handleIsState = () => {
         setIsState((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
+        if (assets) {
+            assets.reverse();
         }
     };
 
@@ -222,29 +229,31 @@ function Asset() {
     }, [currentPage, location.pathname, location.search]);
 
     useEffect(() => {
-        axios({
-            method: 'GET',
-            url: `${BASE_URL}/Asset/query?page=${currentPage}&pageSize=2`,
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token.token}`,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-        })
-            .then((response) => {
-                setDataList(response.data.source);
-                setTotalPage(response.data.totalPage);
+        if (!search) {
+            axios({
+                method: 'GET',
+                url: `${BASE_URL}/Asset/query?page=${currentPage}&pageSize=2`,
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
             })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [currentPage, token.token, deleteSuccess]);
+                .then((response) => {
+                    setAssets(response.data.source);
+                    setTotalPage(response.data.totalPage);
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, [currentPage, token.token, deleteSuccess, search]);
 
-    const handleSearch = async () => {
-        try {
+    useEffect(() => {
+        const callSearch = async () => {
             const response = await fetch(
-                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=1&pageSize=2&valueSearch=${search}`,
+                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=${currentPage}&pageSize=2&valueSearch=${search}`,
                 {
                     method: 'GET',
                     headers: {
@@ -258,8 +267,35 @@ function Asset() {
 
             const data = await response.json();
 
-            if (response.status === 200) {
-                setDataList(data.source);
+            if (data.totalRecord) {
+                setAssets(data.source);
+                setTotalPage(data.totalPage);
+            }
+
+            return null;
+        };
+        callSearch();
+    }, [currentPage, search, token.token]);
+
+    const handleSearch = async () => {
+        try {
+            const response = await fetch(
+                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=${currentPage}&pageSize=2&valueSearch=${search}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        Accept: 'application/json',
+                        Authorization: `Bearer ${token.token}`,
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*',
+                    },
+                },
+            );
+
+            const data = await response.json();
+
+            if (data.totalRecord) {
+                setAssets(data.source);
                 setTotalPage(data.totalPage);
             }
         } catch (error) {
@@ -273,10 +309,6 @@ function Asset() {
         if (e.key === 'Enter') {
             handleSearch(search);
         }
-    };
-
-    const onChange = (e) => {
-        setSearch(e.target.value);
     };
 
     return (
@@ -312,16 +344,14 @@ function Asset() {
 
                 <div>
                     <InputGroup>
-                        <Form.Control onKeyUp={handleOnChangeEnter} />
+                        <Form.Control
+                            onKeyUp={handleOnChangeEnter}
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
 
                         <InputGroup.Text>
-                            <button
-                                className={cx('input')}
-                                onClick={handleSearch}
-                                value={search}
-                                onChange={onChange}
-                                onKeyUp={handleOnChangeEnter}
-                            >
+                            <button className={cx('input')} onClick={handleSearch} onKeyUp={handleOnChangeEnter}>
                                 <BsSearch />
                             </button>
                         </InputGroup.Text>
@@ -457,8 +487,8 @@ function Asset() {
                         </tr>
                     </thead>
 
-                    {dataList.length > 0
-                        ? dataList.map((item) => (
+                    {assets.length > 0
+                        ? assets.map((item) => (
                               <tbody key={item.id}>
                                   <tr>
                                       <td>{item.assetCode}</td>

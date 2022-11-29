@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
 
 const Login = () => {
@@ -17,7 +17,7 @@ const Login = () => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const { setIsAuthenticated, setToken, setOldPasswordLogin } = useAuthContext();
+    const { setIsAuthenticated, setToken, setOldPasswordLogin } = useAppContext();
 
     useEffect(() => {
         if (!Boolean(userName) || !Boolean(password)) {
