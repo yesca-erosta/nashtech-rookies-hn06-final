@@ -17,8 +17,8 @@ namespace AssetManagementTeam6.API.Validation
 
             RuleFor(x => x.Name)
                 .NotNull()
-                .NotEmpty()
-                .Matches(StringPattern.Name);           
+                .NotEmpty();
+                .Matches(StringPattern.Name);
         }
     }
 }
