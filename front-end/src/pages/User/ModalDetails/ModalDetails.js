@@ -46,8 +46,22 @@ export const ModalDetails = ({ userDetails, handleClose, show }) => {
             Gender
           </Form.Label>
           <Col>
-            <Form.Check inline disabled label="Female" type={'radio'} id={`inline-radio-1`} />
-            <Form.Check inline disabled label="Male" type={'radio'} id={`inline-radio-2`} checked />
+            <Form.Check
+              inline
+              disabled
+              label="Female"
+              type={'radio'}
+              id={`inline-radio-1`}
+              checked={userDetails.gender === 2}
+            />
+            <Form.Check
+              inline
+              disabled
+              label="Male"
+              type={'radio'}
+              id={`inline-radio-2`}
+              checked={userDetails.gender === 1}
+            />
           </Col>
         </Row>
         <Row className="mt-3">

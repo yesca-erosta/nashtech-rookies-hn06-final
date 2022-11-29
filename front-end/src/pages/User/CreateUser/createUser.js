@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { React, useState } from 'react';
+import { React, useMemo, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
@@ -46,6 +46,11 @@ function CreateUser() {
     DateOfBirth: '',
     JoinedDate: '',
   });
+
+  const isInputComplete = useMemo(() => {
+    const { type, ...otherData } = dataAdd;
+    return Object.values(otherData).every((x) => x !== null && x !== '');
+  }, [dataAdd]);
 
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
@@ -101,10 +106,10 @@ function CreateUser() {
 
       <Form>
         <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>User Name</Form.Label>
+          <Form.Label className={cx('title_input')}>Username</Form.Label>
           <Form.Control
+            isInvalid={arrMsg.UserName}
             type="text"
-            placeholder="Enter username"
             className={cx('input')}
             name="userName"
             onChange={handleChangeAdd}
@@ -116,10 +121,10 @@ function CreateUser() {
           <Form.Label className={cx('title_input')}>Password</Form.Label>
           <div className={cx('input-new-password')}>
             <Form.Control
+              isInvalid={arrMsg.Password}
               type={hidePass ? 'password' : 'text'}
               className={cx('input')}
               name="password"
-              placeholder="Enter password"
               onChange={handleChangeAdd}
               onBlur={handleBlurAdd}
             />
@@ -132,22 +137,22 @@ function CreateUser() {
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>First Name</Form.Label>
           <Form.Control
+            isInvalid={arrMsg.FirstName}
             type="text"
             className={cx('input')}
             name="firstName"
             onChange={handleChangeAdd}
             onBlur={handleBlurAdd}
-            placeholder="Enter first name"
           />
         </Form.Group>
         {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Last Name</Form.Label>
           <Form.Control
+            isInvalid={arrMsg.LastName}
             type="text"
             className={cx('input')}
             name="lastName"
-            placeholder="Enter last name"
             onChange={handleChangeAdd}
             onBlur={handleBlurAdd}
           />
@@ -156,6 +161,7 @@ function CreateUser() {
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
           <Form.Control
+            isInvalid={arrMsg.DateOfBirth}
             type="date"
             className={cx('input')}
             name="dateOfBirth"
@@ -193,6 +199,7 @@ function CreateUser() {
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
           <Form.Control
+            isInvalid={arrMsg.JoinedDate}
             type="date"
             className={cx('input')}
             name="joinedDate"
@@ -209,10 +216,10 @@ function CreateUser() {
           </Form.Select>
         </Form.Group>
         <div className={cx('button')}>
-          <Button variant="danger" onClick={onSaveAdd}>
+          <Button variant="danger" onClick={onSaveAdd} disabled={!isInputComplete}>
             Save
           </Button>
-          <Button variant="outline-success" className={cx('cancel-button')} onClick={onCancelAdd}>
+          <Button variant="light" className={cx('cancel-button')} onClick={onCancelAdd}>
             Cancel
           </Button>
         </div>
