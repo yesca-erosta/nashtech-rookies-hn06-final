@@ -1,38 +1,32 @@
 import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import Modal from 'react-bootstrap/Modal';
 import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
+import { USER } from '../../constants';
+import { useUserListContext } from '../../context/userListContext';
 import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
 import { ModalDetails } from './ModalDetails/ModalDetails';
 import { SearchUser } from './SearchUser/SearchUser';
 import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { USER } from '../../constants';
+
+
 
 function User() {
-  const [show, setShow] = useState(false);
 
+  const {users,setUsers,loading,setLoading,totalRows,setTotalRows,perPage,setPerPage,queryParams,setQueryParams} = useUserListContext();
+  const [show, setShow] = useState(false);
   const [showRemove, setShowRemove] = useState(false);
   const [userDetails, setUserDetails] = useState('');
-  const [dataState, setDataState] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  const [queryParams, setQueryParams] = useState({
-    page: 1,
-    pageSize: 10,
-    types: '0,1',
-    sort: 'NameAcsending',
-  });
-  const [loading, setLoading] = useState(false);
-  const [totalRows, setTotalRows] = useState(0);
-  const [perPage, setPerPage] = useState(10);
   const [userId, setUserId] = useState('');
 
   const handleClose = () => {
@@ -40,15 +34,9 @@ function User() {
     setUserDetails('');
   };
 
-  // Get Data
-  const getData = async () => {
-    const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    setDataState(data.source);
-  };
-
   const handleShow = (staffCode) => {
     setShow(true);
-    setUserDetails(dataState.find((c) => c.staffCode === staffCode));
+    setUserDetails(users.find((c) => c.staffCode === staffCode));
   };
 
   const handleShowRemove = (row) => {
@@ -61,17 +49,11 @@ function User() {
   const handleDisable = async (id) => {
     setLoading(true);
     await deleteData(USER, id);
-    getData();
     setShowRemove(false);
     setUserId('');
     setLoading(false);
   };
 
-  useEffect(() => {
-    getData();
-    // I want call a function when first render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const columns = [
     {
@@ -139,28 +121,9 @@ function User() {
       data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
     }
     setTotalRows(data.totalRecord);
-    setDataState(data.source);
+    setUsers(data.source);
     setLoading(false);
   };
-
-  // Paging
-  const fetchUsers = async (page) => {
-    setLoading(true);
-    setQueryParams({ ...queryParams, page: page, pageSize: perPage });
-
-    const data = await getAllDataWithFilterBox(
-      `User/query` + queryToString({ ...queryParams, page: page, pageSize: perPage }),
-    );
-
-    setDataState(data.source);
-
-    setTotalRows(data.totalRecord);
-    setLoading(false);
-  };
-  useEffect(() => {
-    fetchUsers(1); // fetch page 1 of users
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const [selectedPage, setSelectedPage] = useState(1);
 
@@ -174,7 +137,7 @@ function User() {
     );
 
     setTotalRows(data.totalRecord);
-    setDataState(data.source);
+    setUsers(data.source);
     setPerPage(10);
     setLoading(false);
   };
@@ -232,7 +195,7 @@ function User() {
       const data = await getAllDataWithFilterBox(
         `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` }),
       );
-      setDataState(data.source);
+      setUsers(data.source);
       setPerPage(10);
     } else {
       setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` });
@@ -240,7 +203,7 @@ function User() {
       const data = await getAllDataWithFilterBox(
         `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` }),
       );
-      setDataState(data.source);
+      setUsers(data.source);
       setPerPage(10);
     }
   };
@@ -271,7 +234,7 @@ function User() {
       <div className="tableExtension">
         <div className="tableExtensionLeft">
           <TypeFilter
-            setDataState={setDataState}
+            setDataState={setUsers}
             setTotalRows={setTotalRows}
             setQueryParams={setQueryParams}
             queryParams={queryParams}
@@ -284,11 +247,11 @@ function User() {
           <ButtonCreate />
         </div>
       </div>
-      {dataState ? (
+      {users ? (
         <DataTable
           title="Users"
           columns={columns}
-          data={dataState}
+          data={users}
           noHeader
           defaultSortField="id"
           defaultSortAsc={true}
@@ -306,7 +269,7 @@ function User() {
         msgNoData()
       )}
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
-      
+
       <Modal show={showRemove} onHide={handleCloseRemove}>
         <Modal.Header>
           <Modal.Title>Are you sure?</Modal.Title>
@@ -316,7 +279,7 @@ function User() {
             <Form.Label>Do you want to disable this user?</Form.Label>
           </Form>
         </Modal.Body>
-        <Modal.Footer  style={{ justifyContent: 'flex-start' }}>
+        <Modal.Footer style={{ justifyContent: 'flex-start' }}>
           <Button variant="danger" onClick={() => handleDisable(userId)}>
             Disable
           </Button>

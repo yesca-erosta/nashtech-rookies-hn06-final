@@ -61,7 +61,7 @@ export const createData = async (url, data) => {
     data: data,
   })
     .then((res) => {
-      response = [...res.data];
+      response = res.data;
     })
     .catch((err) => {
       response = err;
@@ -78,7 +78,7 @@ export const updateData = async (url, data) => {
     data: data,
   })
     .then((res) => {
-      response = [...res.data];
+      response = res.data;
     })
     .catch((err) => {
       response = err;

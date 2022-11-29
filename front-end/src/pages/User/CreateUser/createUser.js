@@ -6,13 +6,16 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
+import { useUserListContext } from '../../../context/userListContext';
+
 import styles from './createUser.module.scss';
 
 const cx = classNames.bind(styles);
 
 function CreateUser() {
   let navigate = useNavigate();
-
+  const {users,setUsers} = useUserListContext();
+  console.log(users);
   const [hidePass, setHidePass] = useState(true);
   const [dataAdd, setDataAdd] = useState({
     userName: '',
@@ -74,6 +77,16 @@ function CreateUser() {
         joinedDate: '',
         type: 0,
       });
+
+      const newUsers =[...users];
+      
+      newUsers.unshift({
+        ...res,
+        type:res.type === 0 ? 'Staff' : 'Admin'
+      });
+      newUsers.pop();
+
+      setUsers(newUsers)
 
       navigate('/manageruser');
     }
@@ -163,6 +176,7 @@ function CreateUser() {
           <Form.Control
             isInvalid={arrMsg.DateOfBirth}
             type="date"
+            onKeyDown={(e) => e.preventDefault()}
             className={cx('input')}
             name="dateOfBirth"
             onChange={handleChangeAdd}
@@ -201,6 +215,7 @@ function CreateUser() {
           <Form.Control
             isInvalid={arrMsg.JoinedDate}
             type="date"
+            onKeyDown={(e) => e.preventDefault()}
             className={cx('input')}
             name="joinedDate"
             onChange={handleChangeAdd}
