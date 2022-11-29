@@ -1,4 +1,4 @@
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 import { useEffect, useState } from 'react';
 import React from 'react';
 import Button from 'react-bootstrap/Button';
@@ -15,7 +15,7 @@ const cx = classNames.bind(styles);
 
 function Home() {
     const [hideNew, setHideNew] = useState(false);
-    const { token, oldPasswordLogin } = useAuthContext();
+    const { token, oldPasswordLogin } = useAppContext();
     const [showFirstChangePassword, setShowFirstChangePassWord] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [disable, setDisable] = useState(true);
