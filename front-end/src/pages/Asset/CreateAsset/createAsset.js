@@ -5,6 +5,7 @@ import styles from './createAsset.module.scss';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../../context/RequiredAuth/authContext';
+import { getAllData } from '../../../apiServices';
 
 const cx = classNames.bind(styles);
 
@@ -15,6 +16,8 @@ function CreateAsset() {
     const [installedDate, setInstalledDate] = useState('');
     const [checkbox, setCheckbox] = useState();
     const [disabled, setDisable] = useState(true);
+
+    const [dataCategory, setDataCategory] = useState([]);
 
     const { token } = useAuthContext();
     const navigate = useNavigate();
@@ -72,6 +75,15 @@ function CreateAsset() {
         }
     }, [name, category, specification, installedDate, checkbox]);
 
+    const getData = async () => {
+        const data = await getAllData('Category');
+        setDataCategory(data);
+    };
+
+    useEffect(() => {
+        getData();
+    }, []);
+
     return (
         <div className={cx('container')}>
             <h3 className={cx('title')}>Create New Asset</h3>
@@ -90,13 +102,17 @@ function CreateAsset() {
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter category"
-                        className={cx('input')}
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
-                    />
+                    <Form.Select className={cx('input')} onChange={(e) => setCategory(e.target.value)}>
+                        {dataCategory?.map((item) => (
+                            <option key={item.id} name={'categoryId'} value={item.id}>
+                                {item.name}
+                            </option>
+                        ))}
+
+                        <div>
+                            <a href="/">abc</a>
+                        </div>
+                    </Form.Select>
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
