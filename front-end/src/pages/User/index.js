@@ -28,7 +28,7 @@ function User() {
     page: 1,
     pageSize: 10,
     types: '0,1',
-    sort: 'StaffCodeAcsending',
+    sort: 'NameAcsending',
   });
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
@@ -139,7 +139,7 @@ function User() {
       setQueryParams(queryParams);
       data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
     }
-
+    setTotalRows(data.totalRecord);
     setDataState(data.source);
     setLoading(false);
   };
@@ -174,6 +174,7 @@ function User() {
       `User/query` + queryToString({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
     );
 
+    setTotalRows(data.totalRecord);
     setDataState(data.source);
     setPerPage(10);
     setLoading(false);

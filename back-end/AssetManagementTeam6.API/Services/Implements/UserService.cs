@@ -113,12 +113,12 @@ namespace AssetManagementTeam6.API.Services.Implements
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
                 nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
-                users = users?.Where(u => u!.FullName!.ToLower().Contains(nameToQuery) ||
+                users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
                                         u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting
-            var sortOption = queryModel.Sort ??= Constants.StaffCodeAcsending;
+            var sortOption = queryModel.Sort ??= Constants.NameAcsending;
 
             switch (sortOption)
             {
