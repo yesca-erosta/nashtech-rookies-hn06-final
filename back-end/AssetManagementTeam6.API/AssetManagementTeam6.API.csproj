@@ -23,15 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AssetManagementTeam6.Data\AssetManagementTeam6.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Dtos\Models\" />
     <Folder Include="Extensions\" />
     <Folder Include="Heplers\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AssetManagementTeam6.Data\AssetManagementTeam6.Data.csproj" />
   </ItemGroup>
 
 </Project>

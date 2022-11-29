@@ -15,14 +15,14 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
         {
             var dbSet = predicate == null ?  _dbSet :  _dbSet.Where(predicate);
 
-            return await dbSet.Include(book => book.Category).ToListAsync();
+            return await dbSet.Include(asset => asset.Category).ToListAsync();
         }
-        public override async Task<Asset> GetOneAsync(Expression<Func<Asset, bool>>? predicate = null)
+        public override async Task<Asset?> GetOneAsync(Expression<Func<Asset, bool>>? predicate = null)
         {
             var dbSet = predicate == null ? _dbSet : _dbSet.Where(predicate);
 
             return await dbSet
-            .Include(book => book.Category)
+            .Include(asset => asset.Category)
             .FirstOrDefaultAsync();
         }
     }

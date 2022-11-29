@@ -22,7 +22,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("https://localhost:7060/api",
+        policy.WithOrigins("https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api",
                             "http://localhost:3000");
     });
 });
@@ -46,14 +46,20 @@ builder.Services.AddTransient<IAssetService, AssetService>();
 builder.Services.AddTransient<IAssetRepository, AssetRepository>();
 builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IAssignmentRepository, AssignmentRepository>();
+builder.Services.AddTransient<IAssignmentService, AssignmentService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddScoped<IValidator<User>, UserValidator>();
+builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
+builder.Services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidatior>();
+builder.Services.AddScoped<IValidator<AssetRequest>, AssetRequestValidator>();
+builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
+builder.Services.AddFluentValidation();
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 

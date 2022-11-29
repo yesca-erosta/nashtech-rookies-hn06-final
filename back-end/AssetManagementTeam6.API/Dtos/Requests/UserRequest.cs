@@ -4,6 +4,7 @@ namespace AssetManagementTeam6.API.Dtos.Requests
 {
     public class UserRequest
     {
+        public int? Id { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
@@ -14,5 +15,7 @@ namespace AssetManagementTeam6.API.Dtos.Requests
         public bool? NeedUpdatePwdOnLogin { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
+        public string? FullName { get; private set; }
+        public string? StaffCode { get; private set; }
     }
 }

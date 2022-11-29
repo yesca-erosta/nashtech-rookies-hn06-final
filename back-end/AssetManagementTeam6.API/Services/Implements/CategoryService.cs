@@ -1,4 +1,5 @@
 
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
@@ -15,10 +16,15 @@ namespace AssetManagementTeam6.API.Services.Implements
             _categoryRepository = categoryRepository;
         }
 
-        public async Task<Category?> Create(Category createRequest)
+        public async Task<Category?> Create(CategoryRequest createRequest)
         {
             if (createRequest == null) return null;
-            return await _categoryRepository.Create(createRequest);
+            var newCategory = new Category
+            {
+                Id = createRequest.Id,
+                Name = createRequest.Name,
+            };
+            return await _categoryRepository.Create(newCategory);
         }
 
         public async Task<IEnumerable<Category>> GetAllAsync()
@@ -28,7 +34,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Category> GetCategoryById(string id)
         {
-            return await _categoryRepository.GetOneAsync(x=> x.Id ==id);
+            return await _categoryRepository.GetOneAsync(x => x.Id == id);
         }
     }
 }

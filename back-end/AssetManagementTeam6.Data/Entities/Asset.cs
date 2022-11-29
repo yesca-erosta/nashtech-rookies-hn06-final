@@ -17,5 +17,6 @@ namespace AssetManagementTeam6.Data.Entities
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string? AssetCode { get; set; }
         public LocationEnum Location { get; set; }
+
     }
 }

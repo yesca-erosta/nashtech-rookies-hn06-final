@@ -16,9 +16,11 @@ namespace AssetManagementTeam6.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IAssignmentService _assignmentService;
+        public UserController(IUserService userService, IAssignmentService assignmentService)
         {
             _userService = userService;
+            _assignmentService = assignmentService;
         }
 
         [HttpGet()]
@@ -53,7 +55,7 @@ namespace AssetManagementTeam6.API.Controllers
             var isExistedUser = await _userService.GetUserByUserAccount(requestModel.UserName);
 
             if (isExistedUser != null)
-                return StatusCode(409, $"User name {requestModel.UserName} has already existed in the system");
+                return StatusCode(409, $"The user name {requestModel.UserName} has already existed in the system");
 
             var userId = this.GetCurrentLoginUserId();
 
@@ -86,21 +88,14 @@ namespace AssetManagementTeam6.API.Controllers
 
             var userAdmin = await _userService.GetUserById(userId.Value);
 
-            var userUpdate = await _userService.GetUserById(id);
-
-            if(id < 0)
+            if (id < 0)
             {
                 return BadRequest("Invalid user");
             }
+            
+            requestModel.Location = userAdmin!.Location;
 
-            requestModel.UserName = userUpdate.UserName;
-            requestModel.Password = userUpdate.Password;
-            requestModel.FirstName = userUpdate.FirstName;
-            requestModel.LastName = userUpdate.LastName;
-            requestModel.NeedUpdatePwdOnLogin = userUpdate.NeedUpdatePwdOnLogin;
-            requestModel.Location = userAdmin.Location;
-
-            var result = await _userService.Update(requestModel);
+            var result = await _userService.Update(id, requestModel);
            
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
@@ -118,6 +113,13 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (user == null)
                 return StatusCode(500, "Can't found user in the system");
+
+            var assignedUser = await _assignmentService.GetAssignmentByAssignedUser(id);
+
+            if (assignedUser != null)
+            {
+                return StatusCode(500, "Can not delete user because there are valid assignments belonging to this user");
+            }
 
             await _userService.Delete(id);
 

@@ -113,12 +113,12 @@ namespace AssetManagementTeam6.API.Services.Implements
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
                 nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
-                users = users?.Where(u => u!.FullName!.ToLower().Contains(nameToQuery) ||
+                users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
                                         u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting
-            var sortOption = queryModel.Sort ??= Constants.StaffCodeAcsending;
+            var sortOption = queryModel.Sort ??= Constants.NameAcsending;
 
             switch (sortOption)
             {
@@ -192,27 +192,24 @@ namespace AssetManagementTeam6.API.Services.Implements
             return await _userRepository.Update(updateRequest);
         }
 
-        public async Task<User?> Update(UserRequest updateRequest)
+        public async Task<User?> Update(int id, UserRequest updateRequest)
         {
-            var newUser = new User
-            {
-                UserName = updateRequest.UserName,
-                Password = updateRequest.Password,
-                FirstName = updateRequest.FirstName,
-                LastName = updateRequest.LastName,
-                Gender = updateRequest.Gender,
-                DateOfBirth = updateRequest.DateOfBirth,
-                Location = updateRequest.Location,
-                JoinedDate = updateRequest.JoinedDate,
-                Type = updateRequest.Type,
-                NeedUpdatePwdOnLogin = (bool)updateRequest.NeedUpdatePwdOnLogin
-            };
 
-            newUser.Password = SystemFunction.CreateMD5(updateRequest.Password);
+            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == id);
 
-            var updatedUser = await _userRepository.Update(newUser);
+            userUpdate.DateOfBirth = updateRequest.DateOfBirth;
+            userUpdate.Gender = updateRequest.Gender;
+            userUpdate.JoinedDate = updateRequest.JoinedDate;
+            userUpdate.Type = updateRequest.Type;
+
+            var updatedUser = await _userRepository.Update(userUpdate);
 
             return updatedUser;
+        }
+
+        public Task<User?> GetUserByStaffCode(string staffcode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

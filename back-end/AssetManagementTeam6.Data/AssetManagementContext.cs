@@ -30,6 +30,7 @@ namespace AssetManagementTeam6.Data
             SeedData(builder);
         }
 
+
         private void SeedData(ModelBuilder builder)
         {
             builder.Entity<User>().HasData(
@@ -310,7 +311,31 @@ namespace AssetManagementTeam6.Data
                      Location = LocationEnum.HN,
                      State = StateEnum.Assigned
                  }
+
+             
                 );
+            builder.Entity<Assignment>().HasData(
+                 new Assignment
+                 {
+                     Id = 1,
+                     AssetId = 1,
+                     AssignedById = 1,
+                     AssignedDate = DateTime.UtcNow,
+                     AssignedToID = 2,
+                     Note = "OKE CON DE",
+                     State = AssignmentStateEnum.Accepted
+                 },
+                new Assignment
+                {
+                    Id = 2,
+                    AssetId = 2,
+                    AssignedById = 1,
+                    AssignedDate = DateTime.UtcNow,
+                    AssignedToID = 3,
+                    Note = "OKE CON DE DE",
+                    State = AssignmentStateEnum.WaitingForAcceptance
+                }
+            );
         }
 
         public DbSet<User> Users { get; set; }
