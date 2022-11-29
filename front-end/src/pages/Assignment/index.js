@@ -4,7 +4,9 @@ import styles from './assignment.module.scss';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
-import { BsSearch, BsFillCalendarDateFill } from 'react-icons/bs';
+import { BsFillPencilFill, BsSearch, BsFillCalendarDateFill } from 'react-icons/bs';
+import { TiDeleteOutline } from 'react-icons/ti';
+import { MdRefresh } from 'react-icons/md';
 import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
 import { FaFilter } from 'react-icons/fa';
 import { Button, Form, InputGroup } from 'react-bootstrap';
@@ -70,6 +72,10 @@ function Assignment() {
 
     const navigateToCreateAsset = () => {
         navigate('createnewasset');
+    };
+
+    const navigateToEditAsset = () => {
+        navigate('editasset');
     };
 
     const handleState = () => {
