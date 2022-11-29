@@ -70,8 +70,11 @@ const EditUser = () => {
     }
   };
 
-  const isInputValidateComplete = useMemo(() => Object.values(arrMsg).every((x) => x === null || x === ''), [arrMsg]);
-  
+  const isInputComplete = useMemo(() => {
+    const { type, userName, password, gender, ...otherData } = data;
+    return Object.values(otherData).every((x) => x !== null && x !== '');
+  }, [data]);
+
   return (
     <>
       <div className={cx('container')}>
@@ -104,6 +107,7 @@ const EditUser = () => {
           <Form.Group className={cx('common-form')}>
             <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
             <Form.Control
+              isInvalid={arrMsg.DateOfBirth}
               type="date"
               className={cx('input')}
               name="dateOfBirth"
@@ -139,6 +143,7 @@ const EditUser = () => {
           <Form.Group className={cx('common-form')}>
             <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
             <Form.Control
+              isInvalid={arrMsg.JoinedDate}
               type="date"
               className={cx('input')}
               name="joinedDate"
@@ -159,7 +164,7 @@ const EditUser = () => {
             </Form.Select>
           </Form.Group>
           <div className={cx('button')}>
-            <Button variant="danger" onClick={onSubmit} disabled={!isInputValidateComplete}>
+            <Button variant="danger" onClick={onSubmit} disabled={!isInputComplete}>
               Save
             </Button>
             <Button
