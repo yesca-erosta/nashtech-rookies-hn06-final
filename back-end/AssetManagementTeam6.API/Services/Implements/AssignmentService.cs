@@ -2,6 +2,7 @@
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
+using Common.Enums;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
@@ -41,7 +42,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 AssignedTo = assignedTo,
                 AssignedToID = createRequest.AssignedToID,
                 Note = createRequest.Note,
-                State = createRequest.State
+                State = AssignmentStateEnum.WaitingForAcceptance
             };
 
             var createdAssignment = await _assignmentRepository.Create(newAssignment);
