@@ -23,6 +23,23 @@ namespace AssetManagementTeam6.API.Controllers
             _assignmentService = assignmentService;
         }
 
+        [HttpGet("{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> GetOneAsync(int id)
+        {
+            var userId = this.GetCurrentLoginUserId();
+
+            if (userId == null)
+                return NotFound();
+
+            var data = await _assetService.GetAssetById(id);
+
+            if (data == null)
+                return NotFound();
+
+            return Ok(data);
+        }
+
         [HttpGet()]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAllAsync()

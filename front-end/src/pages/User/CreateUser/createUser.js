@@ -2,13 +2,10 @@ import classNames from 'classnames/bind';
 import { React, useMemo, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
-import { useNavigate } from 'react-router-dom';
-import { createData } from '../../../apiServices';
-import { USER } from '../../../constants';
-import styles from './createUser.module.scss';
+import classNames from 'classnames/bind';
+import styles from "./createUser.module.scss"
 
-const cx = classNames.bind(styles);
+const cx = classNames.bind(styles)
 
 function CreateUser() {
   let navigate = useNavigate();
@@ -116,8 +113,8 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Password</Form.Label>
           <div className={cx('input-new-password')}>
             <Form.Control
@@ -133,8 +130,8 @@ function CreateUser() {
             </div>
           </div>
         </Form.Group>
-        {arrMsg.Password && <p className={cx('msgError')}>{arrMsg.Password[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>First Name</Form.Label>
           <Form.Control
             isInvalid={arrMsg.FirstName}
@@ -145,8 +142,8 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Last Name</Form.Label>
           <Form.Control
             isInvalid={arrMsg.LastName}
@@ -157,8 +154,8 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
           <Form.Control
             isInvalid={arrMsg.DateOfBirth}
@@ -169,8 +166,8 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Gender</Form.Label>
 
           <div key={`gender-radio`} className={cx('input-radio-gender')}>
@@ -179,24 +176,20 @@ function CreateUser() {
               label="Male"
               name="gender"
               type="radio"
-              value={1}
               id={`gender-radio-1`}
-              onChange={handleChangeAdd}
             />
             <Form.Check
               inline
               label="Female"
               name="gender"
               type="radio"
-              className={cx('form-check-input:checked')}
-              value={2}
               id={`gender-radio-2`}
-              onChange={handleChangeAdd}
             />
           </div>
+
         </Form.Group>
 
-        <Form.Group className={cx('common-form')}>
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
           <Form.Control
             isInvalid={arrMsg.JoinedDate}
@@ -207,14 +200,17 @@ function CreateUser() {
             onBlur={handleBlurAdd}
           />
         </Form.Group>
-        {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
-        <Form.Group className={cx('common-form')}>
+
+        <Form.Group className={cx('common-form')} >
           <Form.Label className={cx('title_input')}>Type</Form.Label>
-          <Form.Select onChange={handleChangeAdd} name="type">
-            <option value={0}>Staff</option>
-            <option value={1}>Admin</option>
-          </Form.Select>
+          <Form.Control type="text" className={cx('input')} />
         </Form.Group>
+
+        <Form.Group className={cx('common-form')} >
+          <Form.Label className={cx('title_input')}>Location</Form.Label>
+          <Form.Control type="text" className={cx('input')} />
+        </Form.Group>
+        
         <div className={cx('button')}>
           <Button variant="danger" onClick={onSaveAdd} disabled={!isInputComplete}>
             Save
@@ -223,6 +219,7 @@ function CreateUser() {
             Cancel
           </Button>
         </div>
+        
       </Form>
     </div>
   );
