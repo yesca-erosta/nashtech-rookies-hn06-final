@@ -51,7 +51,6 @@ function CreateAsset() {
   const handleCreate = async () => {
     const res = await createData(ASSET, dataAdd);
 
-    console.log('res', res);
     if (res.code === 'ERR_BAD_REQUEST') {
       setArrMsg(res?.response?.data?.errors);
       if (res?.response?.data?.errors?.requestModel) {
@@ -81,20 +80,25 @@ function CreateAsset() {
   };
 
   const [arrMsgCategory, setArrMsgCategory] = useState('');
+  const [arrMsgCategoryHoan, setArrMsgCategoryHoan] = useState();
 
-  console.log('arrMsgCategory', arrMsgCategory);
+  console.log('arrMsgCategoryHoan', arrMsgCategoryHoan);
   const onCreateCategory = async () => {
     const res = await createData(CATEGORY, createCategoryHoan);
-
     console.log('res', res);
     if (res.code === 'ERR_BAD_REQUEST') {
-      setArrMsgCategory(res?.response?.data);
+      if (res?.response?.data?.errors) {
+        setArrMsgCategoryHoan(res?.response?.data?.errors);
+      } else {
+        setArrMsgCategory(res?.response?.data);
+      }
     } else {
       getDataCategory();
       setDataAdd({ ...dataAdd, categoryId: createCategoryHoan.id });
       setCategory(createCategoryHoan);
       setCreateCategory(false);
       setArrMsgCategory('');
+      setArrMsgCategoryHoan('');
     }
   };
 
@@ -115,6 +119,7 @@ function CreateAsset() {
   const handleCancelCategory = () => {
     setCreateCategory(false);
     setArrMsgCategory('');
+    setArrMsgCategoryHoan('');
   };
 
   const isInputComplete = useMemo(() => {
@@ -142,7 +147,7 @@ function CreateAsset() {
         <Form.Group className={cx('common-form')}>
           <Form.Label className={cx('title_input')}>Category</Form.Label>
           <InputGroup>
-            <Form.Control placeholder={'Category'} value={category.name} />
+            <Form.Control placeholder={'Category'} defaultValue={category.name} />
             <InputGroup.Text
               style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
               onClick={handleShowCategory}
@@ -242,6 +247,7 @@ function CreateAsset() {
           </Form.Group>
 
           {arrMsgCategory && <p className={cx('msgError')}>{arrMsgCategory}</p>}
+          {!arrMsgCategory && arrMsgCategoryHoan && <p className={cx('msgError')}>{arrMsgCategoryHoan.Id[0]}</p>}
 
           <div className={cx('btn_create-category')}>
             <Button
