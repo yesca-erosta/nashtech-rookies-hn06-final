@@ -9,9 +9,9 @@
         public const string UserName = @"^[a-zA-Z]([a-zA-Z0-9]{5,49})$";
         #endregion
 
-        public const string Name = @"^[a-zA-Z]([ a-zA-Z0-9]{5,49})$";
+        public const string Name = @"^[a-zA-Z]([ a-zA-Z0-9]{0,49})$";
         #region Category
-        public const string CategoryID = "^([A-Z]{0,7})$";
+        public const string CategoryID = "^([A-Z]{2,8})$";
         #endregion
 
         #region Asset
