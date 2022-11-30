@@ -9,18 +9,16 @@ namespace AssetManagementTeam6.API.Validation
         public AssetRequestValidator()
         {
             RuleFor(x => x.AssetName)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotNull()
                 .NotEmpty()
-                .Matches(StringPattern.Name);
-
+                .WithMessage("Asset Name is required");
+                
             RuleFor(x => x.Specification)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotNull()
                 .NotEmpty()
-                .Matches(StringPattern.Name);
+                .WithMessage("Specification is required");
 
             RuleFor(x => x.InstalledDate)
+                .Cascade(CascadeMode.StopOnFirstFailure)
+                .NotEmpty().WithMessage("Installed Date is required")
                 .Must(Over1Month)
                 .WithMessage("Installed Date must not be over 30 days");
 

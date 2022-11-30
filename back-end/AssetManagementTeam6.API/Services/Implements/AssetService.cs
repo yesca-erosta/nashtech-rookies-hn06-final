@@ -124,11 +124,11 @@ namespace AssetManagementTeam6.API.Services.Implements
                 case Constants.AssetCodeDescending:
                     assets = assets?.OrderByDescending(u => u.AssetCode)?.ToList();
                     break;
-                case Constants.AssetInstalledDateAcsending:
-                    assets = assets?.OrderBy(u => u.InstalledDate)?.ToList();
+                case Constants.AssetCategoryNameAcsending:
+                    assets = assets?.OrderBy(u => u.Category.Name)?.ToList();
                     break;
-                case Constants.AssetInstalledDateDescending:
-                    assets = assets?.OrderByDescending(u => u.InstalledDate)?.ToList();
+                case Constants.AssetCategoryNameDescending:
+                    assets = assets?.OrderByDescending(u => u.Category.Name)?.ToList();
                     break;
                 case Constants.AssetStateAcsending:
                     assets = assets?.OrderBy(u => u.State)?.ToList();
