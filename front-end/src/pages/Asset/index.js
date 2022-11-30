@@ -36,6 +36,7 @@ export const convertStatetoStr = (state) => {
 
 function Asset() {
   const ref = useRef();
+  const [loading, setLoading] = useState(false);
   const [showState, setShowState] = useState(false);
   const [showCategory, setShowCategory] = useState(false);
   const [placeholderState, setPlaceholderState] = useState('State');
@@ -70,6 +71,7 @@ function Asset() {
 
     const checkIfClickedOutside = async (e) => {
       if (showState && ref.current && !ref.current.contains(e.target)) {
+        setLoading(true);
         setCheckedStateHoan(initSelectState);
         setPlaceholderState('State');
         setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' });
@@ -79,8 +81,10 @@ function Asset() {
         setTotalPageHoan(data.totalRecord);
         setAssetsHoan(data.source);
         setShowState(false);
+        setLoading(false);
       }
       if (showCategory && ref.current && !ref.current.contains(e.target)) {
+        setLoading(true);
         setCheckedCategoryHoan(categories?.map((v) => ({ ...v, isChecked: false })));
         setQueryParams({ ...queryParams, page: 1, pageSize: 10, category: '' });
         const data = await getAllDataWithFilterBox(
@@ -89,6 +93,7 @@ function Asset() {
         setTotalPageHoan(data.totalRecord);
         setAssetsHoan(data.source);
         setShowCategory(false);
+        setLoading(false);
       }
     };
     document.addEventListener('mousedown', checkIfClickedOutside);
@@ -118,6 +123,7 @@ function Asset() {
   };
 
   const handleOkState = async () => {
+    setLoading(true);
     let data = await getAllDataWithFilterBox(
       `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
     );
@@ -188,9 +194,11 @@ function Asset() {
     setTotalPageHoan(data.totalRecord);
     setAssetsHoan(data.source);
     setShowState(false);
+    setLoading(false);
   };
 
   const handleCancelState = async () => {
+    setLoading(true);
     setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' });
     const data = await getAllDataWithFilterBox(
       `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
@@ -200,6 +208,7 @@ function Asset() {
     setAssetsHoan(data.source);
     setCheckedStateHoan({ available: false, notAvailable: false, assigned: false });
     setShowState(false);
+    setLoading(false);
   };
 
   // Category
@@ -216,6 +225,7 @@ function Asset() {
   }, []);
 
   const handleOkCategory = async () => {
+    setLoading(true);
     let string = '';
     for (let index = 0; index < listCategories.length; index++) {
       string += listCategories[index] + ',';
@@ -231,6 +241,7 @@ function Asset() {
     setAssetsHoan(data.source);
 
     setShowCategory(false);
+    setLoading(false);
   };
 
   const [listCategories, setListCategories] = useState([]);
@@ -263,6 +274,7 @@ function Asset() {
   };
 
   const handleCancelCategory = async () => {
+    setLoading(true);
     setCheckedCategoryHoan(categories?.map((v) => ({ ...v, isChecked: false })));
     setQueryParams({ ...queryParams, page: 1, pageSize: 10, category: '' });
     const data = await getAllDataWithFilterBox(
@@ -271,9 +283,11 @@ function Asset() {
     setTotalPageHoan(data.totalRecord);
     setAssetsHoan(data.source);
     setShowCategory(false);
+    setLoading(false);
   };
 
   const handleSearch = async (value) => {
+    setLoading(true);
     setSearch(value);
 
     let data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
@@ -289,6 +303,7 @@ function Asset() {
     }
     setTotalPageHoan(data.totalRecord);
     setAssetsHoan(data.source);
+    setLoading(false);
   };
 
   const handleOnChangeEnter = (e) => {
@@ -308,8 +323,10 @@ function Asset() {
 
   // Get Data
   const getData = async () => {
+    setLoading(true);
     const data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
     setAssetsHoan(data.source);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -319,10 +336,12 @@ function Asset() {
   }, []);
 
   const handleDelete = async () => {
+    setLoading(true);
     await deleteData(ASSET, assetId);
     getData();
     setAssetId('');
     setShowDelete(false);
+    setLoading(false);
   };
 
   const handleShowDetail = (assetCode) => {
@@ -397,6 +416,7 @@ function Asset() {
   const [selectedPage, setSelectedPage] = useState(1);
 
   const fetchAssets = async (page) => {
+    setLoading(true);
     setQueryParams({ ...queryParams, page: page, pageSize: 10 });
 
     const data = await getAllDataWithFilterBox(
@@ -405,6 +425,7 @@ function Asset() {
 
     setAssetsHoan(data.source);
     setTotalPageHoan(data.totalRecord);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -415,6 +436,7 @@ function Asset() {
   const [perPage, setPerPage] = useState(10);
 
   const handlePageClick = async (event) => {
+    setLoading(true);
     setSelectedPage(event.selected + 1);
     setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
@@ -425,6 +447,17 @@ function Asset() {
     setTotalPageHoan(data.totalRecord);
     setAssetsHoan(data.source);
     setPerPage(10);
+    setLoading(false);
+  };
+
+  const msgNoData = () => {
+    if (loading) {
+      return (
+        <div style={{ fontSize: '24px', textAlign: '-webkit-center', fontWeight: 'bold', padding: '24px' }}>Loading...</div>
+      );
+    } else {
+      return <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>There are no records to display</div>;
+    }
   };
 
   const CustomPagination = (e) => {
@@ -530,9 +563,9 @@ function Asset() {
 
           <div className={cx('filter_category')}>
             <InputGroup>
-              <Form.Control />
+              <Form.Control placeholder="Category"/>
 
-              <InputGroup.Text>
+              <InputGroup.Text >
                 <button className={cx('input-category')} onClick={handleCategory}>
                   <FaFilter />
                 </button>
@@ -641,7 +674,7 @@ function Asset() {
           highlightOnHover
           noDataComponent={'There are no records to display'}
           dense
-          //   progressPending={loading}
+          progressPending={loading}
           pagination
           paginationComponent={CustomPagination}
           paginationServer
@@ -649,7 +682,7 @@ function Asset() {
           onSort={handleSort}
         />
       ) : (
-        <div>I wanna cry :(((</div>
+        msgNoData()
       )}
       <DetailAsset showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} />
 

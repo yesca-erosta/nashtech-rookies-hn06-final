@@ -25,7 +25,6 @@ function CreateAsset() {
   const [data, setData] = useState(initAsset);
 
   const navigate = useNavigate();
-  console.log('data', data);
 
   const onChange = (e) => {
     if (e.target.name === 'state') {
@@ -40,7 +39,6 @@ function CreateAsset() {
   const handleUpdate = async () => {
     const res = await updateData(`${ASSET}/${asset.id}`, data);
 
-    console.log('res', res);
     if (res.code === 'ERR_BAD_REQUEST') {
       setArrMsg(res?.response?.data?.errors);
     } else {
