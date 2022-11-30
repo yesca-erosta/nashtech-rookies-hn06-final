@@ -6,13 +6,12 @@ import Form from 'react-bootstrap/Form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { USER } from '../../../constants';
-import { useUserListContext } from '../../../context/userListContext';
 import { dateStrToDate } from '../../../lib/helper';
 import styles from './EditUser.module.scss';
+
 const EditUser = () => {
   const cx = classNames.bind(styles);
   const location = useLocation();
-  const { users, setUsers } = useUserListContext();
   const { user } = location?.state;
 
   const initUser = {
@@ -36,7 +35,6 @@ const EditUser = () => {
     DateOfBirth: '',
     JoinedDate: '',
   });
-  console.log(isShowToast);
   const navigate = useNavigate();
 
   const onSubmit = async () => {
@@ -51,22 +49,13 @@ const EditUser = () => {
         alert('Please input all fields');
       }
     } else {
-      //setData(initUser);
+      setData(initUser);
 
       setIsShowToast(true);
       setTimeout(() => {
         setIsShowToast(false);
       }, 5000);
 
-      const newUsers = [...users];
-
-      newUsers.unshift({
-        ...res,
-        type: res.type === 0 ? 'Staff' : 'Admin',
-      });
-      newUsers.pop();
-      setUsers(newUsers);
-      console.log(newUsers);
       navigate('/manageruser');
     }
   };
