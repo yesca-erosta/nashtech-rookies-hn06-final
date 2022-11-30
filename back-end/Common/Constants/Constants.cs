@@ -21,8 +21,8 @@
         public const string AssetNameDescending = "AssetNameDescending";
         public const string AssetCodeAcsending = "AssetCodeAcsending";
         public const string AssetCodeDescending = "AssetCodeDescending";
-        public const string AssetInstalledDateAcsending = "AssetInstalledDateAcsending";
-        public const string AssetInstalledDateDescending = "AssetInstalledDateDescending";
+        public const string AssetCategoryNameAcsending = "AssetCategoryNameAcsending";
+        public const string AssetCategoryNameDescending = "AssetCategoryNameDescending";
         public const string AssetStateAcsending = "AssetStateAcsending";
         public const string AssetStateDescending = "AssetStateDescending";
     }

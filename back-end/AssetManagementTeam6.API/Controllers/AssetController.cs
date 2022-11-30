@@ -152,14 +152,14 @@ namespace AssetManagementTeam6.API.Controllers
 
             var listStates = new List<StateEnum>();
 
-            if (!string.IsNullOrWhiteSpace(states)) 
-               {
+            if (!string.IsNullOrWhiteSpace(states))
+            {
                 var typeArr = states.Split(",");
                 foreach (string typeValue in typeArr)
                 {
                     var tryParseOk = (Enum.TryParse(typeValue, out StateEnum enumValue));
                     if (tryParseOk)
-                        listStates.Add(enumValue);
+                        listStates.Add(enumValue); ;
                 }
             }
 

@@ -9,7 +9,6 @@ const routes = {
     editUser: { path: '/manageruser/edituser', name: 'Manage User > Edit User' },
     createNewAsset: { path: '/manageasset/createnewasset', name: 'Manage Asset > Create New Asset' },
     editAset: { path: '/manageasset/editasset', name: 'Manage Asset > Edit Asset' },
-    pageAsset: { path: '/manageasset?p=1' },
     notFound: { path: '*' },
 };
 
