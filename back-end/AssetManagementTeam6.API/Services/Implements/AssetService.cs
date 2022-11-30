@@ -18,7 +18,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             _assetRepository = assetRepository;
             _categoryRepository = categoryRepository;
         }
-            
+
         public async Task<Asset?> Create(AssetRequest requestModel)
         {
             var category = await _categoryRepository.GetOneAsync(x => x.Id == requestModel.CategoryId);
@@ -85,7 +85,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<Pagination<GetAssetResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
         {
             // TODO: get list assets not set with location
-            var assets = await _assetRepository.GetListAsync(x => x.Location == location);
+            var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != StateEnum.Recycled && x.State != StateEnum.WaitingForRecycling);
 
             // filter by type
             if (queryModel.State != null)
@@ -103,6 +103,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
             {
                 nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+
                 assets = assets?.Where(u => u!.AssetName!.ToLower().Contains(nameToQuery) ||
                                         u!.AssetCode!.ToLower().Contains(nameToQuery))?.ToList();
             }
@@ -177,18 +178,18 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Asset?> Update(AssetRequest updateRequest)
         {
-            var updatedAssert =await _assetRepository.GetOneAsync(x => x.Id ==updateRequest.Id);
+            var updatedAssert = await _assetRepository.GetOneAsync(x => x.Id == updateRequest.Id);
             if (updatedAssert == null) return null;
 
             {
-                updatedAssert.Location = updateRequest.Location;    
+                updatedAssert.Location = updateRequest.Location;
                 updatedAssert.AssetName = updateRequest.AssetName;
                 updatedAssert.InstalledDate = updateRequest.InstalledDate;
                 updatedAssert.State = updateRequest.State;
                 updatedAssert.CategoryId = updateRequest.CategoryId;
                 updatedAssert.Specification = updateRequest.Specification;
             }
-                
+
             return await _assetRepository.Update(updatedAssert);
         }
 

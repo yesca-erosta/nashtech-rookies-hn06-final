@@ -7,6 +7,7 @@ const AppContext = createContext({
     oldPasswordLogin: null,
     id: null,
     newAsset: null,
+    getOneAsset: null,
 });
 
 export const useAppContext = () => useContext(AppContext);
@@ -17,6 +18,7 @@ const AuthProvider = ({ children }) => {
     const [oldPasswordLogin, setOldPasswordLogin] = useState('');
     const [id, setId] = useState();
     const [newAsset, setNewAsset] = useState();
+    const [getOneAsset, setGetOneAsset] = useState();
 
     const contextValue = {
         isAuthenticated,
@@ -29,6 +31,8 @@ const AuthProvider = ({ children }) => {
         setId,
         newAsset,
         setNewAsset,
+        getOneAsset,
+        setGetOneAsset,
     };
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

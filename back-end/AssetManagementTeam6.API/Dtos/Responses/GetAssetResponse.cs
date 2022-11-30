@@ -11,7 +11,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public Category Category { get; set; }
         public string Specification { get; set; }
         public DateTime? InstalledDate { get; set; }
-        public string State { get; set; }
+        public StateEnum State { get; set; }
         public string AssetCode { get; set; }
 
         public GetAssetResponse(Asset asset)
@@ -22,7 +22,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             CategoryId = asset.CategoryId;
             Specification = asset.Specification;
             InstalledDate = asset.InstalledDate;
-            State = asset.State.ToString();
+            State = asset.State;
             AssetCode = asset.AssetCode;
         }
     }
