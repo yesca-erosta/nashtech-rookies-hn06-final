@@ -11,14 +11,16 @@ namespace AssetManagementTeam6.API.Validation
         {
 
             RuleFor(x => x.Id)
-             .NotNull()
+             .Cascade(CascadeMode.StopOnFirstFailure)
+             .NotNull().WithMessage("the Category ID should have 2-8 characters")
              .NotEmpty()
-             .Matches(StringPattern.CategoryID);
+             .Matches(StringPattern.CategoryID).WithMessage("the Category ID is invalid!");
 
             RuleFor(x => x.Name)
-            .NotNull()
+            .Cascade(CascadeMode.StopOnFirstFailure)
+            .NotNull().WithMessage("should contain the alphabet and numeric!")
             .NotEmpty()
-            .Matches(StringPattern.Name);
+            .Matches(StringPattern.Name).WithMessage("the Category ID should have 2-8 characters");
         }
     }
 }

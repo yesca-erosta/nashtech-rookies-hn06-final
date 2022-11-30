@@ -68,8 +68,8 @@ function Assignment() {
         };
     }, [showState, showCategory]);
 
-    const navigateToCreateAsset = () => {
-        navigate('createnewasset');
+    const navigateToCreateAssignment = () => {
+        navigate('createnewassignment');
     };
 
     const handleState = () => {
@@ -145,7 +145,7 @@ function Assignment() {
                     </InputGroup>
                 </div>
 
-                <Button variant="danger" onClick={navigateToCreateAsset}>
+                <Button variant="danger" onClick={navigateToCreateAssignment}>
                     Create new assignment
                 </Button>
             </div>

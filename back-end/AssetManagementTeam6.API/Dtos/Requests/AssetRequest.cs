@@ -5,7 +5,7 @@ namespace AssetManagementTeam6.API.Dtos.Requests
 {
     public class AssetRequest
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string AssetName { get; set; }
         public string CategoryId { get; set; }
         public string Specification { get; set; }

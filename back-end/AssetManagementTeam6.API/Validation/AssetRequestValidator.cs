@@ -9,18 +9,16 @@ namespace AssetManagementTeam6.API.Validation
         public AssetRequestValidator()
         {
             RuleFor(x => x.AssetName)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotNull()
                 .NotEmpty()
-                .Matches(StringPattern.Name);
-
+                .WithMessage("Asset Name is required");
+                
             RuleFor(x => x.Specification)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .NotNull()
                 .NotEmpty()
-                .Matches(StringPattern.Name);
+                .WithMessage("Specification is required");
 
             RuleFor(x => x.InstalledDate)
+                .Cascade(CascadeMode.StopOnFirstFailure)
+                .NotEmpty().WithMessage("Installed Date is required")
                 .Must(Over1Month)
                 .WithMessage("Installed Date must not be over 30 days");
 
@@ -30,10 +28,12 @@ namespace AssetManagementTeam6.API.Validation
         }
         protected bool Over1Month(DateTime date)
         {
-            var now = DateTime.Now;
-            var month = now.Month + 1;
 
-            var compareDate = new DateTime(now.Year, month, now.Day);
+            // TODO: check day 30, 31
+            var now = DateTime.Now;
+            var month = now.Month == 12 ? 1 : now.Month + 1;
+            var year = now.Month == 12 ? now.Year + 1 : now.Year;
+            var compareDate = new DateTime(year, month, now.Day);
 
             return DateTime.Compare(compareDate, date) >= 0 ;
 

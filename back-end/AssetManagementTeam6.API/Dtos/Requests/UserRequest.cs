@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using AssetManagementTeam6.Data.Entities;
+using Common.Enums;
 
 namespace AssetManagementTeam6.API.Dtos.Requests
 {
@@ -15,7 +16,21 @@ namespace AssetManagementTeam6.API.Dtos.Requests
         public bool? NeedUpdatePwdOnLogin { get; set; }
         public string UserName { get; set; }
         public string Password { get; set; }
-        public string? FullName { get; private set; }
-        public string? StaffCode { get; private set; }
+
+
+        //public UserRequest(User user)
+        //{
+        //    Id = user.Id;
+        //    FirstName = user.FirstName;
+        //    LastName = user.LastName;
+        //    DateOfBirth = user.DateOfBirth;
+        //    Gender = user.Gender;
+        //    JoinedDate = user.JoinedDate;
+        //    Type = user.Type;
+        //    Location = user.Location;
+        //    NeedUpdatePwdOnLogin = user.NeedUpdatePwdOnLogin;
+        //    UserName = user.UserName;
+        //    Password = user.Password;
+        //}
     }
 }

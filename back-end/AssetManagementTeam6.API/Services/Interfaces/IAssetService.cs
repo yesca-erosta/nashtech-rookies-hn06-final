@@ -12,7 +12,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<Asset?> GetAssetByName(string model);
         Task<Asset>GetAssetById(int id);
         Task<Asset?> Create(AssetRequest createRequest);
-        Task<Asset?> Update(AssetRequest updateRequest);
+        Task<Asset?> Update(int id, AssetRequest updateRequest);
         Task<bool> Delete(int id);
         Task<Pagination<GetAssetResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location);
     }

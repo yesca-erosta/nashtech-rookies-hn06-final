@@ -1,160 +1,139 @@
+import classNames from 'classnames/bind';
+import { useMemo, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import classNames from 'classnames/bind';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { updateData } from '../../../apiServices';
+import { ASSET } from '../../../constants';
+import { dateStrToDate } from '../../../lib/helper';
 import styles from '../CreateAsset/createAsset.module.scss';
-import { useAppContext } from '../../../context/RequiredAuth/authContext';
-import { useState, useEffect } from 'react';
-import { getAllData } from '../../../apiServices';
-import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
-    const { token, id } = useAppContext();
-    const navigate = useNavigate();
+  const location = useLocation();
+  const { asset } = location?.state;
 
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('LA');
-    const [specification, setSpecification] = useState('');
-    const [installed, setInstalled] = useState('');
-    const [state, setState] = useState(0);
+  const initAsset = {
+    assetName: asset.assetName,
+    categoryId: asset.categoryId,
+    specification: asset.specification,
+    installedDate: asset.installedDate,
+    state: asset.state,
+  };
 
-    const [dataCategory, setDataCategory] = useState([]);
+  const [data, setData] = useState(initAsset);
 
-    const handleChecked = (e) => {
-        if (e.target.id === '2') {
-            setState(0);
-        }
-        if (e.target.id === '1') {
-            setState(1);
-        }
-        if (e.target.id === '4') {
-            setState(2);
-        }
-        if (e.target.id === '3') {
-            setState(3);
-        }
-    };
+  const navigate = useNavigate();
+  console.log('data', data);
 
-    const handleUpdate = async () => {
-        try {
-            const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset`, {
-                method: 'PUT',
-                body: JSON.stringify({
-                    Id: id,
-                    assetName: name,
-                    categoryId: category,
-                    specification: specification,
-                    installedDate: installed,
-                    state: state,
-                }),
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token.token}`,
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-            });
+  const onChange = (e) => {
+    if (e.target.name === 'state') {
+      setData({ ...data, [e.target.name]: parseInt(e.target.value) });
+    } else {
+      setData({ ...data, [e.target.name]: e.target.value });
+    }
+  };
 
-            if (response.status === 200) {
-                navigate('/manageasset');
-            }
-        } catch (error) {
-            console.log('error');
-        }
+  const [arrMsg, setArrMsg] = useState('');
 
-        return null;
-    };
+  const handleUpdate = async () => {
+    const res = await updateData(`${ASSET}/${asset.id}`, data);
 
-    const getData = async () => {
-        const data = await getAllData('Category');
-        setDataCategory(data);
-    };
+    console.log('res', res);
+    if (res.code === 'ERR_BAD_REQUEST') {
+      setArrMsg(res?.response?.data?.errors);
+    } else {
+      navigate('/manageasset');
+    }
+  };
 
-    useEffect(() => {
-        getData();
-    }, []);
+  const isInputComplete = useMemo(() => {
+    return Object.values(data).every((x) => x !== null && x !== '');
+  }, [data]);
 
-    return (
-        <div className={cx('container')}>
-            <h3 className={cx('title')}>Edit Asset</h3>
+  return (
+    <div className={cx('container')}>
+      <h3 className={cx('title')}>Edit Asset</h3>
 
-            <Form className={cx('form')}>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}> Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter name"
-                        className={cx('input')}
-                        value={name}
-                        onChange={(e) => {
-                            setName(e.target.value);
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Category</Form.Label>
-                    <Form.Select className={cx('input')} onChange={(e) => setCategory(e.target.value)}>
-                        {dataCategory?.map((item) => (
-                            <option key={item.id} name={'categoryId'} value={item.id}>
-                                {item.name}
-                            </option>
-                        ))}
-                    </Form.Select>
-                </Form.Group>
+      <Form className={cx('form')}>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}> Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter name"
+            name="assetName"
+            value={data.assetName}
+            onChange={onChange}
+            className={cx('input')}
+          />
+        </Form.Group>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Category</Form.Label>
+          <Form.Control type="text" className={cx('input')} value={asset.category.name} disabled readOnly />
+        </Form.Group>
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}> Specification</Form.Label>
-                    <textarea
-                        cols="40"
-                        rows="5"
-                        placeholder="Enter specification"
-                        className={cx('input-specification')}
-                        value={specification}
-                        onChange={(e) => {
-                            setSpecification(e.target.value);
-                        }}
-                    ></textarea>
-                </Form.Group>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
-                    <Form.Control
-                        type="date"
-                        className={cx('input')}
-                        value={installed}
-                        onChange={(e) => {
-                            setInstalled(e.target.value);
-                        }}
-                    />
-                </Form.Group>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>State</Form.Label>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Specification</Form.Label>
+          <textarea
+            cols="40"
+            rows="5"
+            placeholder="Enter specification"
+            name="specification"
+            onChange={onChange}
+            value={data.specification}
+            className={cx('input-specification')}
+          ></textarea>
+        </Form.Group>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
+          <Form.Control
+            isInvalid={arrMsg.InstalledDate}
+            type="date"
+            name="installedDate"
+            value={dateStrToDate(data.installedDate)}
+            onChange={onChange}
+            onKeyDown={(e) => e.preventDefault()}
+            className={cx('input')}
+          />
+        </Form.Group>
+        {arrMsg.InstalledDate && <p className={cx('msgError')}>{arrMsg.InstalledDate[0]}</p>}
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input-state')}>State</Form.Label>
 
-                    <div
-                        key={`gender-radio`}
-                        className={cx('input-radio-state')}
-                        onChange={(e) => {
-                            handleChecked(e);
-                        }}
-                    >
-                        <Form.Check label="Available" name="gender" id={1} type="radio" />
-                        <Form.Check label="Not available" name="gender" id={2} type="radio" />
-                        <Form.Check label="Waiting for recycling" name="gender" id={3} type="radio" />
-                        <Form.Check label="Recycled" name="gender" id={4} type="radio" />
-                    </div>
-                </Form.Group>
-                <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleUpdate}>
-                        Save
-                    </Button>
+          <div key={`state-radio`} onChange={onChange} className={cx('input-radio-state')}>
+            <Form.Check label="Available" name="state" id={1} value={1} type="radio" defaultChecked={asset.state === 1} />
+            <Form.Check
+              label="Not available"
+              name="state"
+              id={0}
+              value={0}
+              type="radio"
+              defaultChecked={asset.state === 0}
+            />
+            <Form.Check
+              label="Waiting for recycling"
+              name="state"
+              id={3}
+              value={3}
+              type="radio"
+              defaultChecked={asset.state === 3}
+            />
+            <Form.Check label="Recycled" name="state" id={2} value={2} type="radio" defaultChecked={asset.state === 2} />
+          </div>
+        </Form.Group>
+        <div className={cx('button')}>
+          <Button variant="danger" onClick={handleUpdate} disabled={!isInputComplete}>
+            Save
+          </Button>
 
-                    <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
-                        Cancel
-                    </Button>
-                </div>
-            </Form>
+          <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
+            Cancel
+          </Button>
         </div>
-    );
+      </Form>
+    </div>
+  );
 }
 
 export default CreateAsset;

@@ -8,8 +8,7 @@ namespace AssetManagementTeam6.API.Dtos.Requests
         public int AssetId { get; set; }
         public int AssignedToID { get; set; }
         public int? AssignedById { get; set; }
-        public DateTime AssignedDate { get; set; }
-        //public AssignmentStateEnum State { get; set; }
+        public DateTime AssignedDate { get; set; } = DateTime.Now;
         public string? Note { get; set; }
     }
 }
