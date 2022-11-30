@@ -1,58 +1,93 @@
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../context/RequiredAuth/authContext';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './asset.module.scss';
 
 import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import { Button, Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { BsSearch } from 'react-icons/bs';
 import { FaFilter } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { deleteData, getAllData, getAllDataWithFilterBox } from '../../apiServices';
+import { ASSET } from '../../constants';
 import { queryToStringForAsset } from '../../lib/helper';
+import { DetailAsset } from './DetailAsset/DetailAsset';
 
 const cx = classNames.bind(styles);
 
+export const convertStatetoStr = (state) => {
+  switch (state) {
+    case 0:
+      return 'Not Available';
+    case 1:
+      return 'Available';
+    case 2:
+      return 'Waiting For Recycling';
+    case 3:
+      return 'Recycled';
+    case 4:
+      return 'Assigned';
+    default:
+      break;
+  }
+};
+
 function Asset() {
-  const { newAsset, setNewAsset } = useAppContext();
   const ref = useRef();
-  const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false, assigned: false });
-  const [checkedCategory, setCheckedCategory] = useState({ laptop: false, monitor: false, personalComputer: false });
   const [showState, setShowState] = useState(false);
   const [showCategory, setShowCategory] = useState(false);
   const [placeholderState, setPlaceholderState] = useState('State');
-  const [placeholderCategory, setPlaceholderCategory] = useState('Category');
+
+  const [showDelete, setShowDelete] = useState(false);
+
+  const [assetId, setAssetId] = useState('');
+
+  const handleShowDelete = (e, asset) => {
+    if (asset.state === 4) {
+      e.preventDefault();
+    } else {
+      setAssetId(asset.id);
+      setShowDelete(true);
+    }
+  };
 
   const [search, setSearch] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [assets, setAssets] = useState([]);
   const [assetsHoan, setAssetsHoan] = useState([]);
   const [totalPageHoan, setTotalPageHoan] = useState();
   const [queryParams, setQueryParams] = useState({
     page: 1,
     pageSize: 10,
     sort: 'AssetCodeAcsending',
+    states: '0,1,4',
   });
 
-  let location = useLocation();
   let navigate = useNavigate();
 
   useEffect(() => {
-    if (newAsset) {
-      setAssets((prevAsset) => [newAsset, ...prevAsset]);
-      setNewAsset(null);
-    }
-  }, [newAsset, setNewAsset]);
+    const initSelectState = { available: false, notAvailable: false, assigned: false };
 
-  useEffect(() => {
-    const checkIfClickedOutside = (e) => {
+    const checkIfClickedOutside = async (e) => {
       if (showState && ref.current && !ref.current.contains(e.target)) {
+        setCheckedStateHoan(initSelectState);
+        setPlaceholderState('State');
+        setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' });
+        const data = await getAllDataWithFilterBox(
+          `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
+        );
+        setTotalPageHoan(data.totalRecord);
+        setAssetsHoan(data.source);
         setShowState(false);
       }
       if (showCategory && ref.current && !ref.current.contains(e.target)) {
+        setCheckedCategoryHoan(categories?.map((v) => ({ ...v, isChecked: false })));
+        setQueryParams({ ...queryParams, page: 1, pageSize: 10, category: '' });
+        const data = await getAllDataWithFilterBox(
+          `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, category: '' }),
+        );
+        setTotalPageHoan(data.totalRecord);
+        setAssetsHoan(data.source);
         setShowCategory(false);
       }
     };
@@ -61,7 +96,9 @@ function Asset() {
     return () => {
       document.removeEventListener('mousedown', checkIfClickedOutside);
     };
-  }, [showState, showCategory]);
+    // I dont want render when categories changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showState, showCategory, queryParams]);
 
   const navigateToCreateAsset = () => {
     navigate('createnewasset');
@@ -71,89 +108,170 @@ function Asset() {
     setShowState((pre) => !pre);
   };
   const handleCategory = () => {
-    setShowCategory((pre) => !pre);
+    setShowCategory(true);
   };
 
-  const handleChangeCheckboxState = (e, type) => {
-    setCheckedState({ ...checkedState, [type]: e.target.checked });
+  const [checkedStateHoan, setCheckedStateHoan] = useState({ available: false, notAvailable: false, assigned: false });
+
+  const handleChangeCheckboxHoan = (e) => {
+    setCheckedStateHoan({ ...checkedStateHoan, [e.target.name]: e.target.checked });
   };
 
-  const handleOkState = () => {
-    setShowState((pre) => !pre);
-    if (checkedState.available && checkedState.notAvailable && checkedState.assigned) {
-      return setPlaceholderState('Available, Not available, Assigned');
+  const handleOkState = async () => {
+    let data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
+    );
+
+    if (checkedStateHoan.available) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '1' }),
+      );
+      setPlaceholderState('Available');
     }
-    if (checkedState.available && checkedState.notAvailable) {
-      return setPlaceholderState('Available, Not available');
+    if (checkedStateHoan.notAvailable) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0' }),
+      );
+      setPlaceholderState('Not available');
     }
-    if (checkedState.available && checkedState.assigned) {
-      return setPlaceholderState('Available, Assigned');
-    }
-    if (checkedState.notAvailable && checkedState.assigned) {
-      return setPlaceholderState('Not available, Assigned');
-    }
-    if (checkedState.available) {
-      return setPlaceholderState('Available');
-    }
-    if (checkedState.notAvailable) {
-      return setPlaceholderState('Not available');
-    }
-    if (checkedState.assigned) {
-      return setPlaceholderState('Assigned');
+    if (checkedStateHoan.assigned) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '4' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '4' }),
+      );
+
+      setPlaceholderState('Assigned');
     }
 
-    return setPlaceholderState('State');
+    if (checkedStateHoan.available && checkedStateHoan.notAvailable) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
+      );
+
+      setPlaceholderState('Available, Not available');
+    }
+    if (checkedStateHoan.available && checkedStateHoan.assigned) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1, 4' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '1, 4' }),
+      );
+
+      setPlaceholderState('Available, Assigned');
+    }
+    if (checkedStateHoan.notAvailable && checkedStateHoan.assigned) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0, 4' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0, 4' }),
+      );
+      setPlaceholderState('Not available, Assigned');
+    }
+
+    if (checkedStateHoan.available && checkedStateHoan.notAvailable && checkedStateHoan.assigned) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' });
+
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
+      );
+
+      setPlaceholderState('All');
+    }
+
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+    setShowState(false);
   };
 
-  const handleCancelState = () => {
-    setShowState((pre) => !pre);
+  const handleCancelState = async () => {
+    setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' });
+    const data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, states: '0,1,4' }),
+    );
+    setPlaceholderState('State');
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+    setCheckedStateHoan({ available: false, notAvailable: false, assigned: false });
+    setShowState(false);
   };
 
-  const handleChangeCheckboxCategory = (e, type) => {
-    setCheckedCategory({ ...checkedCategory, [type]: e.target.checked });
+  // Category
+
+  const [categories, setCategories] = useState([]);
+
+  const getDataCategory = async () => {
+    const data = await getAllData('Category');
+    setCategories(data);
   };
 
-  const handleOkCategory = () => {
+  useEffect(() => {
+    getDataCategory();
+  }, []);
+
+  const handleOkCategory = async () => {
+    let string = '';
+    for (let index = 0; index < listCategories.length; index++) {
+      string += listCategories[index] + ',';
+    }
+
+    setQueryParams({ ...queryParams, page: 1, pageSize: 10, category: string });
+
+    const data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, category: string }),
+    );
+
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+
     setShowCategory(false);
-    if (checkedCategory.laptop && checkedCategory.monitor && checkedCategory.personalComputer) {
-      return setPlaceholderCategory('Laptop, Monitor, Personal Computer');
-    }
-    if (checkedCategory.monitor && checkedCategory.personalComputer) {
-      return setPlaceholderCategory(' Monitor, Personal Computer');
-    }
-    if (checkedCategory.laptop && checkedCategory.monitor) {
-      return setPlaceholderCategory('Laptop, Monitor');
-    }
-    if (checkedCategory.laptop && checkedCategory.personalComputer) {
-      return setPlaceholderCategory('Laptop, Personal Computer');
-    }
-    if (checkedCategory.laptop) {
-      return setPlaceholderCategory('Laptop');
-    }
-    if (checkedCategory.monitor) {
-      return setPlaceholderCategory(' Monitor');
-    }
-    if (checkedCategory.personalComputer) {
-      return setPlaceholderCategory(' Personal Computer');
-    }
-
-    return setPlaceholderCategory('Category');
   };
 
-  const handleCancelCategory = () => {
-    setShowCategory((pre) => !pre);
+  const [listCategories, setListCategories] = useState([]);
+
+  const [checkedCategoryHoan, setCheckedCategoryHoan] = useState();
+
+  useEffect(() => {
+    if (categories) {
+      setCheckedCategoryHoan(categories?.map((v) => ({ ...v, isChecked: false })));
+    }
+  }, [categories]);
+
+  const handleChangeCheckboxCategory = (e) => {
+    setCheckedCategoryHoan(
+      checkedCategoryHoan.map((x) => {
+        if (x.id === e.target.id)
+          return {
+            ...x,
+            isChecked: e.target.checked,
+          };
+        return x;
+      }),
+    );
+
+    setListCategories(
+      listCategories.includes(e.target?.value)
+        ? listCategories.filter((x) => x !== e.target?.value)
+        : [...listCategories, e.target?.value],
+    );
   };
 
-  useEffect(() => {
-    setAssetsHoan(assets);
-  }, [assets, currentPage]);
-
-  useEffect(() => {
-    const currentSearchPage = location.search?.slice(-1);
-    if (currentSearchPage && Number(currentSearchPage)) {
-      setCurrentPage(Number(currentSearchPage));
-    }
-  }, [currentPage, location.pathname, location.search]);
+  const handleCancelCategory = async () => {
+    setCheckedCategoryHoan(categories?.map((v) => ({ ...v, isChecked: false })));
+    setQueryParams({ ...queryParams, page: 1, pageSize: 10, category: '' });
+    const data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, category: '' }),
+    );
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+    setShowCategory(false);
+  };
 
   const handleSearch = async (value) => {
     setSearch(value);
@@ -179,27 +297,33 @@ function Asset() {
     }
   };
 
-  const convertStatetoStr = (state) => {
-    switch (state) {
-      case 0:
-        return 'Not Available';
-      case 1:
-        return 'Available';
-      case 2:
-        return 'Waiting For Recycling';
-      case 3:
-        return 'Recycled';
-      case 4:
-        return 'Assigned';
-      default:
-        break;
-    }
-  };
-
   /// Hoan
 
   const [showDetail, setShowDetail] = useState(false);
-  const [assetDetails, setAssetDetails] = useState('');
+  const [assetDetail, setAssetDetails] = useState('');
+
+  const handleCloseDetail = () => {
+    setShowDetail(false);
+  };
+
+  // Get Data
+  const getData = async () => {
+    const data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
+    setAssetsHoan(data.source);
+  };
+
+  useEffect(() => {
+    getData();
+    // I want call a function when first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleDelete = async () => {
+    await deleteData(ASSET, assetId);
+    getData();
+    setAssetId('');
+    setShowDelete(false);
+  };
 
   const handleShowDetail = (assetCode) => {
     setShowDetail(true);
@@ -210,7 +334,7 @@ function Asset() {
     if (state === 4) {
       e.preventDefault();
     } else {
-      console.log('abc');
+      navigate('./editasset');
     }
   };
 
@@ -231,7 +355,7 @@ function Asset() {
     {
       name: 'Category',
       sortable: true,
-      selector: (row) => row.category.name,
+      selector: (row) => row.category?.name,
     },
     {
       name: 'State',
@@ -247,18 +371,24 @@ function Asset() {
       cell: (row) => [
         <Link
           onClick={(e) => handleClickEdit(e, row.state)}
+          to={`./editasset`}
           key={row.assetCode}
-          state={{ user: row }}
+          state={{ asset: row }}
           className={styles.customPen}
+          style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
         >
           <FontAwesomeIcon icon={faPen} />
         </Link>,
         <Link
           key={`keyDelete_${row.assetCode}`}
           to={'#'}
-          style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
+          style={
+            row.state === 4
+              ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+              : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
+          }
         >
-          <FontAwesomeIcon icon={faRemove} onClick={() => console.log('delete')} />
+          <FontAwesomeIcon icon={faRemove} onClick={(e) => handleShowDelete(e, row)} />
         </Link>,
       ],
     },
@@ -266,21 +396,19 @@ function Asset() {
 
   const [selectedPage, setSelectedPage] = useState(1);
 
-  const fetchUsers = async (page) => {
+  const fetchAssets = async (page) => {
     setQueryParams({ ...queryParams, page: page, pageSize: 10 });
 
     const data = await getAllDataWithFilterBox(
       `Asset/query` + queryToStringForAsset({ ...queryParams, page: page, pageSize: 10 }),
     );
 
-    console.log('data', data);
-
     setAssetsHoan(data.source);
     setTotalPageHoan(data.totalRecord);
   };
 
   useEffect(() => {
-    fetchUsers(1); // fetch page 1 of users
+    fetchAssets(1); // fetch page 1 of Assets
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -351,7 +479,12 @@ function Asset() {
 
       const data = await getAllDataWithFilterBox(
         `Asset/query` +
-          queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` }),
+          queryToStringForAsset({
+            ...queryParams,
+            page: 1,
+            pageSize: 10,
+            sort: `${getNameSort(column)}Acsending`,
+          }),
       );
       setAssetsHoan(data.source);
       setPerPage(10);
@@ -360,7 +493,12 @@ function Asset() {
 
       const data = await getAllDataWithFilterBox(
         `Asset/query` +
-          queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` }),
+          queryToStringForAsset({
+            ...queryParams,
+            page: 1,
+            pageSize: 10,
+            sort: `${getNameSort(column)}Descending`,
+          }),
       );
       setAssetsHoan(data.source);
       setPerPage(10);
@@ -374,57 +512,127 @@ function Asset() {
   };
 
   return (
-    <div className="main tableMain">
-      <h1 className="tableTitle">User List</h1>
-      <div className="tableExtension">
-        <div className="tableExtensionLeft">
-          <div className={cx('filterbox')}>
-            <div>
-              <InputGroup>
-                <Form.Control placeholder={placeholderState} />
-
-                <InputGroup.Text>
-                  <button className={cx('input')} onClick={handleState}>
-                    <FaFilter />
-                  </button>
-                </InputGroup.Text>
-              </InputGroup>
-            </div>
-
-            <div>
-              <InputGroup>
-                <Form.Control placeholder={placeholderCategory} />
-
-                <InputGroup.Text>
-                  <button className={cx('input')} onClick={handleCategory}>
-                    <FaFilter />
-                  </button>
-                </InputGroup.Text>
-              </InputGroup>
-            </div>
-          </div>
-        </div>
-
-        <div className="tableExtensionRight">
+    <div className={cx('main tableMain')} style={{ fontSize: 20 }}>
+      <h4 className={cx('tableTitle')}>Asset List</h4>
+      <div className={cx('tableExtension')}>
+        <div className={cx('filterbox')}>
           <div>
             <InputGroup>
-              <Form.Control onKeyUp={handleOnChangeEnter} value={search} onChange={(e) => setSearch(e.target.value)} />
+              <Form.Control placeholder={placeholderState} />
+
               <InputGroup.Text>
-                <button className={cx('input')} onClick={() => handleSearch(search)} onKeyUp={handleOnChangeEnter}>
-                  <BsSearch />
+                <button className={cx('input-state')} onClick={handleState}>
+                  <FaFilter />
                 </button>
               </InputGroup.Text>
             </InputGroup>
           </div>
-          <Button variant="danger" onClick={navigateToCreateAsset}>
-            Create new asset
-          </Button>
-        </div>
-      </div>
 
+          <div className={cx('filter_category')}>
+            <InputGroup>
+              <Form.Control />
+
+              <InputGroup.Text>
+                <button className={cx('input-category')} onClick={handleCategory}>
+                  <FaFilter />
+                </button>
+              </InputGroup.Text>
+            </InputGroup>
+          </div>
+          {showState && (
+            <div className={cx('dropdown')} ref={ref}>
+              <div className={cx('dropdown_container')}>
+                <div className={cx('dropdown_title')}>Select type(s)</div>
+                <div>
+                  <Form.Check
+                    type={'checkbox'}
+                    label={`Available`}
+                    id={`available`}
+                    value={1}
+                    name="available"
+                    onChange={handleChangeCheckboxHoan}
+                    checked={checkedStateHoan.available}
+                  />
+                  <Form.Check
+                    type={'checkbox'}
+                    label={`Not available`}
+                    id={`notAvailable`}
+                    value={0}
+                    name="notAvailable"
+                    onChange={handleChangeCheckboxHoan}
+                    checked={checkedStateHoan.notAvailable}
+                  />
+                  <Form.Check
+                    type={'checkbox'}
+                    label={`Assigned`}
+                    id={`assigned`}
+                    value={4}
+                    name="assigned"
+                    onChange={handleChangeCheckboxHoan}
+                    checked={checkedStateHoan.assigned}
+                  />
+                </div>
+
+                <div className={cx('button')}>
+                  <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
+                    OK
+                  </Button>
+                  <Button variant="light" size="sm" className={cx('button_cancel')} onClick={handleCancelState}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {showCategory && (
+            <div className={cx('dropdown')} style={{ marginLeft: 398, width: 198 }} ref={ref}>
+              <div className={cx('dropdown_container')}>
+                <div className={cx('dropdown_title')}>Select type(s)</div>
+                {checkedCategoryHoan?.map((category) => (
+                  <div key={category.id}>
+                    <Form.Check
+                      type="checkbox"
+                      name={category.name}
+                      label={category.name}
+                      value={category.id}
+                      id={category.id}
+                      onChange={handleChangeCheckboxCategory}
+                      checked={category.isChecked}
+                    />
+                  </div>
+                ))}
+
+                <div className={cx('button')}>
+                  <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkCategory}>
+                    OK
+                  </Button>
+                  <Button variant="light" size="sm" className={cx('button_cancel')} onClick={handleCancelCategory}>
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className={cx('tableExtensionRight')}>
+          <InputGroup>
+            <Form.Control onKeyUp={handleOnChangeEnter} value={search} onChange={(e) => setSearch(e.target.value)} />
+            <InputGroup.Text>
+              <button className={cx('input_search')} onClick={() => handleSearch(search)} onKeyUp={handleOnChangeEnter}>
+                <BsSearch />
+              </button>
+            </InputGroup.Text>
+          </InputGroup>
+        </div>
+        <Button variant="danger" onClick={navigateToCreateAsset}>
+          Create new asset
+        </Button>
+      </div>
       {assetsHoan ? (
         <DataTable
-          title="Users"
+          title="Assets"
           columns={columns}
           data={assetsHoan}
           noHeader
@@ -441,8 +649,31 @@ function Asset() {
           onSort={handleSort}
         />
       ) : (
-        <div>Deo co du lieu</div>
+        <div>I wanna cry :(((</div>
       )}
+      <DetailAsset showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} />
+
+      {/* TODO: handle modal delete */}
+      {/* <ModalDelete showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} /> */}
+
+      <Modal show={showDelete} onHide={() => setShowDelete(false)}>
+        <Modal.Header>
+          <Modal.Title>Are you sure?</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Label>Do you want to delete asset?</Form.Label>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={() => setShowDelete(false)}>
+            Close
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }

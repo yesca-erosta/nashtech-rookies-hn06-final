@@ -176,9 +176,9 @@ namespace AssetManagementTeam6.API.Services.Implements
             return output;
         }
 
-        public async Task<Asset?> Update(AssetRequest updateRequest)
+        public async Task<Asset?> Update(int id, AssetRequest updateRequest)
         {
-            var updatedAssert = await _assetRepository.GetOneAsync(x => x.Id == updateRequest.Id);
+            var updatedAssert = await _assetRepository.GetOneAsync(x => x.Id == id);
             if (updatedAssert == null) return null;
 
             {
@@ -186,7 +186,6 @@ namespace AssetManagementTeam6.API.Services.Implements
                 updatedAssert.AssetName = updateRequest.AssetName;
                 updatedAssert.InstalledDate = updateRequest.InstalledDate;
                 updatedAssert.State = updateRequest.State;
-                updatedAssert.CategoryId = updateRequest.CategoryId;
                 updatedAssert.Specification = updateRequest.Specification;
             }
 
