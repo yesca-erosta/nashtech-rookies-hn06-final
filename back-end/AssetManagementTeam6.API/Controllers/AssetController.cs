@@ -131,31 +131,6 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments.\n" +
                                         "If the asset is not able to used anymore, please update its state in Edit Asset page");
-<<<<<<< HEAD
-            }
-                
-            await _assetService.Delete(id);
-
-            return Ok(asset);
-        }
-
-        [HttpGet("query")]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? sort,string? states,string? category)
-        {
-            var userId = this.GetCurrentLoginUserId();
-
-            if (userId == null)
-                return NotFound();
-
-            var user = await _userService.GetUserById(userId.Value);
-
-            var location = user!.Location;
-
-            var listStates = new List<StateEnum>();
-
-            if (!string.IsNullOrWhiteSpace(states)) 
-               {
-=======
             }
                 
             await _assetService.Delete(id);
@@ -179,45 +154,11 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (!string.IsNullOrWhiteSpace(states))
             {
->>>>>>> 68de8b6f41432e82f8094b73590018c5d0c8f405
                 var typeArr = states.Split(",");
                 foreach (string typeValue in typeArr)
                 {
                     var tryParseOk = (Enum.TryParse(typeValue, out StateEnum enumValue));
                     if (tryParseOk)
-<<<<<<< HEAD
-                        listStates.Add(enumValue);
-                }
-            }
-
-            var listCategory = new List<string>();
-
-            if (!string.IsNullOrWhiteSpace(category))
-            {
-                var typeArr = category.Split(",");
-                foreach (string typeValue in typeArr)
-                {
-                    listCategory.Add(typeValue);
-                }
-            }
-
-            var queryModel = new PaginationQueryModel
-            {
-                Page = page,
-                PageSize = pageSize,
-                StaffCodeOrName = valueSearch,
-                State = listStates.Count != 0 ? listStates : null,
-                Category = listCategory.Count != 0 ? listCategory : null,
-                Sort = sort
-            };
-
-            var result = await _assetService.GetPagination(queryModel, location);
-
-            return Ok(result);
-        }
-    }
-}
-=======
                         listStates.Add(enumValue); ;
                 }
             }
@@ -249,4 +190,3 @@ namespace AssetManagementTeam6.API.Controllers
         }
     }
 }
->>>>>>> 68de8b6f41432e82f8094b73590018c5d0c8f405
