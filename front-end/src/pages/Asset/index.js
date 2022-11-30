@@ -43,7 +43,7 @@ function Asset() {
 
     let location = useLocation();
     let navigate = useNavigate();
-    const { token } = useAppContext();
+    const { token, setGetOneAsset } = useAppContext();
 
     useEffect(() => {
         if (newAsset) {
@@ -99,9 +99,28 @@ function Asset() {
         navigate('createnewasset');
     };
 
-    const navigateToEditAsset = (id) => {
-        setId(id);
-        navigate('editasset');
+    const navigateToEditAsset = async (id) => {
+        try {
+            const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/${id}`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token.token}`,
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*',
+                },
+            });
+
+            const data = await response.json();
+
+            setGetOneAsset(data);
+            setId(id);
+            navigate('editasset');
+        } catch (error) {
+            console.log('error');
+        }
+
+        return null;
     };
 
     const handleState = () => {
@@ -275,7 +294,8 @@ function Asset() {
             return null;
         };
         callSearch();
-    }, [currentPage, search, token.token]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage, token.token]);
 
     const handleSearch = async () => {
         try {

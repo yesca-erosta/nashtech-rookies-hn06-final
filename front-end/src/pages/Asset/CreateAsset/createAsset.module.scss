@@ -43,12 +43,22 @@
         .input-radio-state {
             width: 680px;
         }
+
+        .title_input-state {
+            width: 124px;
+        }
         .button {
             display: flex;
             justify-content: flex-end;
         }
         .cancel-button {
             margin-left: 10px;
+        }
+
+        .errorMessage1 {
+            color: #cf2338;
+            font-style: italic;
+            margin-left: 126px;
         }
     }
 
@@ -63,7 +73,7 @@
         border-radius: 6px;
         margin-bottom: 100px;
         position: absolute;
-        margin: 90px 0 0 570px;
+        margin: 90px 0 0 546px;
 
         .item {
             padding: 2px;

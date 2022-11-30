@@ -18,7 +18,7 @@ function CreateAsset() {
     const [category, setCategory] = useState('');
     const [specification, setSpecification] = useState('');
     const [installedDate, setInstalledDate] = useState('');
-    const [checkbox, setCheckbox] = useState(1);
+    const [checkbox, setCheckbox] = useState();
     const [disabled, setDisable] = useState(true);
     const [addCategory, setAddCategory] = useState(false);
     const [createCategory, setCreateCategory] = useState(false);
@@ -28,6 +28,12 @@ function CreateAsset() {
     const [errorCategoryName, setErrorCategoryName] = useState(false);
     const [disableCategory, setDisableCategory] = useState(true);
     const [categories, setCategories] = useState([]);
+
+    const [errorAssetName, setErrorAssetName] = useState(false);
+    const [errorAssetName2, setErrorAssetName2] = useState(false);
+    const [errorAssetName3, setErrorAssetName3] = useState(false);
+    const [errorSpecification, setErrorSpecification] = useState(false);
+    const [errorSpecification2, setErrorSpecification2] = useState(false);
 
     const { token } = useAppContext();
     const navigate = useNavigate();
@@ -72,6 +78,22 @@ function CreateAsset() {
                 navigate('/manageasset');
                 setNewAsset(data);
             }
+
+            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(name)) {
+                setErrorAssetName2(true);
+            }
+
+            if (name.length < 6 || name.length > 50) {
+                setErrorAssetName(true);
+            }
+
+            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(specification)) {
+                setErrorSpecification2(true);
+            }
+
+            if (specification.length < 6 || specification.length > 50) {
+                setErrorSpecification(true);
+            }
         } catch (error) {
             console.log('error');
         }
@@ -80,12 +102,18 @@ function CreateAsset() {
     };
 
     useEffect(() => {
-        if (Boolean(name) && Boolean(category) && Boolean(specification) && Boolean(installedDate)) {
+        if (
+            Boolean(name) &&
+            Boolean(category) &&
+            Boolean(specification) &&
+            Boolean(installedDate) &&
+            checkbox !== undefined
+        ) {
             setDisable(true);
         } else {
             setDisable(false);
         }
-    }, [name, category, specification, installedDate]);
+    }, [name, category, specification, installedDate, checkbox]);
 
     const getData = async () => {
         const data = await getAllData('Category');
@@ -138,18 +166,16 @@ function CreateAsset() {
                 setCategory(data.name);
             }
 
-            if (categoryName.length > 50) {
+            if (categoryName.length < 1 || categoryName.length > 50) {
                 setErrorCategoryName2(true);
+            }
+            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(categoryName)) {
+                setErrorCategoryName(true);
             }
 
             if (categoryId.length > 8 || categoryId.length < 2) {
                 setErrorCategoryId(true);
             }
-
-            if (!/^[a-zA-Z][a-zA-Z0-9]+$/.test(categoryName)) {
-                setErrorCategoryName(true);
-            }
-
             if (!/^([A-Z]{0,50})$/.test(categoryId)) {
                 setErrorCategoryId3(true);
             }
@@ -172,9 +198,19 @@ function CreateAsset() {
                         placeholder="Enter name"
                         className={cx('input')}
                         value={name}
+                        onFocus={() => {
+                            setErrorAssetName(false);
+                            setErrorAssetName2(false);
+                            setErrorAssetName3(false);
+                        }}
                         onChange={(e) => setName(e.target.value)}
                     />
                 </Form.Group>
+                {errorAssetName && <div className={cx('errorMessage1')}>the asset name should have 6-50 characters!</div>}
+                {errorAssetName3 && <div className={cx('errorMessage1')}>the asset name is required!</div>}
+                {errorAssetName2 && (
+                    <div className={cx('errorMessage1')}>the asset name should contain the alphaber and numeric!</div>
+                )}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
@@ -198,22 +234,34 @@ function CreateAsset() {
                         placeholder="Enter specification"
                         className={cx('input-specification')}
                         value={specification}
+                        onFocus={() => {
+                            setErrorSpecification(false);
+                            setErrorSpecification2(false);
+                        }}
                         onChange={(e) => setSpecification(e.target.value)}
                     ></textarea>
                 </Form.Group>
+                {errorSpecification && (
+                    <div className={cx('errorMessage1')}>the specification should have 6-50 characters!</div>
+                )}
+                {errorSpecification2 && (
+                    <div className={cx('errorMessage1')}>the specification should contain the alphaber and numeric!</div>
+                )}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
                     <Form.Control
                         type="date"
+                        onKeyDown={(e) => e.preventDefault()}
                         className={cx('input')}
                         value={installedDate}
+                        id="date"
                         onChange={(e) => setInstalledDate(e.target.value)}
                     />
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>State</Form.Label>
+                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
                     <div
                         key={`gender-radio`}
                         className={cx('input-radio-state')}
@@ -247,6 +295,7 @@ function CreateAsset() {
                             onClick={() => {
                                 setCategoryName(item.id);
                                 setCategory(item.name);
+                                setAddCategory(false);
                             }}
                         >
                             {item.name}
@@ -280,7 +329,7 @@ function CreateAsset() {
                         />
                     </Form.Group>
                     {errorCategoryName && <div className={cx('errorMessage')}>should contain the alphabet and numeric!</div>}
-                    {errorCategoryName2 && <div className={cx('errorMessage')}>no more than 50 characters!</div>}
+                    {errorCategoryName2 && <div className={cx('errorMessage')}>name should have 1-50 characters!</div>}
 
                     <Form.Group>
                         <Form.Label> Category ID:</Form.Label>

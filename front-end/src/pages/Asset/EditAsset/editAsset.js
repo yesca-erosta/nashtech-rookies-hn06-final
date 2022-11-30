@@ -6,20 +6,32 @@ import { useAppContext } from '../../../context/RequiredAuth/authContext';
 import { useState, useEffect } from 'react';
 import { getAllData } from '../../../apiServices';
 import { useNavigate } from 'react-router-dom';
+import { dateStrToDate } from '../../../lib/helper';
 
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
     const { token, id } = useAppContext();
     const navigate = useNavigate();
-
     const [name, setName] = useState('');
     const [category, setCategory] = useState('LA');
     const [specification, setSpecification] = useState('');
     const [installed, setInstalled] = useState('');
-    const [state, setState] = useState(0);
-
+    const [state, setState] = useState();
+    const [disableEdit, setDisableEdit] = useState(true);
     const [dataCategory, setDataCategory] = useState([]);
+
+    const { getOneAsset } = useAppContext();
+
+    useEffect(() => {
+        if (getOneAsset) {
+            setName(getOneAsset.assetName);
+            setCategory(getOneAsset.category.name);
+            setSpecification(getOneAsset.specification);
+            setInstalled(dateStrToDate(getOneAsset.installedDate));
+            setState(parseInt(getOneAsset.state));
+        }
+    }, [getOneAsset]);
 
     const handleChecked = (e) => {
         if (e.target.id === '2') {
@@ -35,6 +47,14 @@ function CreateAsset() {
             setState(3);
         }
     };
+
+    useEffect(() => {
+        if (Boolean(name) && Boolean(category) && Boolean(specification) && Boolean(installed) && state !== undefined) {
+            setDisableEdit(false);
+        } else {
+            setDisableEdit(true);
+        }
+    }, [name, category, specification, installed, state]);
 
     const handleUpdate = async () => {
         try {
@@ -120,6 +140,7 @@ function CreateAsset() {
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
                     <Form.Control
                         type="date"
+                        onKeyDown={(e) => e.preventDefault()}
                         className={cx('input')}
                         value={installed}
                         onChange={(e) => {
@@ -128,7 +149,7 @@ function CreateAsset() {
                     />
                 </Form.Group>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>State</Form.Label>
+                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
 
                     <div
                         key={`gender-radio`}
@@ -144,7 +165,7 @@ function CreateAsset() {
                     </div>
                 </Form.Group>
                 <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleUpdate}>
+                    <Button variant="danger" onClick={handleUpdate} disabled={disableEdit}>
                         Save
                     </Button>
 
