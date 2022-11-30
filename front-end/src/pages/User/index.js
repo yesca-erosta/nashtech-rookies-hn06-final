@@ -18,11 +18,9 @@ import { SearchUser } from './SearchUser/SearchUser';
 import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
 
-
-
 function User() {
-
-  const {users,setUsers,loading,setLoading,totalRows,setTotalRows,perPage,setPerPage,queryParams,setQueryParams} = useUserListContext();
+  const { users, setUsers, loading, setLoading, totalRows, setTotalRows, perPage, setPerPage, queryParams, setQueryParams } =
+    useUserListContext();
   const [show, setShow] = useState(false);
   const [showRemove, setShowRemove] = useState(false);
   const [userDetails, setUserDetails] = useState('');
@@ -53,7 +51,6 @@ function User() {
     setUserId('');
     setLoading(false);
   };
-
 
   const columns = [
     {

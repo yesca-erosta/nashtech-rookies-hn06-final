@@ -58,7 +58,7 @@ builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
 builder.Services.AddScoped<IValidator<ChangePasswordRequest>, ChangePasswordRequestValidator>();
 builder.Services.AddScoped<IValidator<CategoryRequest>, CategoryRequestValidatior>();
 builder.Services.AddScoped<IValidator<AssetRequest>, AssetRequestValidator>();
-builder.Services.AddScoped<IValidator<UserRequest>, UserValidator>();
+builder.Services.AddScoped<IValidator<AssignmentRequest>, AssignmentRequestValidator>();
 builder.Services.AddFluentValidation();
 
 builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
