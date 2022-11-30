@@ -6,44 +6,47 @@ import AuthProvider from './context/RequiredAuth/authContext';
 import RequiredAuth from './context/RequiredAuth/requiredAuth';
 import Login from './components/login/login';
 import NotFound from './pages/NotFound/notFound';
+import UsersProvider from './context/userListContext';
 
 function App() {
-    return (
-        <div>
-            <AuthProvider>
-                <Router>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="*" element={<NotFound />} />
+  return (
+    <div>
+      <AuthProvider>
+        <UsersProvider>
+          <Router>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="*" element={<NotFound />} />
 
-                        {publicRoutes.map((route, index) => {
-                            const Page = route.component;
-                            let Layout = DefaultLayout;
+              {publicRoutes.map((route, index) => {
+                const Page = route.component;
+                let Layout = DefaultLayout;
 
-                            if (route.layout === null) {
-                                Layout = Fragment;
-                            }
+                if (route.layout === null) {
+                  Layout = Fragment;
+                }
 
-                            return (
-                                <Route
-                                    key={index}
-                                    path={route.path}
-                                    element={
-                                        <RequiredAuth>
-                                            <Layout>
-                                                <Page />
-                                            </Layout>
-                                        </RequiredAuth>
-                                    }
-                                />
-                            );
-                        })}
-                    </Routes>
-                    <Outlet />
-                </Router>
-            </AuthProvider>
-        </div>
-    );
+                return (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                      <RequiredAuth>
+                        <Layout>
+                          <Page />
+                        </Layout>
+                      </RequiredAuth>
+                    }
+                  />
+                );
+              })}
+            </Routes>
+            <Outlet />
+          </Router>
+        </UsersProvider>
+      </AuthProvider>
+    </div>
+  );
 }
 
 export default App;

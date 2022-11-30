@@ -2,7 +2,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import classNames from 'classnames/bind';
 import styles from '../CreateAsset/createAsset.module.scss';
-import { useAuthContext } from '../../../context/RequiredAuth/authContext';
+import { useAppContext } from '../../../context/RequiredAuth/authContext';
 import { useState, useEffect } from 'react';
 import { getAllData } from '../../../apiServices';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
-    const { token, id } = useAuthContext();
+    const { token, id } = useAppContext();
     const navigate = useNavigate();
 
     const [name, setName] = useState('');
@@ -79,7 +79,7 @@ function CreateAsset() {
         <div className={cx('container')}>
             <h3 className={cx('title')}>Edit Asset</h3>
 
-            <Form>
+            <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}> Name</Form.Label>
                     <Form.Control

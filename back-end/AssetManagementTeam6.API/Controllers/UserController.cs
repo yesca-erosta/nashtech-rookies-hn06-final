@@ -118,7 +118,8 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (assignedUser != null)
             {
-                return StatusCode(500, "Can not delete user because there are valid assignments belonging to this user");
+                return StatusCode(500, "There are valid assignments belonging to this user.\n " +
+                                        "Please close all assignments before disable user.");
             }
 
             await _userService.Delete(id);
