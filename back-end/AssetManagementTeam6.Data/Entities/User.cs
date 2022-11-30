@@ -23,20 +23,18 @@ namespace AssetManagementTeam6.Data.Entities
         public string? FullName
         {
             get { return _fullName; }
-            set { _fullName = $"{FirstName} {LastName}"; }
-        } // => $"{FirstName} {LastName}";
+            private set { _fullName = $"{FirstName} {LastName}"; }
+        } 
         public string UserName { get; set; }
 
         // TODO: type hash password
         public string Password { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        //public string? StaffCode { get; private set; }
-
         public string? StaffCode
         {
             get { return _staffcode; }
-            set { _staffcode = $"SD{Id.ToString("D4")}"; }
+            private set { _staffcode = $"SD{Id.ToString("D4")}"; }
         }
 
     }

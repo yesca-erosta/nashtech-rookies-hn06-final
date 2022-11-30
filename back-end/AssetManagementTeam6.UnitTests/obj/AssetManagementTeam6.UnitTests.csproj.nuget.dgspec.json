@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\CustomProject\\TheFinal_Assignment\\Project\\backend\\AssetManagementTeam6\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj": {}
+    "D:\\Final_Rookies_Team06\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj": {}
   },
   "projects": {
-    "C:\\CustomProject\\TheFinal_Assignment\\Project\\backend\\AssetManagementTeam6\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj": {
+    "D:\\Final_Rookies_Team06\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\CustomProject\\TheFinal_Assignment\\Project\\backend\\AssetManagementTeam6\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj",
+        "projectUniqueName": "D:\\Final_Rookies_Team06\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj",
         "projectName": "AssetManagementTeam6.UnitTests",
-        "projectPath": "C:\\CustomProject\\TheFinal_Assignment\\Project\\backend\\AssetManagementTeam6\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj",
-        "packagesPath": "C:\\Users\\22nvh\\.nuget\\packages\\",
-        "outputPath": "C:\\CustomProject\\TheFinal_Assignment\\Project\\backend\\AssetManagementTeam6\\AssetManagementTeam6.UnitTests\\obj\\",
+        "projectPath": "D:\\Final_Rookies_Team06\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.UnitTests\\AssetManagementTeam6.UnitTests.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "D:\\Final_Rookies_Team06\\nashtech-rookies-hn06-final\\back-end\\AssetManagementTeam6.UnitTests\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\22nvh\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

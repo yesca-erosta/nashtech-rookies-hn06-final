@@ -60,7 +60,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 DateOfBirth = user.DateOfBirth
-        });
+            });
         }
 
         public async Task<User?> GetUserById(int id)
@@ -207,9 +207,9 @@ namespace AssetManagementTeam6.API.Services.Implements
             return updatedUser;
         }
 
-        public Task<User?> GetUserByStaffCode(string staffcode)
+        public async Task<User?> GetUserByStaffCode(string staffcode)
         {
-            throw new NotImplementedException();
+            return await _userRepository.GetOneAsync(user => user!.StaffCode == staffcode);
         }
     }
 }
