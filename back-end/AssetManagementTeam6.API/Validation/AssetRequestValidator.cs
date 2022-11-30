@@ -28,10 +28,12 @@ namespace AssetManagementTeam6.API.Validation
         }
         protected bool Over1Month(DateTime date)
         {
-            var now = DateTime.Now;
-            var month = now.Month + 1;
 
-            var compareDate = new DateTime(now.Year, month, now.Day);
+            // TODO: check day 30, 31
+            var now = DateTime.Now;
+            var month = now.Month == 12 ? 1 : now.Month + 1;
+            var year = now.Month == 12 ? now.Year + 1 : now.Year;
+            var compareDate = new DateTime(year, month, now.Day);
 
             return DateTime.Compare(compareDate, date) >= 0 ;
 

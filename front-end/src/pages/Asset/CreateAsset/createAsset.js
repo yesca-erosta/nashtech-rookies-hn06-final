@@ -1,39 +1,24 @@
+import classNames from 'classnames/bind';
+import { useEffect, useMemo, useState } from 'react';
+import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import classNames from 'classnames/bind';
-import styles from './createAsset.module.scss';
-import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../../../context/RequiredAuth/authContext';
 import { createData, getAllData } from '../../../apiServices';
-import { InputGroup } from 'react-bootstrap';
+import styles from './createAsset.module.scss';
 
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
-import { ASSET, CATEGORY, USER } from '../../../constants';
+import { ASSET, CATEGORY } from '../../../constants';
 
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
-  const [name, setName] = useState('');
-  //   const [category, setCategory] = useState('');
-  const [specification, setSpecification] = useState('');
-  const [installedDate, setInstalledDate] = useState('');
-  const [checkbox, setCheckbox] = useState();
-  const [disabled, setDisable] = useState(true);
   const [showCategory, setShowCategory] = useState(false);
   const [createCategory, setCreateCategory] = useState(false);
-  const [errorCategoryName2, setErrorCategoryName2] = useState(false);
-  const [errorCategoryId, setErrorCategoryId] = useState(false);
-  const [errorCategoryId3, setErrorCategoryId3] = useState(false);
-  const [errorCategoryName, setErrorCategoryName] = useState(false);
-  const [disableCategory, setDisableCategory] = useState(true);
   const [categories, setCategories] = useState([]);
 
   const navigate = useNavigate();
-
-  //   const [categoryName, setCategoryName] = useState('');
-  //   const [categoryId, setCategoryId] = useState('');
 
   const initCategory = { id: '', name: '' };
   const [category, setCategory] = useState(initCategory);
@@ -50,6 +35,9 @@ function CreateAsset() {
     if (category.id && category.name) {
       setDataAdd({ ...dataAdd, categoryId: category.id });
     }
+
+    // I dont want render when dataAdd changed
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category.id, category.name]);
 
   const [arrMsg, setArrMsg] = useState({
@@ -74,64 +62,6 @@ function CreateAsset() {
     }
   };
 
-  // const { setNewAsset } = useAppContext();
-
-  // const handleCreate = async () => {
-  //     try {
-  //         const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset`, {
-  //             method: 'POST',
-  //             body: JSON.stringify({
-  //                 assetName: name,
-  //                 categoryId: categoryName,
-  //                 specification: specification,
-  //                 installedDate: installedDate,
-  //                 state: checkbox,
-  //             }),
-  //             headers: {
-  //                 Accept: 'application/json',
-  //                 Authorization: `Bearer ${token.token}`,
-  //                 'Content-Type': 'application/json',
-  //                 'Access-Control-Allow-Origin': '*',
-  //             },
-  //         });
-
-  //         const data = await response.json();
-
-  //         if (response.status === 200) {
-  //             navigate('/manageasset');
-  //             setNewAsset(data);
-  //         }
-
-  //         if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(name)) {
-  //             setErrorAssetName2(true);
-  //         }
-
-  //         if (name.length < 6 || name.length > 50) {
-  //             setErrorAssetName(true);
-  //         }
-
-  //         if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(specification)) {
-  //             setErrorSpecification2(true);
-  //         }
-
-  //         if (specification.length < 6 || specification.length > 50) {
-  //             setErrorSpecification(true);
-  //         }
-  //     } catch (error) {
-  //         console.log('error');
-  //     }
-
-  //     return null;
-  // };
-
-  useEffect(() => {
-    if (Boolean(name) && Boolean(category) && Boolean(specification) && Boolean(installedDate) && checkbox !== undefined) {
-      setDisable(true);
-    } else {
-      setDisable(false);
-    }
-  }, [name, category, specification, installedDate, checkbox]);
-
   const getDataCategory = async () => {
     const data = await getAllData('Category');
     setCategories(data);
@@ -149,14 +79,6 @@ function CreateAsset() {
     setShowCategory(false);
     setCreateCategory((pre) => !pre);
   };
-
-  useEffect(() => {
-    if (category.id && category.name) {
-      setDisableCategory(false);
-    } else {
-      setDisableCategory(true);
-    }
-  }, [category.id, category.name]);
 
   const [arrMsgCategory, setArrMsgCategory] = useState('');
 
@@ -274,7 +196,7 @@ function CreateAsset() {
             Save
           </Button>
 
-          <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
+          <Button variant="outline-success" className={cx('cancel-button')} onClick={() => navigate('/manageasset')}>
             Cancel
           </Button>
         </div>

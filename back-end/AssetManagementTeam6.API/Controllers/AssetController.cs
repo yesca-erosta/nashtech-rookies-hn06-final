@@ -67,6 +67,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPost]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssetRequest requestModel)
         {
             var userId = this.GetCurrentLoginUserId();
@@ -90,26 +91,32 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateAsync([FromBody] AssetRequest requestModel)
+        [AuthorizeRoles(StaffRoles.Admin)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssetRequest requestModel)
         {
             var userId = this.GetCurrentLoginUserId();
 
             if (userId == null)
                 return NotFound();
 
-            var asset = await _assetService.GetAssetById(requestModel.Id);
+            if (id < 0)
+            {
+                return BadRequest("Invalid asset");
+            }
+
+            var asset = await _assetService.GetAssetById(id);
             if (asset == null)
                 return NotFound();
 
-            var user = await _userService.GetUserById((int)userId);
+            var user = await _userService.GetUserById(userId.Value);
 
-            requestModel.Location = user.Location;
+            requestModel.Location = user!.Location;
 
             if ((int)requestModel.State == 4)
                     return BadRequest("State Invalid");
             
-            var result = await _assetService.Update(requestModel);
+            var result = await _assetService.Update(id, requestModel);
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
@@ -118,6 +125,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             var asset = await _assetService.GetAssetById(id);
@@ -139,6 +147,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("query")]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? sort,string? states,string? category)
         {
             var userId = this.GetCurrentLoginUserId();

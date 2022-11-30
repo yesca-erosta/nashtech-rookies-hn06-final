@@ -41,8 +41,8 @@ export const queryToStringForAsset = (query) => {
     `page=${query.page ?? 1}&` +
     `pageSize=${query.pageSize ?? 10}&` +
     `${checkQuery(query.valueSearch, 'valueSearch')}` +
-    `${checkQuery(query.states, 'types')}` +
-    `${checkQuery(query.category, 'types')}` +
+    `${checkQuery(query.states, 'states')}` +
+    `${checkQuery(query.category, 'category')}` +
     `sort=${query.sort ?? 'AssetCodeAcsending'}`
   );
 };
