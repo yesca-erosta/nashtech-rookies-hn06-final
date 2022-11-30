@@ -48,7 +48,6 @@ function CreateUser() {
 
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
-
     if (res.code === 'ERR_BAD_REQUEST') {
       setArrMsg(res?.response?.data?.errors);
       if (res?.response?.status === 409) {
@@ -68,15 +67,6 @@ function CreateUser() {
         joinedDate: '',
         type: 0,
       });
-
-      // const newUsers = [...users];
-      // newUsers.unshift({
-      //   ...res,
-      //   type: res.type === 0 ? 'Staff' : 'Admin',
-      // });
-      // newUsers.pop();
-
-      // setUsers(newUsers);
 
       navigate('/manageruser');
     }

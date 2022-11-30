@@ -11,11 +11,13 @@ namespace AssetManagementTeam6.API.Validation
         {
 
             RuleFor(x => x.Id)
+             .Cascade(CascadeMode.StopOnFirstFailure)
              .NotNull()
              .NotEmpty()
              .Matches(StringPattern.CategoryID);
 
             RuleFor(x => x.Name)
+            .Cascade(CascadeMode.StopOnFirstFailure)
             .NotNull()
             .NotEmpty()
             .Matches(StringPattern.Name);

@@ -1,98 +1,103 @@
 .container {
-    min-width: 900px;
+  min-width: 900px;
+  position: relative;
+
+  .table {
+    margin-top: 80px;
+    width: 1190px;
+    .actions {
+      display: flex;
+    }
+  }
+
+  .title {
+    display: flex;
+
+    .triagle {
+      border: none;
+      background-color: transparent;
+      margin-left: 5px;
+    }
+  }
+
+  .paging {
+    display: flex;
+    justify-content: flex-end;
     position: relative;
+  }
 
-    .table {
-        margin-top: 80px;
-        width: 1190px;
-        .actions {
-            display: flex;
+  .title_asset {
+    color: #cf2338;
+  }
 
-            .pen {
-                margin-left: 10px;
-                font-size: 16px;
-                border: none;
-                background-color: transparent;
-                cursor: pointer;
-            }
+  .filterbox {
+    margin: 20px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 1190px;
+    position: absolute;
 
-            .delete {
-                margin-left: 20px;
-                color: red;
-                border: none;
-                background-color: transparent;
-                cursor: pointer;
-                font-size: 20px;
-            }
-
-            .delete:disabled {
-                color: #b7b7b7;
-            }
-        }
+    .input {
+      border: none;
+      background-color: transparent;
     }
+  }
 
-    .title {
-        display: flex;
+  .dropdown {
+    position: absolute;
+    border: 1px solid #b7b7b7;
+    border-radius: 6px;
+    width: 186px;
+    background-color: #fff;
+    margin: 60px 0 0 62px;
 
-        .triagle {
-            border: none;
-            background-color: transparent;
-            margin-left: 5px;
-        }
-    }
+    .dropdown_container {
+      margin: 16px;
 
-    .paging {
-        display: flex;
-        justify-content: flex-end;
-        position: relative;
-    }
-
-    .title_asset {
+      .dropdown_title {
+        font-weight: 700;
+        margin-bottom: 10px;
         color: #cf2338;
-    }
+      }
 
-    .filterbox {
-        margin: 20px 0;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 1190px;
-        position: absolute;
+      .button {
+        margin-top: 10px;
 
-        .input {
-            border: none;
-            background-color: transparent;
+        .button_ok {
+          width: 50px;
         }
-    }
 
-    .dropdown {
-        position: absolute;
-        border: 1px solid #b7b7b7;
-        border-radius: 6px;
-        width: 186px;
-        background-color: #fff;
-        margin: 60px 0 0 62px;
-
-        .dropdown_container {
-            margin: 16px;
-
-            .dropdown_title {
-                font-weight: 700;
-                margin-bottom: 10px;
-                color: #cf2338;
-            }
-
-            .button {
-                margin-top: 10px;
-
-                .button_ok {
-                    width: 50px;
-                }
-
-                .button_cancel {
-                    margin-left: 10px;
-                }
-            }
+        .button_cancel {
+          margin-left: 10px;
         }
+      }
     }
+  }
+}
+
+.pen {
+  margin-left: 10px;
+  font-size: 16px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.deleteDisabled,
+.penDisabled {
+  color: #b7b7b7;
+}
+
+.delete {
+  margin-left: 20px;
+  color: red;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.delete:disabled {
+  color: #b7b7b7;
 }

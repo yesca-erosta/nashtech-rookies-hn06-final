@@ -278,6 +278,7 @@ function User() {
       ) : (
         msgNoData()
       )}
+      
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
 
       <Modal show={showRemove} onHide={handleCloseRemove}>

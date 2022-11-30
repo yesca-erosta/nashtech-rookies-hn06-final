@@ -2,367 +2,341 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import classNames from 'classnames/bind';
 import styles from './createAsset.module.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../context/RequiredAuth/authContext';
-import { getAllData } from '../../../apiServices';
+import { createData, getAllData } from '../../../apiServices';
 import { InputGroup } from 'react-bootstrap';
 
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
+import { ASSET, CATEGORY, USER } from '../../../constants';
 
 const cx = classNames.bind(styles);
 
 function CreateAsset() {
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
-    const [specification, setSpecification] = useState('');
-    const [installedDate, setInstalledDate] = useState('');
-    const [checkbox, setCheckbox] = useState();
-    const [disabled, setDisable] = useState(true);
-    const [addCategory, setAddCategory] = useState(false);
-    const [createCategory, setCreateCategory] = useState(false);
-    const [errorCategoryName2, setErrorCategoryName2] = useState(false);
-    const [errorCategoryId, setErrorCategoryId] = useState(false);
-    const [errorCategoryId3, setErrorCategoryId3] = useState(false);
-    const [errorCategoryName, setErrorCategoryName] = useState(false);
-    const [disableCategory, setDisableCategory] = useState(true);
-    const [categories, setCategories] = useState([]);
+  const [name, setName] = useState('');
+  //   const [category, setCategory] = useState('');
+  const [specification, setSpecification] = useState('');
+  const [installedDate, setInstalledDate] = useState('');
+  const [checkbox, setCheckbox] = useState();
+  const [disabled, setDisable] = useState(true);
+  const [showCategory, setShowCategory] = useState(false);
+  const [createCategory, setCreateCategory] = useState(false);
+  const [errorCategoryName2, setErrorCategoryName2] = useState(false);
+  const [errorCategoryId, setErrorCategoryId] = useState(false);
+  const [errorCategoryId3, setErrorCategoryId3] = useState(false);
+  const [errorCategoryName, setErrorCategoryName] = useState(false);
+  const [disableCategory, setDisableCategory] = useState(true);
+  const [categories, setCategories] = useState([]);
 
-    const [errorAssetName, setErrorAssetName] = useState(false);
-    const [errorAssetName2, setErrorAssetName2] = useState(false);
-    const [errorAssetName3, setErrorAssetName3] = useState(false);
-    const [errorSpecification, setErrorSpecification] = useState(false);
-    const [errorSpecification2, setErrorSpecification2] = useState(false);
+  const navigate = useNavigate();
 
-    const { token } = useAppContext();
-    const navigate = useNavigate();
+  //   const [categoryName, setCategoryName] = useState('');
+  //   const [categoryId, setCategoryId] = useState('');
 
-    const [categoryName, setCategoryName] = useState('');
-    const [categoryId, setCategoryId] = useState('');
+  const initCategory = { id: '', name: '' };
+  const [category, setCategory] = useState(initCategory);
 
-    const handleChecked = (e) => {
-        if (e.target.id === '2') {
-            setCheckbox(0);
-        }
+  const [dataAdd, setDataAdd] = useState({
+    assetName: '',
+    categoryId: '',
+    specification: '',
+    installedDate: '',
+    state: '',
+  });
 
-        if (e.target.id === '1') {
-            setCheckbox(1);
-        }
-    };
+  useEffect(() => {
+    if (category.id && category.name) {
+      setDataAdd({ ...dataAdd, categoryId: category.id });
+    }
+  }, [category.id, category.name]);
 
-    const { setNewAsset } = useAppContext();
+  const [arrMsg, setArrMsg] = useState({
+    AssetName: '',
+    CategoryId: '',
+    Specification: '',
+    InstalledDate: '',
+    State: '',
+  });
 
-    const handleCreate = async () => {
-        try {
-            const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    assetName: name,
-                    categoryId: categoryName,
-                    specification: specification,
-                    installedDate: installedDate,
-                    state: checkbox,
-                }),
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token.token}`,
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-            });
+  const handleCreate = async () => {
+    const res = await createData(ASSET, dataAdd);
 
-            const data = await response.json();
+    console.log('res', res);
+    if (res.code === 'ERR_BAD_REQUEST') {
+      setArrMsg(res?.response?.data?.errors);
+      if (res?.response?.data?.errors?.requestModel) {
+        alert('Please input all fields');
+      }
+    } else {
+      navigate('/manageasset');
+    }
+  };
 
-            if (response.status === 200) {
-                navigate('/manageasset');
-                setNewAsset(data);
-            }
+  // const { setNewAsset } = useAppContext();
 
-            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(name)) {
-                setErrorAssetName2(true);
-            }
+  // const handleCreate = async () => {
+  //     try {
+  //         const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset`, {
+  //             method: 'POST',
+  //             body: JSON.stringify({
+  //                 assetName: name,
+  //                 categoryId: categoryName,
+  //                 specification: specification,
+  //                 installedDate: installedDate,
+  //                 state: checkbox,
+  //             }),
+  //             headers: {
+  //                 Accept: 'application/json',
+  //                 Authorization: `Bearer ${token.token}`,
+  //                 'Content-Type': 'application/json',
+  //                 'Access-Control-Allow-Origin': '*',
+  //             },
+  //         });
 
-            if (name.length < 6 || name.length > 50) {
-                setErrorAssetName(true);
-            }
+  //         const data = await response.json();
 
-            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(specification)) {
-                setErrorSpecification2(true);
-            }
+  //         if (response.status === 200) {
+  //             navigate('/manageasset');
+  //             setNewAsset(data);
+  //         }
 
-            if (specification.length < 6 || specification.length > 50) {
-                setErrorSpecification(true);
-            }
-        } catch (error) {
-            console.log('error');
-        }
+  //         if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(name)) {
+  //             setErrorAssetName2(true);
+  //         }
 
-        return null;
-    };
+  //         if (name.length < 6 || name.length > 50) {
+  //             setErrorAssetName(true);
+  //         }
 
-    useEffect(() => {
-        if (
-            Boolean(name) &&
-            Boolean(category) &&
-            Boolean(specification) &&
-            Boolean(installedDate) &&
-            checkbox !== undefined
-        ) {
-            setDisable(true);
-        } else {
-            setDisable(false);
-        }
-    }, [name, category, specification, installedDate, checkbox]);
+  //         if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(specification)) {
+  //             setErrorSpecification2(true);
+  //         }
 
-    const getData = async () => {
-        const data = await getAllData('Category');
-        setCategories(data);
-    };
+  //         if (specification.length < 6 || specification.length > 50) {
+  //             setErrorSpecification(true);
+  //         }
+  //     } catch (error) {
+  //         console.log('error');
+  //     }
 
-    useEffect(() => {
-        getData();
-    }, []);
+  //     return null;
+  // };
 
-    const handleAddCategory = () => {
-        setAddCategory((pre) => !pre);
-    };
+  useEffect(() => {
+    if (Boolean(name) && Boolean(category) && Boolean(specification) && Boolean(installedDate) && checkbox !== undefined) {
+      setDisable(true);
+    } else {
+      setDisable(false);
+    }
+  }, [name, category, specification, installedDate, checkbox]);
 
-    const handleCreateCategory = () => {
-        setAddCategory(false);
-        setCreateCategory((pre) => !pre);
-    };
+  const getDataCategory = async () => {
+    const data = await getAllData('Category');
+    setCategories(data);
+  };
 
-    useEffect(() => {
-        if (categoryId && categoryName) {
-            setDisableCategory(false);
-        } else {
-            setDisableCategory(true);
-        }
-    }, [categoryId, categoryName]);
+  useEffect(() => {
+    getDataCategory();
+  }, []);
 
-    const onCreateCategory = async () => {
-        try {
-            const response = await fetch(`https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Category`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    id: categoryId,
-                    name: categoryName,
-                }),
-                headers: {
-                    Accept: 'application/json',
-                    Authorization: `Bearer ${token.token}`,
-                    'Content-Type': 'application/json',
-                    'Access-Control-Allow-Origin': '*',
-                },
-            });
+  const handleShowCategory = () => {
+    setShowCategory((pre) => !pre);
+  };
 
-            const data = await response.json();
+  const handleCreateCategory = () => {
+    setShowCategory(false);
+    setCreateCategory((pre) => !pre);
+  };
 
-            if (response.status === 200) {
-                setCreateCategory((pre) => !pre);
-                setCategories((prevCategories) => [...prevCategories, data]);
-                setCategoryName(data.id);
-                setCategory(data.name);
-            }
+  useEffect(() => {
+    if (category.id && category.name) {
+      setDisableCategory(false);
+    } else {
+      setDisableCategory(true);
+    }
+  }, [category.id, category.name]);
 
-            if (categoryName.length < 1 || categoryName.length > 50) {
-                setErrorCategoryName2(true);
-            }
-            if (!/^[a-z A-Z][a-z A-Z 0-9]+$/.test(categoryName)) {
-                setErrorCategoryName(true);
-            }
+  const [arrMsgCategory, setArrMsgCategory] = useState('');
 
-            if (categoryId.length > 8 || categoryId.length < 2) {
-                setErrorCategoryId(true);
-            }
-            if (!/^([A-Z]{0,50})$/.test(categoryId)) {
-                setErrorCategoryId3(true);
-            }
-        } catch (error) {
-            console.log('error');
-        }
+  console.log('arrMsgCategory', arrMsgCategory);
+  const onCreateCategory = async () => {
+    const res = await createData(CATEGORY, createCategoryHoan);
 
-        return null;
-    };
+    console.log('res', res);
+    if (res.code === 'ERR_BAD_REQUEST') {
+      setArrMsgCategory(res?.response?.data);
+    } else {
+      getDataCategory();
+      setDataAdd({ ...dataAdd, categoryId: createCategoryHoan.id });
+      setCategory(createCategoryHoan);
+      setCreateCategory(false);
+      setArrMsgCategory('');
+    }
+  };
 
-    return (
-        <div className={cx('container')}>
-            <h3 className={cx('title')}>Create New Asset</h3>
+  const [createCategoryHoan, setCreateCategoryHoan] = useState(initCategory);
 
-            <Form className={cx('form')}>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}> Name</Form.Label>
-                    <Form.Control
-                        type="text"
-                        placeholder="Enter name"
-                        className={cx('input')}
-                        value={name}
-                        onFocus={() => {
-                            setErrorAssetName(false);
-                            setErrorAssetName2(false);
-                            setErrorAssetName3(false);
-                        }}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                </Form.Group>
-                {errorAssetName && <div className={cx('errorMessage1')}>the asset name should have 6-50 characters!</div>}
-                {errorAssetName3 && <div className={cx('errorMessage1')}>the asset name is required!</div>}
-                {errorAssetName2 && (
-                    <div className={cx('errorMessage1')}>the asset name should contain the alphaber and numeric!</div>
-                )}
+  const onChangeCategory = (e) => {
+    setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value });
+  };
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Category</Form.Label>
-                    <InputGroup>
-                        <Form.Control placeholder={'Category'} value={category} />
+  const handleChangeAdd = (e) => {
+    if (e.target.name === 'state') {
+      setDataAdd({ ...dataAdd, [e.target.name]: parseInt(e.target.value) });
+    } else {
+      setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
+    }
+  };
 
-                        <InputGroup.Text
-                            style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
-                            onClick={handleAddCategory}
-                        >
-                            <GoTriangleDown />
-                        </InputGroup.Text>
-                    </InputGroup>
-                </Form.Group>
+  const handleCancelCategory = () => {
+    setCreateCategory(false);
+    setArrMsgCategory('');
+  };
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}> Specification</Form.Label>
-                    <textarea
-                        cols="40"
-                        rows="5"
-                        placeholder="Enter specification"
-                        className={cx('input-specification')}
-                        value={specification}
-                        onFocus={() => {
-                            setErrorSpecification(false);
-                            setErrorSpecification2(false);
-                        }}
-                        onChange={(e) => setSpecification(e.target.value)}
-                    ></textarea>
-                </Form.Group>
-                {errorSpecification && (
-                    <div className={cx('errorMessage1')}>the specification should have 6-50 characters!</div>
-                )}
-                {errorSpecification2 && (
-                    <div className={cx('errorMessage1')}>the specification should contain the alphaber and numeric!</div>
-                )}
+  const isInputComplete = useMemo(() => {
+    return Object.values(dataAdd).every((x) => x !== null && x !== '');
+  }, [dataAdd]);
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
-                    <Form.Control
-                        type="date"
-                        onKeyDown={(e) => e.preventDefault()}
-                        className={cx('input')}
-                        value={installedDate}
-                        id="date"
-                        onChange={(e) => setInstalledDate(e.target.value)}
-                    />
-                </Form.Group>
+  return (
+    <div className={cx('container')}>
+      <h3 className={cx('title')}>Create New Asset</h3>
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
-                    <div
-                        key={`gender-radio`}
-                        className={cx('input-radio-state')}
-                        onChange={(e) => {
-                            handleChecked(e);
-                        }}
-                    >
-                        <Form.Check label="Available" name="btn" id={1} type="radio" />
-                        <Form.Check label="Not available" name="btn" id={2} type="radio" />
-                    </div>
-                </Form.Group>
+      <Form className={cx('form')}>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Name</Form.Label>
+          <Form.Control
+            isInvalid={arrMsg.AssetName}
+            type="text"
+            className={cx('input')}
+            placeholder="Enter name"
+            name="assetName"
+            onChange={handleChangeAdd}
+          />
+        </Form.Group>
+        {arrMsg.AssetName && <p className={cx('msgError')}>{arrMsg.AssetName[0]}</p>}
 
-                <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleCreate} disabled={!disabled}>
-                        Save
-                    </Button>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Category</Form.Label>
+          <InputGroup>
+            <Form.Control placeholder={'Category'} value={category.name} />
+            <InputGroup.Text
+              style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
+              onClick={handleShowCategory}
+            >
+              <GoTriangleDown />
+            </InputGroup.Text>
+          </InputGroup>
+        </Form.Group>
 
-                    <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
-                        Cancel
-                    </Button>
-                </div>
-            </Form>
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Specification</Form.Label>
+          <Form.Group className="w-100" controlId="exampleForm.ControlTextarea1">
+            <Form.Control
+              isInvalid={arrMsg.Specification}
+              type="text"
+              name="specification"
+              onChange={handleChangeAdd}
+              as="textarea"
+              className={cx('input-specification')}
+              rows={5}
+              cols={40}
+              placeholder="Enter specification"
+            />
+          </Form.Group>
+        </Form.Group>
+        {arrMsg.Specification && <p className={cx('msgError')}>{arrMsg.Specification[0]}</p>}
 
-            {addCategory && (
-                <div className={cx('container_category')}>
-                    {categories?.map((item, index) => (
-                        <div
-                            className={cx('item')}
-                            key={index}
-                            name={'categoryId'}
-                            onClick={() => {
-                                setCategoryName(item.id);
-                                setCategory(item.name);
-                                setAddCategory(false);
-                            }}
-                        >
-                            {item.name}
-                        </div>
-                    ))}
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
+          <Form.Control
+            isInvalid={arrMsg.InstalledDate}
+            type="date"
+            onKeyDown={(e) => e.preventDefault()}
+            className={cx('input')}
+            name="installedDate"
+            onChange={handleChangeAdd}
+          />
+        </Form.Group>
+        {arrMsg.InstalledDate && <p className={cx('msgError')}>{arrMsg.InstalledDate[0]}</p>}
 
-                    <div className={cx('addNew')} onClick={handleCreateCategory}>
-                        <div>
-                            <HiPlusSm style={{ color: 'red', fontSize: 20, marginRight: 6, marginBottom: 3 }} />
-                        </div>
-                        <div>Add new category</div>
-                    </div>
-                </div>
-            )}
+        <Form.Group className={cx('common-form')}>
+          <Form.Label className={cx('title_input-state')}>State</Form.Label>
+          <div key={`state-radio`} onChange={handleChangeAdd} className={cx('input-radio-state')}>
+            <Form.Check label="Not Available" name="state" type="radio" value={0} id={`state-radio-1`} />
+            <Form.Check label="Available" name="state" type="radio" value={1} id={`state-radio-2`} />
+          </div>
+        </Form.Group>
 
-            {createCategory && (
-                <div className={cx('container_createCategory')}>
-                    <div className={cx('container_title')}>Create New Category</div>
+        <div className={cx('button')}>
+          <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>
+            Save
+          </Button>
 
-                    <Form.Group>
-                        <Form.Label>Category Name:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Enter categoryName"
-                            value={categoryName}
-                            onFocus={() => {
-                                setErrorCategoryName(false);
-                                setErrorCategoryName2(false);
-                            }}
-                            onChange={(e) => setCategoryName(e.target.value)}
-                        />
-                    </Form.Group>
-                    {errorCategoryName && <div className={cx('errorMessage')}>should contain the alphabet and numeric!</div>}
-                    {errorCategoryName2 && <div className={cx('errorMessage')}>name should have 1-50 characters!</div>}
-
-                    <Form.Group>
-                        <Form.Label> Category ID:</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Enter categoryId"
-                            value={categoryId}
-                            onFocus={() => {
-                                setErrorCategoryId(false);
-                                setErrorCategoryId3(false);
-                            }}
-                            onChange={(e) => setCategoryId(e.target.value)}
-                        />
-                    </Form.Group>
-                    {errorCategoryId && <div className={cx('errorMessage')}>the Category ID should have 2-8 characters</div>}
-                    {errorCategoryId3 && <div className={cx('errorMessage')}>the Category ID is invalid!</div>}
-
-                    <div className={cx('btn_create-category')}>
-                        <Button variant="danger" onClick={onCreateCategory} disabled={disableCategory}>
-                            Save
-                        </Button>
-                        <Button
-                            variant="outline-primary"
-                            style={{ marginLeft: 20 }}
-                            onClick={() => setCreateCategory((pre) => !pre)}
-                        >
-                            Cancel
-                        </Button>
-                    </div>
-                </div>
-            )}
+          <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
+            Cancel
+          </Button>
         </div>
-    );
+      </Form>
+
+      {showCategory && (
+        <div className={cx('container_category')}>
+          {categories?.map((item, index) => (
+            <div
+              className={cx('item')}
+              key={index}
+              name={'categoryId'}
+              onClick={() => {
+                setCategory({ id: item.id, name: item.name });
+                setShowCategory(false);
+              }}
+            >
+              {item.name}
+            </div>
+          ))}
+
+          <div className={cx('addNew')} onClick={handleCreateCategory}>
+            <div>
+              <HiPlusSm style={{ color: 'red', fontSize: 20, marginRight: 6, marginBottom: 3 }} />
+            </div>
+            <div>Add new category</div>
+          </div>
+        </div>
+      )}
+
+      {createCategory && (
+        <div className={cx('container_createCategory')}>
+          <div className={cx('container_title')}>Create New Category</div>
+
+          <Form.Group>
+            <Form.Label>Category Name:</Form.Label>
+            <Form.Control type="text" name="name" placeholder="Enter Category Name" onChange={onChangeCategory} />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Category ID:</Form.Label>
+            <Form.Control type="text" name="id" placeholder="Enter Category Id" onChange={onChangeCategory} />
+          </Form.Group>
+
+          {arrMsgCategory && <p className={cx('msgError')}>{arrMsgCategory}</p>}
+
+          <div className={cx('btn_create-category')}>
+            <Button
+              variant="danger"
+              onClick={onCreateCategory}
+              disabled={!createCategoryHoan?.name || !createCategoryHoan?.id}
+            >
+              Save
+            </Button>
+            <Button variant="outline-primary" style={{ marginLeft: 20 }} onClick={handleCancelCategory}>
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default CreateAsset;

@@ -2,3 +2,5 @@ export const BASE_URL = 'https://localhost:7060/api' ?? 'https://nashtech-rookie
 export const TOKEN_KEY = 'accessToken';
 export const USER_INFORMATION = 'userInformation';
 export const USER = 'User';
+export const ASSET = 'Asset';
+export const CATEGORY = 'Category';

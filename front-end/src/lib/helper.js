@@ -30,3 +30,19 @@ export const queryToString = (query) => {
     `sort=${query.sort ?? 'NameAcsending'}`
   );
 };
+
+export const queryToStringForAsset = (query) => {
+  const checkQuery = (queryParams, queryName) => {
+    return queryParams === 0 ? `${queryName}=0&` : queryParams ? `${queryName}=${queryParams}&` : `${queryName}=&`;
+  };
+
+  return (
+    '?' +
+    `page=${query.page ?? 1}&` +
+    `pageSize=${query.pageSize ?? 10}&` +
+    `${checkQuery(query.valueSearch, 'valueSearch')}` +
+    `${checkQuery(query.states, 'types')}` +
+    `${checkQuery(query.category, 'types')}` +
+    `sort=${query.sort ?? 'AssetCodeAcsending'}`
+  );
+};
