@@ -6,16 +6,16 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
-import { useUserListContext } from '../../../context/userListContext';
+// import { useUserListContext } from '../../../context/userListContext';
 
 import styles from './createUser.module.scss';
 
 const cx = classNames.bind(styles);
 
 function CreateUser() {
+  // const { users, setUsers } = useUserListContext();
+
   let navigate = useNavigate();
-  const {users,setUsers} = useUserListContext();
-  console.log(users);
   const [hidePass, setHidePass] = useState(true);
   const [dataAdd, setDataAdd] = useState({
     userName: '',
@@ -26,15 +26,6 @@ function CreateUser() {
     gender: '',
     joinedDate: '',
     type: 0,
-  });
-
-  const [error, setError] = useState({
-    userName: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    joinedDate: '',
   });
 
   const toggleBtnOld = () => {
@@ -57,7 +48,6 @@ function CreateUser() {
 
   const onSaveAdd = async () => {
     const res = await createData(USER, dataAdd);
-
     if (res.code === 'ERR_BAD_REQUEST') {
       setArrMsg(res?.response?.data?.errors);
       if (res?.response?.status === 409) {
@@ -78,30 +68,11 @@ function CreateUser() {
         type: 0,
       });
 
-      const newUsers =[...users];
-      
-      newUsers.unshift({
-        ...res,
-        type:res.type === 0 ? 'Staff' : 'Admin'
-      });
-      newUsers.pop();
-
-      setUsers(newUsers)
-
       navigate('/manageruser');
     }
   };
 
-  const handleBlurAdd = (e) => {
-    if (e.target.value) {
-      setError({ userName: '', password: '', firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
-    } else {
-      setError({ ...error, [e.target.name]: 'This field is required' });
-    }
-  };
-
   const handleChangeAdd = (e) => {
-    setError({ userName: '', password: '', firstName: '', lastName: '', dateOfBirth: '', joinedDate: '' });
     if (e.target.name === 'gender' || e.target.name === 'type') {
       setDataAdd({ ...dataAdd, [e.target.name]: parseInt(e.target.value) });
     } else {
@@ -126,7 +97,6 @@ function CreateUser() {
             className={cx('input')}
             name="userName"
             onChange={handleChangeAdd}
-            onBlur={handleBlurAdd}
           />
         </Form.Group>
         {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
@@ -139,7 +109,6 @@ function CreateUser() {
               className={cx('input')}
               name="password"
               onChange={handleChangeAdd}
-              onBlur={handleBlurAdd}
             />
             <div className={cx('icon-new')} onClick={toggleBtnOld}>
               {!hidePass ? <AiFillEye /> : <AiFillEyeInvisible />}
@@ -155,7 +124,6 @@ function CreateUser() {
             className={cx('input')}
             name="firstName"
             onChange={handleChangeAdd}
-            onBlur={handleBlurAdd}
           />
         </Form.Group>
         {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
@@ -167,7 +135,6 @@ function CreateUser() {
             className={cx('input')}
             name="lastName"
             onChange={handleChangeAdd}
-            onBlur={handleBlurAdd}
           />
         </Form.Group>
         {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
@@ -180,7 +147,6 @@ function CreateUser() {
             className={cx('input')}
             name="dateOfBirth"
             onChange={handleChangeAdd}
-            onBlur={handleBlurAdd}
           />
         </Form.Group>
         {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
@@ -219,7 +185,6 @@ function CreateUser() {
             className={cx('input')}
             name="joinedDate"
             onChange={handleChangeAdd}
-            onBlur={handleBlurAdd}
           />
         </Form.Group>
         {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}

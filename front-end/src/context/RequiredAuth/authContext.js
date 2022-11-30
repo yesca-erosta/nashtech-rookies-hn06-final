@@ -1,20 +1,24 @@
 import { createContext, useContext, useState } from 'react';
 
-const AuthContext = createContext({
+const AppContext = createContext({
     isAuthenticated: false,
     setIsAuthenticated: () => {},
     token: null,
     oldPasswordLogin: null,
     id: null,
+    newAsset: null,
+    getOneAsset: null,
 });
 
-export const useAuthContext = () => useContext(AuthContext);
+export const useAppContext = () => useContext(AppContext);
 
 const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [token, setToken] = useState({});
     const [oldPasswordLogin, setOldPasswordLogin] = useState('');
     const [id, setId] = useState();
+    const [newAsset, setNewAsset] = useState();
+    const [getOneAsset, setGetOneAsset] = useState();
 
     const contextValue = {
         isAuthenticated,
@@ -25,9 +29,13 @@ const AuthProvider = ({ children }) => {
         setOldPasswordLogin,
         id,
         setId,
+        newAsset,
+        setNewAsset,
+        getOneAsset,
+        setGetOneAsset,
     };
 
-    return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
+    return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;
 };
 
 export default AuthProvider;

@@ -1,539 +1,450 @@
-import axios from 'axios';
 import classNames from 'classnames/bind';
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { BASE_URL } from '../../constants';
-import { useAuthContext } from '../../context/RequiredAuth/authContext';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 import styles from './asset.module.scss';
 
-import { Button, Form, InputGroup } from 'react-bootstrap';
-import Modal from 'react-bootstrap/Modal';
-import Pagination from 'react-bootstrap/Pagination';
-import Table from 'react-bootstrap/Table';
-import { BsFillPencilFill, BsSearch } from 'react-icons/bs';
+import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import { BsSearch } from 'react-icons/bs';
 import { FaFilter } from 'react-icons/fa';
-import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
-import { TiDeleteOutline } from 'react-icons/ti';
+import ReactPaginate from 'react-paginate';
+import { getAllDataWithFilterBox } from '../../apiServices';
+import { queryToStringForAsset } from '../../lib/helper';
 
 const cx = classNames.bind(styles);
 
 function Asset() {
-    const { setId } = useAuthContext();
-    const ref = useRef();
-    const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false, assigned: false });
-    const [checkedCategory, setCheckedCategory] = useState({ laptop: false, monitor: false, personalComputer: false });
-    const [showState, setShowState] = useState(false);
-    const [showCategory, setShowCategory] = useState(false);
-    const [placeholderState, setPlaceholderState] = useState('State');
-    const [placeholderCategory, setPlaceholderCategory] = useState('Category');
+  const { newAsset, setNewAsset } = useAppContext();
+  const ref = useRef();
+  const [checkedState, setCheckedState] = useState({ available: false, notAvailable: false, assigned: false });
+  const [checkedCategory, setCheckedCategory] = useState({ laptop: false, monitor: false, personalComputer: false });
+  const [showState, setShowState] = useState(false);
+  const [showCategory, setShowCategory] = useState(false);
+  const [placeholderState, setPlaceholderState] = useState('State');
+  const [placeholderCategory, setPlaceholderCategory] = useState('Category');
 
-    const [isAssetCode, setIsAssetCode] = useState(false);
-    const [isAssetName, setIsAssetName] = useState(false);
-    const [isCategory, setIsCategory] = useState(false);
-    const [isState, setIsState] = useState(false);
-    const [showDelete, setShowDelete] = useState(false);
-    const [activeDeleteId, setactiveDeleteId] = useState();
-    const [deleteSuccess, setDeleteSuccess] = useState(false);
-    const [search, setSearch] = useState('');
+  const [search, setSearch] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [assets, setAssets] = useState([]);
+  const [assetsHoan, setAssetsHoan] = useState([]);
+  const [totalPageHoan, setTotalPageHoan] = useState();
+  const [queryParams, setQueryParams] = useState({
+    page: 1,
+    pageSize: 10,
+    sort: 'AssetCodeAcsending',
+  });
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPage, setTotalPage] = useState();
+  let location = useLocation();
+  let navigate = useNavigate();
 
-    const [dataList, setDataList] = useState([]);
+  useEffect(() => {
+    if (newAsset) {
+      setAssets((prevAsset) => [newAsset, ...prevAsset]);
+      setNewAsset(null);
+    }
+  }, [newAsset, setNewAsset]);
 
-    let location = useLocation();
-    let navigate = useNavigate();
-    const { token } = useAuthContext();
-
-    const handleIsAssetCode = () => {
-        setIsAssetCode((pre) => !pre);
-
-        if (dataList) {
-            dataList.reverse();
-        }
-    };
-    const handleIsAssetName = () => {
-        setIsAssetName((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
-        }
-    };
-    const handleIsCategory = () => {
-        setIsCategory((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
-        }
-    };
-    const handleIsState = () => {
-        setIsState((pre) => !pre);
-        if (dataList) {
-            dataList.reverse();
-        }
-    };
-
-    useEffect(() => {
-        const checkIfClickedOutside = (e) => {
-            if (showState && ref.current && !ref.current.contains(e.target)) {
-                setShowState(false);
-            }
-
-            if (showCategory && ref.current && !ref.current.contains(e.target)) {
-                setShowCategory(false);
-            }
-        };
-        document.addEventListener('mousedown', checkIfClickedOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', checkIfClickedOutside);
-        };
-    }, [showState, showCategory]);
-
-    const navigateToCreateAsset = () => {
-        navigate('createnewasset');
-    };
-
-    const navigateToEditAsset = (id) => {
-        setId(id);
-        navigate('editasset');
-    };
-
-    const handleState = () => {
-        setShowState((pre) => !pre);
-    };
-    const handleCategory = () => {
-        setShowCategory((pre) => !pre);
-    };
-
-    const handleChangeCheckboxState = (e, type) => {
-        setCheckedState({ ...checkedState, [type]: e.target.checked });
-    };
-
-    const handleOkState = () => {
-        setShowState((pre) => !pre);
-        if (checkedState.available && checkedState.notAvailable && checkedState.assigned) {
-            return setPlaceholderState('Available, Not available, Assigned');
-        }
-        if (checkedState.available && checkedState.notAvailable) {
-            return setPlaceholderState('Available, Not available');
-        }
-        if (checkedState.available && checkedState.assigned) {
-            return setPlaceholderState('Available, Assigned');
-        }
-        if (checkedState.notAvailable && checkedState.assigned) {
-            return setPlaceholderState('Not available, Assigned');
-        }
-        if (checkedState.available) {
-            return setPlaceholderState('Available');
-        }
-        if (checkedState.notAvailable) {
-            return setPlaceholderState('Not available');
-        }
-        if (checkedState.assigned) {
-            return setPlaceholderState('Assigned');
-        }
-
-        return setPlaceholderState('State');
-    };
-
-    const handleCancelState = () => {
-        setShowState((pre) => !pre);
-    };
-
-    const handleChangeCheckboxCategory = (e, type) => {
-        setCheckedCategory({ ...checkedCategory, [type]: e.target.checked });
-    };
-
-    const handleOkCategory = () => {
+  useEffect(() => {
+    const checkIfClickedOutside = (e) => {
+      if (showState && ref.current && !ref.current.contains(e.target)) {
+        setShowState(false);
+      }
+      if (showCategory && ref.current && !ref.current.contains(e.target)) {
         setShowCategory(false);
-        if (checkedCategory.laptop && checkedCategory.monitor && checkedCategory.personalComputer) {
-            return setPlaceholderCategory('Laptop, Monitor, Personal Computer');
-        }
-        if (checkedCategory.monitor && checkedCategory.personalComputer) {
-            return setPlaceholderCategory(' Monitor, Personal Computer');
-        }
-        if (checkedCategory.laptop && checkedCategory.monitor) {
-            return setPlaceholderCategory('Laptop, Monitor');
-        }
-        if (checkedCategory.laptop && checkedCategory.personalComputer) {
-            return setPlaceholderCategory('Laptop, Personal Computer');
-        }
-        if (checkedCategory.laptop) {
-            return setPlaceholderCategory('Laptop');
-        }
-        if (checkedCategory.monitor) {
-            return setPlaceholderCategory(' Monitor');
-        }
-        if (checkedCategory.personalComputer) {
-            return setPlaceholderCategory(' Personal Computer');
-        }
-
-        return setPlaceholderCategory('Category');
+      }
     };
+    document.addEventListener('mousedown', checkIfClickedOutside);
 
-    const handleCancelCategory = () => {
-        setShowCategory((pre) => !pre);
+    return () => {
+      document.removeEventListener('mousedown', checkIfClickedOutside);
     };
+  }, [showState, showCategory]);
 
-    const showModalDelete = (id) => {
-        setactiveDeleteId(id);
-        setShowDelete(true);
-    };
-    const handleCloseDelete = () => setShowDelete(false);
-    const handleDelete = async (id) => {
-        await axios({
-            method: 'DELETE',
-            url: `${BASE_URL}/Asset/${id}`,
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token.token}`,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-        })
-            .then((response) => {
-                if (response.status === 200) {
-                    setShowDelete(false);
-                    setDeleteSuccess((pre) => !pre);
-                }
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    };
+  const navigateToCreateAsset = () => {
+    navigate('createnewasset');
+  };
 
-    useEffect(() => {
-        if (!location.search) {
-            navigate('?p=1');
-        }
+  const handleState = () => {
+    setShowState((pre) => !pre);
+  };
+  const handleCategory = () => {
+    setShowCategory((pre) => !pre);
+  };
 
-        return;
-    }, [location, navigate]);
+  const handleChangeCheckboxState = (e, type) => {
+    setCheckedState({ ...checkedState, [type]: e.target.checked });
+  };
 
-    const handlePage = (item) => {
-        setCurrentPage(item);
-        navigate(`?p=${item}`);
-    };
+  const handleOkState = () => {
+    setShowState((pre) => !pre);
+    if (checkedState.available && checkedState.notAvailable && checkedState.assigned) {
+      return setPlaceholderState('Available, Not available, Assigned');
+    }
+    if (checkedState.available && checkedState.notAvailable) {
+      return setPlaceholderState('Available, Not available');
+    }
+    if (checkedState.available && checkedState.assigned) {
+      return setPlaceholderState('Available, Assigned');
+    }
+    if (checkedState.notAvailable && checkedState.assigned) {
+      return setPlaceholderState('Not available, Assigned');
+    }
+    if (checkedState.available) {
+      return setPlaceholderState('Available');
+    }
+    if (checkedState.notAvailable) {
+      return setPlaceholderState('Not available');
+    }
+    if (checkedState.assigned) {
+      return setPlaceholderState('Assigned');
+    }
 
-    useEffect(() => {
-        const currentSearchPage = location.search?.slice(-1);
-        if (currentSearchPage && Number(currentSearchPage)) {
-            setCurrentPage(Number(currentSearchPage));
-        }
-    }, [currentPage, location.pathname, location.search]);
+    return setPlaceholderState('State');
+  };
 
-    useEffect(() => {
-        axios({
-            method: 'GET',
-            url: `${BASE_URL}/Asset/query?page=${currentPage}&pageSize=2`,
-            headers: {
-                Accept: 'application/json',
-                Authorization: `Bearer ${token.token}`,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-            },
-        })
-            .then((response) => {
-                setDataList(response.data.source);
-                setTotalPage(response.data.totalPage);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, [currentPage, token.token, deleteSuccess]);
+  const handleCancelState = () => {
+    setShowState((pre) => !pre);
+  };
 
-    const handleSearch = async () => {
-        try {
-            const response = await fetch(
-                `https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Asset/query?page=1&pageSize=2&valueSearch=${search}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        Accept: 'application/json',
-                        Authorization: `Bearer ${token.token}`,
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                    },
-                },
-            );
+  const handleChangeCheckboxCategory = (e, type) => {
+    setCheckedCategory({ ...checkedCategory, [type]: e.target.checked });
+  };
 
-            const data = await response.json();
+  const handleOkCategory = () => {
+    setShowCategory(false);
+    if (checkedCategory.laptop && checkedCategory.monitor && checkedCategory.personalComputer) {
+      return setPlaceholderCategory('Laptop, Monitor, Personal Computer');
+    }
+    if (checkedCategory.monitor && checkedCategory.personalComputer) {
+      return setPlaceholderCategory(' Monitor, Personal Computer');
+    }
+    if (checkedCategory.laptop && checkedCategory.monitor) {
+      return setPlaceholderCategory('Laptop, Monitor');
+    }
+    if (checkedCategory.laptop && checkedCategory.personalComputer) {
+      return setPlaceholderCategory('Laptop, Personal Computer');
+    }
+    if (checkedCategory.laptop) {
+      return setPlaceholderCategory('Laptop');
+    }
+    if (checkedCategory.monitor) {
+      return setPlaceholderCategory(' Monitor');
+    }
+    if (checkedCategory.personalComputer) {
+      return setPlaceholderCategory(' Personal Computer');
+    }
 
-            if (response.status === 200) {
-                setDataList(data.source);
-                setTotalPage(data.totalPage);
-            }
-        } catch (error) {
-            console.log('error');
-        }
+    return setPlaceholderCategory('Category');
+  };
 
-        return null;
-    };
+  const handleCancelCategory = () => {
+    setShowCategory((pre) => !pre);
+  };
 
-    const handleOnChangeEnter = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch(search);
-        }
-    };
+  useEffect(() => {
+    setAssetsHoan(assets);
+  }, [assets, currentPage]);
 
-    const onChange = (e) => {
-        setSearch(e.target.value);
-    };
+  useEffect(() => {
+    const currentSearchPage = location.search?.slice(-1);
+    if (currentSearchPage && Number(currentSearchPage)) {
+      setCurrentPage(Number(currentSearchPage));
+    }
+  }, [currentPage, location.pathname, location.search]);
 
-    return (
-        <div className={cx('container')}>
-            <div className={cx('title_asset')}>
-                <h1>Asset List</h1>
-            </div>
+  const handleSearch = async (value) => {
+    setSearch(value);
 
-            <div className={cx('filterbox')}>
-                <div>
-                    <InputGroup>
-                        <Form.Control placeholder={placeholderState} />
+    let data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
+    if (value) {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
+      data = await getAllDataWithFilterBox(
+        `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
+      );
+    } else {
+      delete queryParams.valueSearch;
+      setQueryParams(queryParams);
+      data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
+    }
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+  };
 
-                        <InputGroup.Text>
-                            <button className={cx('input')} onClick={handleState}>
-                                <FaFilter />
-                            </button>
-                        </InputGroup.Text>
-                    </InputGroup>
-                </div>
+  const handleOnChangeEnter = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch(search);
+    }
+  };
 
-                <div>
-                    <InputGroup>
-                        <Form.Control placeholder={placeholderCategory} />
+  const convertStatetoStr = (state) => {
+    switch (state) {
+      case 0:
+        return 'Not Available';
+      case 1:
+        return 'Available';
+      case 2:
+        return 'Waiting For Recycling';
+      case 3:
+        return 'Recycled';
+      case 4:
+        return 'Assigned';
+      default:
+        break;
+    }
+  };
 
-                        <InputGroup.Text>
-                            <button className={cx('input')} onClick={handleCategory}>
-                                <FaFilter />
-                            </button>
-                        </InputGroup.Text>
-                    </InputGroup>
-                </div>
+  /// Hoan
 
-                <div>
-                    <InputGroup>
-                        <Form.Control onKeyUp={handleOnChangeEnter} />
+  const [showDetail, setShowDetail] = useState(false);
+  const [assetDetails, setAssetDetails] = useState('');
 
-                        <InputGroup.Text>
-                            <button
-                                className={cx('input')}
-                                onClick={handleSearch}
-                                value={search}
-                                onChange={onChange}
-                                onKeyUp={handleOnChangeEnter}
-                            >
-                                <BsSearch />
-                            </button>
-                        </InputGroup.Text>
-                    </InputGroup>
-                </div>
+  const handleShowDetail = (assetCode) => {
+    setShowDetail(true);
+    setAssetDetails(assetsHoan.find((c) => c.assetCode === assetCode));
+  };
 
-                <Button variant="danger" onClick={navigateToCreateAsset}>
-                    Create new asset
-                </Button>
-            </div>
+  const handleClickEdit = (e, state) => {
+    if (state === 4) {
+      e.preventDefault();
+    } else {
+      console.log('abc');
+    }
+  };
 
-            {showState && (
-                <div className={cx('dropdown')} ref={ref}>
-                    <div className={cx('dropdown_container')}>
-                        <div className={cx('dropdown_title')}>Select type(s)</div>
-                        <div>
-                            <Form.Check
-                                type={'checkbox'}
-                                label={`Available`}
-                                id={`available`}
-                                onChange={(e) => handleChangeCheckboxState(e, 'available')}
-                                checked={checkedState.available}
-                            />
-                            <Form.Check
-                                type={'checkbox'}
-                                label={`Not available`}
-                                id={`notAvailable`}
-                                onChange={(e) => handleChangeCheckboxState(e, 'notAvailable')}
-                                checked={checkedState.notAvailable}
-                            />
-                            <Form.Check
-                                type={'checkbox'}
-                                label={`Assigned`}
-                                id={`assigned`}
-                                onChange={(e) => handleChangeCheckboxState(e, 'assigned')}
-                                checked={checkedState.assigned}
-                            />
-                        </div>
+  const columns = [
+    {
+      name: 'Asset Code',
+      selector: (row) => row.assetCode,
+      sortable: true,
+    },
+    {
+      name: 'Asset Name',
+      selector: (row) => row.assetName,
+      sortable: true,
+      cell: (row) => {
+        return <Link onClick={() => handleShowDetail(row.assetCode)}>{row.assetName}</Link>;
+      },
+    },
+    {
+      name: 'Category',
+      sortable: true,
+      selector: (row) => row.category.name,
+    },
+    {
+      name: 'State',
+      selector: (row) => row.state,
+      sortable: true,
+      cell: (row) => {
+        return <div>{convertStatetoStr(row.state)}</div>;
+      },
+    },
+    {
+      name: 'Action',
+      selector: (row) => row.null,
+      cell: (row) => [
+        <Link
+          onClick={(e) => handleClickEdit(e, row.state)}
+          key={row.assetCode}
+          state={{ user: row }}
+          className={styles.customPen}
+        >
+          <FontAwesomeIcon icon={faPen} />
+        </Link>,
+        <Link
+          key={`keyDelete_${row.assetCode}`}
+          to={'#'}
+          style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
+        >
+          <FontAwesomeIcon icon={faRemove} onClick={() => console.log('delete')} />
+        </Link>,
+      ],
+    },
+  ];
 
-                        <div className={cx('button')}>
-                            <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
-                                OK
-                            </Button>
-                            <Button variant="light" size="sm" className={cx('button_cancel')} onClick={handleCancelState}>
-                                Cancel
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
+  const [selectedPage, setSelectedPage] = useState(1);
 
-            {showCategory && (
-                <div className={cx('dropdown')} style={{ marginLeft: 398, width: 198 }} ref={ref}>
-                    <div className={cx('dropdown_container')}>
-                        <div className={cx('dropdown_title')}>Select type(s)</div>
-                        <div>
-                            <Form.Check
-                                type="checkbox"
-                                label={`Laptop`}
-                                onChange={(e) => handleChangeCheckboxCategory(e, 'laptop')}
-                                checked={checkedCategory.laptop}
-                            />
-                            <Form.Check
-                                type="checkbox"
-                                label={`Monitor`}
-                                onChange={(e) => handleChangeCheckboxCategory(e, 'monitor')}
-                                checked={checkedCategory.monitor}
-                            />
-                            <Form.Check
-                                type="checkbox"
-                                label={`Personal Computer`}
-                                onChange={(e) => handleChangeCheckboxCategory(e, 'personalComputer')}
-                                checked={checkedCategory.personalComputer}
-                            />
-                        </div>
+  const fetchUsers = async (page) => {
+    setQueryParams({ ...queryParams, page: page, pageSize: 10 });
 
-                        <div className={cx('button')}>
-                            <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkCategory}>
-                                OK
-                            </Button>
-                            <Button variant="light" size="sm" className={cx('button_cancel')} onClick={handleCancelCategory}>
-                                Cancel
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            <div className={cx('table')}>
-                <Table responsive="sm">
-                    <thead>
-                        <tr>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>Asset Code</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssetCode}>
-                                            {isAssetCode ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>Asset Name</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssetName}>
-                                            {isAssetName ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div> Category</div>
-                                        <button className={cx('triagle')} onClick={handleIsCategory}>
-                                            {isCategory ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div> State</div>
-                                        <button className={cx('triagle')} onClick={handleIsState}>
-                                            {isState ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                        </tr>
-                    </thead>
-
-                    {dataList.length > 0
-                        ? dataList.map((item) => (
-                              <tbody key={item.id}>
-                                  <tr>
-                                      <td>{item.assetCode}</td>
-                                      <td>{item.assetName}</td>
-                                      <td>{item.category.name}</td>
-                                      <td>{item.state}</td>
-
-                                      <td>
-                                          <div className={cx('actions')}>
-                                              <button
-                                                  className={cx('pen')}
-                                                  disabled={false}
-                                                  onClick={() => navigateToEditAsset(item.id)}
-                                              >
-                                                  <BsFillPencilFill />
-                                              </button>
-                                              <button
-                                                  className={cx('delete')}
-                                                  disabled={false}
-                                                  onClick={() => showModalDelete(item.id)}
-                                              >
-                                                  <TiDeleteOutline />
-                                              </button>
-                                          </div>
-                                      </td>
-                                  </tr>
-                              </tbody>
-                          ))
-                        : null}
-                </Table>
-            </div>
-
-            <div className={cx('paging')}>
-                <Pagination>
-                    <Pagination.Item disabled={currentPage === 1} onClick={() => handlePage(currentPage - 1)}>
-                        Previous
-                    </Pagination.Item>
-                    {[...Array(totalPage)].map((_, pageNumberIndex) => (
-                        <Pagination.Item
-                            key={pageNumberIndex}
-                            onClick={() => handlePage(pageNumberIndex + 1)}
-                            active={pageNumberIndex + 1 === currentPage}
-                        >
-                            {pageNumberIndex + 1}
-                        </Pagination.Item>
-                    ))}
-                    <Pagination.Item
-                        disabled={totalPage && totalPage === currentPage}
-                        onClick={() => handlePage(currentPage + 1)}
-                    >
-                        Next
-                    </Pagination.Item>
-                </Pagination>
-            </div>
-
-            <Modal show={showDelete}>
-                <Modal.Header>
-                    <Modal.Title>Are you sure?</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Label>Do you want to delete asset?</Form.Label>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={handleCloseDelete}>
-                        Close
-                    </Button>
-                    <Button variant="danger" onClick={() => handleDelete(activeDeleteId)}>
-                        Delete
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
+    const data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: page, pageSize: 10 }),
     );
+
+    console.log('data', data);
+
+    setAssetsHoan(data.source);
+    setTotalPageHoan(data.totalRecord);
+  };
+
+  useEffect(() => {
+    fetchUsers(1); // fetch page 1 of users
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [perPage, setPerPage] = useState(10);
+
+  const handlePageClick = async (event) => {
+    setSelectedPage(event.selected + 1);
+    setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
+
+    const data = await getAllDataWithFilterBox(
+      `Asset/query` + queryToStringForAsset({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
+    );
+
+    setTotalPageHoan(data.totalRecord);
+    setAssetsHoan(data.source);
+    setPerPage(10);
+  };
+
+  const CustomPagination = (e) => {
+    const count = Math.ceil(totalPageHoan / perPage);
+    return (
+      <Row className="mx-0">
+        <Col className="d-flex justify-content-end" sm="12">
+          <ReactPaginate
+            previousLabel={'Previous'}
+            nextLabel={'Next'}
+            forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
+            onPageChange={handlePageClick}
+            pageCount={count || 1}
+            breakLabel={'...'}
+            pageRangeDisplayed={2}
+            marginPagesDisplayed={2}
+            activeClassName={'active '}
+            pageClassName={'page-item text-color'}
+            nextLinkClassName={'page-link text-color'}
+            nextClassName={'page-item next text-color'}
+            previousClassName={'page-item prev text-color'}
+            previousLinkClassName={'page-link text-color'}
+            pageLinkClassName={'page-link text-color'}
+            breakClassName="page-item text-color"
+            breakLinkClassName="page-link text-color"
+            containerClassName={'pagination react-paginate pagination-sm justify-content-end pr-1 mt-3'}
+          />
+        </Col>
+      </Row>
+    );
+  };
+
+  const getNameSort = (column) => {
+    if (column.id === 1) {
+      return 'AssetCode';
+    }
+    if (column.id === 2) {
+      return 'AssetName';
+    }
+    if (column.id === 3) {
+      return 'AssetCategoryName';
+    }
+    if (column.id === 4) {
+      return 'AssetState';
+    }
+    return 'AssetCode';
+  };
+
+  const getDataSort = async (column, sortDirection) => {
+    if (sortDirection === 'asc') {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` });
+
+      const data = await getAllDataWithFilterBox(
+        `Asset/query` +
+          queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` }),
+      );
+      setAssetsHoan(data.source);
+      setPerPage(10);
+    } else {
+      setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` });
+
+      const data = await getAllDataWithFilterBox(
+        `Asset/query` +
+          queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` }),
+      );
+      setAssetsHoan(data.source);
+      setPerPage(10);
+    }
+  };
+
+  const handleSort = async (column, sortDirection) => {
+    await getDataSort(column, sortDirection);
+
+    setSelectedPage(1);
+  };
+
+  return (
+    <div className="main tableMain">
+      <h1 className="tableTitle">User List</h1>
+      <div className="tableExtension">
+        <div className="tableExtensionLeft">
+          <div className={cx('filterbox')}>
+            <div>
+              <InputGroup>
+                <Form.Control placeholder={placeholderState} />
+
+                <InputGroup.Text>
+                  <button className={cx('input')} onClick={handleState}>
+                    <FaFilter />
+                  </button>
+                </InputGroup.Text>
+              </InputGroup>
+            </div>
+
+            <div>
+              <InputGroup>
+                <Form.Control placeholder={placeholderCategory} />
+
+                <InputGroup.Text>
+                  <button className={cx('input')} onClick={handleCategory}>
+                    <FaFilter />
+                  </button>
+                </InputGroup.Text>
+              </InputGroup>
+            </div>
+          </div>
+        </div>
+
+        <div className="tableExtensionRight">
+          <div>
+            <InputGroup>
+              <Form.Control onKeyUp={handleOnChangeEnter} value={search} onChange={(e) => setSearch(e.target.value)} />
+              <InputGroup.Text>
+                <button className={cx('input')} onClick={() => handleSearch(search)} onKeyUp={handleOnChangeEnter}>
+                  <BsSearch />
+                </button>
+              </InputGroup.Text>
+            </InputGroup>
+          </div>
+          <Button variant="danger" onClick={navigateToCreateAsset}>
+            Create new asset
+          </Button>
+        </div>
+      </div>
+
+      {assetsHoan ? (
+        <DataTable
+          title="Users"
+          columns={columns}
+          data={assetsHoan}
+          noHeader
+          defaultSortField="id"
+          defaultSortAsc={true}
+          highlightOnHover
+          noDataComponent={'There are no records to display'}
+          dense
+          //   progressPending={loading}
+          pagination
+          paginationComponent={CustomPagination}
+          paginationServer
+          sortServer
+          onSort={handleSort}
+        />
+      ) : (
+        <div>Deo co du lieu</div>
+      )}
+    </div>
+  );
 }
 
 export default Asset;

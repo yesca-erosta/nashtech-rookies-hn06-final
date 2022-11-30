@@ -9,7 +9,6 @@ import CreateUser from '../pages/User/CreateUser/createUser';
 import EditUser from '../pages/User/EditUser/editUser';
 import CreateAsset from '../pages/Asset/CreateAsset/createAsset';
 import EditAsset from '../pages/Asset/EditAsset/editAsset';
-import PageOne from '../pages/Asset/Paging/pageOne';
 import NotFound from '../pages/NotFound/notFound';
 import CreateAssignment from '../pages/Assignment/CreateAssignment/createAssignment';
 
@@ -25,7 +24,6 @@ export const publicRoutes = [
   { path: config.routes.editUser.path, component: EditUser },
   { path: config.routes.createNewAsset.path, component: CreateAsset },
   { path: config.routes.editAset.path, component: EditAsset },
-  { path: config.routes.pageAsset.path, component: PageOne },
   { path: config.routes.createnewAssignment.path, component: CreateAssignment },
   { path: config.routes.notFound.path, component: NotFound },
 ];

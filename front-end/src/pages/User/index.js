@@ -1,6 +1,6 @@
 import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -47,8 +47,9 @@ function User() {
   const handleDisable = async (id) => {
     setLoading(true);
     await deleteData(USER, id);
-    setShowRemove(false);
+    getData();
     setUserId('');
+    setShowRemove(false);
     setLoading(false);
   };
 
@@ -100,6 +101,18 @@ function User() {
       ],
     },
   ];
+
+  // Get Data
+  const getData = async () => {
+    const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+    setUsers(data.source);
+  };
+
+  useEffect(() => {
+    getData();
+    // I want call a function when first render
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSearch = async (value) => {
     setLoading(true);
@@ -265,6 +278,7 @@ function User() {
       ) : (
         msgNoData()
       )}
+      
       <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
 
       <Modal show={showRemove} onHide={handleCloseRemove}>
