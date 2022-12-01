@@ -1,55 +1,90 @@
 .pen {
-    margin-left: 10px;
-    font-size: 16px;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
+  margin-left: 10px;
+  font-size: 16px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
 }
 
 .deleteDisabled,
 .penDisabled {
-    color: #b7b7b7;
+  color: #b7b7b7;
 }
 
 .delete {
-    margin-left: 20px;
-    color: red;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    font-size: 20px;
+  margin-left: 20px;
+  color: red;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-size: 20px;
 }
 
 .delete:disabled {
-    color: #b7b7b7;
+  color: #b7b7b7;
 }
 
 .tableTitle {
-    font-size: 40px;
-    color: red;
+  font-size: 40px;
+  color: red;
 }
 
 .tableExtension {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
 }
 
 .filterbox {
-    display: flex;
-    flex-direction: row;
+  display: flex;
+  flex-direction: row;
 
-    .input-state,
-    .input-category {
-        border: none;
-        background-color: transparent;
-    }
+  .input-state,
+  .input-category {
+    border: none;
+    background-color: transparent;
+  }
 }
 .filter_category {
-    margin-left: 76px;
+  margin-left: 76px;
 }
 
 .input_search {
-    border: none;
-    background-color: transparent;
+  border: none;
+  background-color: transparent;
+}
+
+.modalTitle {
+  font-size: 20px !important;
+}
+
+.dropdown {
+  position: absolute;
+  border: 1px solid #b7b7b7;
+  border-radius: 6px;
+  width: 186px;
+  background-color: #fff;
+  margin: 60px 0 0 62px;
+  z-index: 1;
+  .dropdown_container {
+    margin: 16px;
+
+    .dropdown_title {
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: #cf2338;
+    }
+
+    .button {
+      margin-top: 10px;
+
+      .button_ok {
+        width: 50px;
+      }
+
+      .button_cancel {
+        margin-left: 10px;
+      }
+    }
+  }
 }
