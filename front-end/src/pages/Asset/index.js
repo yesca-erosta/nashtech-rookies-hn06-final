@@ -721,15 +721,15 @@ function Asset() {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <Form.Label>Do you want to delete asset?</Form.Label>
+                        <Form.Label>Do you want to delete this asset?</Form.Label>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={() => setShowDelete(false)}>
-                        Close
-                    </Button>
                     <Button variant="danger" onClick={handleDelete}>
                         Delete
+                    </Button>
+                    <Button variant="outline-secondary" onClick={() => setShowDelete(false)}>
+                        Cancel
                     </Button>
                 </Modal.Footer>
             </Modal>
