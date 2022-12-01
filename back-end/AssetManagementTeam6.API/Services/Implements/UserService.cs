@@ -97,8 +97,6 @@ namespace AssetManagementTeam6.API.Services.Implements
             return true;
         }
 
-        //sort option, nametoquery, filterbyname, type
-
         public async Task<Pagination<GetUserResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
         {
             // TODO: get list users not set with location
@@ -196,12 +194,13 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<User?> Update(int id, UserRequest updateRequest)
         {
 
-            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == id);
+            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == updateRequest.Id);
 
             if (userUpdate == null) 
             {
                 return null;
             }
+
             userUpdate!.DateOfBirth = updateRequest.DateOfBirth;
             userUpdate.Gender = updateRequest.Gender;
             userUpdate.JoinedDate = updateRequest.JoinedDate;
