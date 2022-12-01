@@ -93,6 +93,7 @@ function Asset() {
                 setTotalPageHoan(data.totalRecord);
                 setAssetsHoan(data.source);
                 setShowCategory(false);
+                setPlacehoderCategory([]);
                 setLoading(false);
             }
         };
@@ -224,6 +225,12 @@ function Asset() {
         getDataCategory();
     }, []);
 
+    const [listCategories, setListCategories] = useState([]);
+
+    const [checkedCategoryHoan, setCheckedCategoryHoan] = useState();
+
+    const [placehoderCategory, setPlacehoderCategory] = useState([]);
+
     const handleOkCategory = async () => {
         setLoading(true);
         let string = '';
@@ -240,13 +247,19 @@ function Asset() {
         setTotalPageHoan(data.totalRecord);
         setAssetsHoan(data.source);
 
+        // Handle placehoderCategory
+        // eslint-disable-next-line array-callback-return
+        checkedCategoryHoan?.map((item) => {
+            if (item.isChecked === true) {
+                setPlacehoderCategory((pre) => (pre.includes(item.name) ? [...pre] : [...pre, item.name]));
+            } else {
+                setPlacehoderCategory((pre) => (pre.includes(item.name) ? pre.filter((x) => x !== item.name) : [...pre]));
+            }
+        });
+
         setShowCategory(false);
         setLoading(false);
     };
-
-    const [listCategories, setListCategories] = useState([]);
-
-    const [checkedCategoryHoan, setCheckedCategoryHoan] = useState();
 
     useEffect(() => {
         if (categories) {
@@ -283,6 +296,7 @@ function Asset() {
         setTotalPageHoan(data.totalRecord);
         setAssetsHoan(data.source);
         setShowCategory(false);
+        setPlacehoderCategory([]);
         setLoading(false);
     };
 
@@ -562,10 +576,18 @@ function Asset() {
                             </InputGroup.Text>
                         </InputGroup>
                     </div>
-
                     <div className={cx('filter_category')}>
                         <InputGroup>
-                            <Form.Control placeholder="Category" readOnly />
+                            <Form.Control
+                                placeholder={
+                                    placehoderCategory?.length === 0
+                                        ? 'Category'
+                                        : placehoderCategory?.length === checkedCategoryHoan?.length
+                                        ? 'All'
+                                        : placehoderCategory
+                                }
+                                readOnly
+                            />
 
                             <InputGroup.Text>
                                 <button className={cx('input-category')} onClick={handleCategory}>
