@@ -1,8 +1,9 @@
 ﻿using AssetManagementTeam6.Data.Entities;
-using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Responses
 {
+    [ExcludeFromCodeCoverage]
     public class CreateAssetResponse
     {
         public string AssetName { get;  set; }
@@ -13,9 +14,9 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public CreateAssetResponse (Asset asset)
         {
-            AssetName = asset.AssetCode;
+            AssetName = asset.AssetCode!;
             CategoryId = asset.CategoryId;
-            Specification = asset.Specification;
+            Specification = asset.Specification!;
             InstalledDate = asset.InstalledDate;
             State = asset.State.ToString();
         }

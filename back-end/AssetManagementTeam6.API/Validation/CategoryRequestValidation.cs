@@ -2,9 +2,11 @@
 using AssetManagementTeam6.Data.Entities;
 using Common.Constants;
 using FluentValidation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Validation
 {
+    [ExcludeFromCodeCoverage]
     public class CategoryRequestValidatior : AbstractValidator<CategoryRequest>
     {
         public CategoryRequestValidatior()

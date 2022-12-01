@@ -1,8 +1,10 @@
 using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Responses
 {
+    [ExcludeFromCodeCoverage]
     public class GetAssetResponse
     {
         public int Id { get; set; }
@@ -18,12 +20,12 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         {
             Category = asset.Category;
             Id = asset.Id;
-            AssetName = asset.AssetName;
+            AssetName = asset.AssetName!;
             CategoryId = asset.CategoryId;
-            Specification = asset.Specification;
+            Specification = asset.Specification!;
             InstalledDate = asset.InstalledDate;
             State = asset.State;
-            AssetCode = asset.AssetCode;
+            AssetCode = asset.AssetCode!;
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace AssetManagementTeam6.API.Controllers
 {
+    [ExcludeFromCodeCoverage]
     public static class ControllerBaseExtensions
     {
         public static int? GetCurrentLoginUserId(this ControllerBase controller)
