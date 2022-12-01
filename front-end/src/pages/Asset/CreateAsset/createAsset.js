@@ -54,6 +54,8 @@ function CreateAsset() {
     const handleCreate = async () => {
         setLoading(true);
 
+        // Trim() all value dataAdd
+        // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
         const res = await createData(ASSET, dataAdd);
