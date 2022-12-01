@@ -13,51 +13,11 @@ import styles from './createUser.module.scss';
 const cx = classNames.bind(styles);
 
 function CreateUser() {
-  // const { users, setUsers } = useUserListContext();
+    // const { users, setUsers } = useUserListContext();
 
-  let navigate = useNavigate();
-  const [hidePass, setHidePass] = useState(true);
-  const [dataAdd, setDataAdd] = useState({
-    userName: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    gender: '',
-    joinedDate: '',
-    type: 0,
-  });
-
-  const toggleBtnOld = () => {
-    setHidePass((pre) => !pre);
-  };
-
-  const [arrMsg, setArrMsg] = useState({
-    UserName: '',
-    Password: '',
-    FirstName: '',
-    LastName: '',
-    DateOfBirth: '',
-    JoinedDate: '',
-  });
-
-  const isInputComplete = useMemo(() => {
-    const { type, ...otherData } = dataAdd;
-    return Object.values(otherData).every((x) => x !== null && x !== '');
-  }, [dataAdd]);
-
-  const onSaveAdd = async () => {
-    const res = await createData(USER, dataAdd);
-    if (res.code === 'ERR_BAD_REQUEST') {
-      setArrMsg(res?.response?.data?.errors);
-      if (res?.response?.status === 409) {
-        setArrMsg({ UserName: [res?.response?.data] });
-      }
-      if (res?.response?.data?.errors?.requestModel) {
-        alert('Please input all fields');
-      }
-    } else {
-      setDataAdd({
+    let navigate = useNavigate();
+    const [hidePass, setHidePass] = useState(true);
+    const [dataAdd, setDataAdd] = useState({
         userName: '',
         password: '',
         firstName: '',
@@ -66,146 +26,184 @@ function CreateUser() {
         gender: '',
         joinedDate: '',
         type: 0,
-      });
+    });
 
-      navigate('/manageruser');
-    }
-  };
+    const toggleBtnOld = () => {
+        setHidePass((pre) => !pre);
+    };
 
-  const handleChangeAdd = (e) => {
-    if (e.target.name === 'gender' || e.target.name === 'type') {
-      setDataAdd({ ...dataAdd, [e.target.name]: parseInt(e.target.value) });
-    } else {
-      setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
-    }
-  };
+    const [arrMsg, setArrMsg] = useState({
+        UserName: '',
+        Password: '',
+        FirstName: '',
+        LastName: '',
+        DateOfBirth: '',
+        JoinedDate: '',
+    });
 
-  const onCancelAdd = () => {
-    navigate('/manageruser');
-  };
+    const isInputComplete = useMemo(() => {
+        const { type, ...otherData } = dataAdd;
+        return Object.values(otherData).every((x) => x !== null && x !== '');
+    }, [dataAdd]);
 
-  return (
-    <div className={cx('container')}>
-      <h3 className={cx('title')}>Create New User</h3>
+    const onSaveAdd = async () => {
+        const res = await createData(USER, dataAdd);
+        if (res.code === 'ERR_BAD_REQUEST') {
+            setArrMsg(res?.response?.data?.errors);
+            if (res?.response?.status === 409) {
+                setArrMsg({ UserName: [res?.response?.data] });
+            }
+            if (res?.response?.data?.errors?.requestModel) {
+                alert('Please input all fields');
+            }
+        } else {
+            setDataAdd({
+                userName: '',
+                password: '',
+                firstName: '',
+                lastName: '',
+                dateOfBirth: '',
+                gender: '',
+                joinedDate: '',
+                type: 0,
+            });
 
-      <Form>
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Username</Form.Label>
-          <Form.Control
-            isInvalid={arrMsg.UserName}
-            type="text"
-            className={cx('input')}
-            name="userName"
-            onChange={handleChangeAdd}
-          />
-        </Form.Group>
-        {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Password</Form.Label>
-          <div className={cx('input-new-password')}>
-            <Form.Control
-              isInvalid={arrMsg.Password}
-              type={hidePass ? 'password' : 'text'}
-              className={cx('input')}
-              name="password"
-              onChange={handleChangeAdd}
-            />
-            <div className={cx('icon-new')} onClick={toggleBtnOld}>
-              {!hidePass ? <AiFillEye /> : <AiFillEyeInvisible />}
-            </div>
-          </div>
-        </Form.Group>
-        {arrMsg.Password && <p className={cx('msgError')}>{arrMsg.Password[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>First Name</Form.Label>
-          <Form.Control
-            isInvalid={arrMsg.FirstName}
-            type="text"
-            className={cx('input')}
-            name="firstName"
-            onChange={handleChangeAdd}
-          />
-        </Form.Group>
-        {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Last Name</Form.Label>
-          <Form.Control
-            isInvalid={arrMsg.LastName}
-            type="text"
-            className={cx('input')}
-            name="lastName"
-            onChange={handleChangeAdd}
-          />
-        </Form.Group>
-        {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-          <Form.Control
-            isInvalid={arrMsg.DateOfBirth}
-            type="date"
-            onKeyDown={(e) => e.preventDefault()}
-            className={cx('input')}
-            name="dateOfBirth"
-            onChange={handleChangeAdd}
-          />
-        </Form.Group>
-        {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Gender</Form.Label>
+            navigate('/manageruser');
+        }
+    };
 
-          <div key={`gender-radio`} className={cx('input-radio-gender')}>
-            <Form.Check
-              inline
-              label="Male"
-              name="gender"
-              type="radio"
-              value={1}
-              id={`gender-radio-1`}
-              onChange={handleChangeAdd}
-            />
-            <Form.Check
-              inline
-              label="Female"
-              name="gender"
-              type="radio"
-              className={cx('form-check-input:checked')}
-              value={2}
-              id={`gender-radio-2`}
-              onChange={handleChangeAdd}
-            />
-          </div>
-        </Form.Group>
+    const handleChangeAdd = (e) => {
+        if (e.target.name === 'gender' || e.target.name === 'type') {
+            setDataAdd({ ...dataAdd, [e.target.name]: parseInt(e.target.value) });
+        } else {
+            setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
+        }
+    };
 
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-          <Form.Control
-            isInvalid={arrMsg.JoinedDate}
-            type="date"
-            onKeyDown={(e) => e.preventDefault()}
-            className={cx('input')}
-            name="joinedDate"
-            onChange={handleChangeAdd}
-          />
-        </Form.Group>
-        {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
-        <Form.Group className={cx('common-form')}>
-          <Form.Label className={cx('title_input')}>Type</Form.Label>
-          <Form.Select onChange={handleChangeAdd} name="type">
-            <option value={0}>Staff</option>
-            <option value={1}>Admin</option>
-          </Form.Select>
-        </Form.Group>
-        <div className={cx('button')}>
-          <Button variant="danger" onClick={onSaveAdd} disabled={!isInputComplete}>
-            Save
-          </Button>
-          <Button variant="light" className={cx('cancel-button')} onClick={onCancelAdd}>
-            Cancel
-          </Button>
+    const onCancelAdd = () => {
+        navigate('/manageruser');
+    };
+
+    return (
+        <div className={cx('container')}>
+            <h3 className={cx('title')}>Create New User</h3>
+
+            <Form>
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Username</Form.Label>
+                    <Form.Control
+                        isInvalid={arrMsg.UserName}
+                        type="text"
+                        className={cx('input')}
+                        name="userName"
+                        onChange={handleChangeAdd}
+                    />
+                </Form.Group>
+                {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Password</Form.Label>
+                    <div className={cx('input-new-password')}>
+                        <Form.Control
+                            isInvalid={arrMsg.Password}
+                            type={hidePass ? 'password' : 'text'}
+                            className={cx('input')}
+                            name="password"
+                            onChange={handleChangeAdd}
+                        />
+                        <div className={cx('icon-new')} onClick={toggleBtnOld}>
+                            {!hidePass ? <AiFillEye /> : <AiFillEyeInvisible />}
+                        </div>
+                    </div>
+                </Form.Group>
+                {arrMsg.Password && <p className={cx('msgError')}>{arrMsg.Password[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>First Name</Form.Label>
+                    <Form.Control
+                        isInvalid={arrMsg.FirstName}
+                        type="text"
+                        className={cx('input')}
+                        name="firstName"
+                        onChange={handleChangeAdd}
+                    />
+                </Form.Group>
+                {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Last Name</Form.Label>
+                    <Form.Control
+                        isInvalid={arrMsg.LastName}
+                        type="text"
+                        className={cx('input')}
+                        name="lastName"
+                        onChange={handleChangeAdd}
+                    />
+                </Form.Group>
+                {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
+                    <Form.Control
+                        isInvalid={arrMsg.DateOfBirth}
+                        type="date"
+                        className={cx('input')}
+                        name="dateOfBirth"
+                        onChange={handleChangeAdd}
+                    />
+                </Form.Group>
+                {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Gender</Form.Label>
+
+                    <div key={`gender-radio`} className={cx('input-radio-gender')}>
+                        <Form.Check
+                            inline
+                            label="Male"
+                            name="gender"
+                            type="radio"
+                            value={1}
+                            id={`gender-radio-1`}
+                            onChange={handleChangeAdd}
+                        />
+                        <Form.Check
+                            inline
+                            label="Female"
+                            name="gender"
+                            type="radio"
+                            className={cx('form-check-input:checked')}
+                            value={2}
+                            id={`gender-radio-2`}
+                            onChange={handleChangeAdd}
+                        />
+                    </div>
+                </Form.Group>
+
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
+                    <Form.Control
+                        isInvalid={arrMsg.JoinedDate}
+                        type="date"
+                        className={cx('input')}
+                        name="joinedDate"
+                        onChange={handleChangeAdd}
+                    />
+                </Form.Group>
+                {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
+                <Form.Group className={cx('common-form')}>
+                    <Form.Label className={cx('title_input')}>Type</Form.Label>
+                    <Form.Select onChange={handleChangeAdd} name="type">
+                        <option value={0}>Staff</option>
+                        <option value={1}>Admin</option>
+                    </Form.Select>
+                </Form.Group>
+                <div className={cx('button')}>
+                    <Button variant="danger" onClick={onSaveAdd} disabled={!isInputComplete}>
+                        Save
+                    </Button>
+                    <Button variant="light" className={cx('cancel-button')} onClick={onCancelAdd}>
+                        Cancel
+                    </Button>
+                </div>
+            </Form>
         </div>
-      </Form>
-    </div>
-  );
+    );
 }
 
 export default CreateUser;
