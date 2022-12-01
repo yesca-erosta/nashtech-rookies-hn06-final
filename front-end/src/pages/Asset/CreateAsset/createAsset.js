@@ -10,6 +10,7 @@ import styles from './createAsset.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
 import { ASSET, CATEGORY } from '../../../constants';
+import { dateStrToDate } from '../../../lib/helper';
 
 const cx = classNames.bind(styles);
 
@@ -53,6 +54,8 @@ function CreateAsset() {
     const handleCreate = async () => {
         setLoading(true);
 
+        Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
+
         const res = await createData(ASSET, dataAdd);
 
         if (res.code === 'ERR_BAD_REQUEST') {
@@ -88,7 +91,10 @@ function CreateAsset() {
     const [arrMsgCategoryHoan, setArrMsgCategoryHoan] = useState();
 
     const onCreateCategory = async () => {
+        setArrMsgCategoryHoan();
+        setArrMsgCategory('');
         const res = await createData(CATEGORY, createCategoryHoan);
+
         if (res.code === 'ERR_BAD_REQUEST') {
             if (res?.response?.data?.errors) {
                 setArrMsgCategoryHoan(res?.response?.data?.errors);
@@ -108,7 +114,7 @@ function CreateAsset() {
     const [createCategoryHoan, setCreateCategoryHoan] = useState(initCategory);
 
     const onChangeCategory = (e) => {
-        setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value });
+        setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value.trim() });
     };
 
     const handleChangeAdd = (e) => {
@@ -148,6 +154,7 @@ function CreateAsset() {
                             placeholder="Enter name"
                             name="assetName"
                             onChange={handleChangeAdd}
+                            value={dataAdd.assetName}
                         />
                     </Form.Group>
                     {arrMsg.AssetName && <p className={cx('msgErrorBg')}>{arrMsg.AssetName[0]}</p>}
@@ -178,6 +185,7 @@ function CreateAsset() {
                                 rows={5}
                                 cols={40}
                                 placeholder="Enter specification"
+                                value={dataAdd.specification}
                             />
                         </Form.Group>
                     </Form.Group>
@@ -191,6 +199,7 @@ function CreateAsset() {
                             className={cx('input')}
                             name="installedDate"
                             onChange={handleChangeAdd}
+                            value={dateStrToDate(dataAdd.installedDate)}
                         />
                     </Form.Group>
                     {arrMsg.InstalledDate && <p className={cx('msgErrorBg')}>{arrMsg.InstalledDate[0]}</p>}
@@ -251,20 +260,40 @@ function CreateAsset() {
                     <Form.Group>
                         <Form.Label>Category Name:</Form.Label>
                         <Form.Control
+                            isInvalid={
+                                arrMsgCategoryHoan?.Name ||
+                                arrMsgCategory === 'Category is already existed. Please enter a different category'
+                            }
                             type="text"
                             name="name"
                             placeholder="Enter Category Name"
                             onChange={onChangeCategory}
                         />
                     </Form.Group>
-
+                    {arrMsgCategory === 'Category is already existed. Please enter a different category' && (
+                        <p className={cx('msgError')}>{arrMsgCategory}</p>
+                    )}
+                    {arrMsgCategoryHoan?.Name && <p className={cx('msgError')}>{arrMsgCategoryHoan?.Name[0]}</p>}
                     <Form.Group>
                         <Form.Label>Category ID:</Form.Label>
-                        <Form.Control type="text" name="id" placeholder="Enter Category Id" onChange={onChangeCategory} />
+                        <Form.Control
+                            isInvalid={
+                                arrMsgCategoryHoan?.Id ||
+                                arrMsgCategory === 'CategoryID is already existed. Please enter a different CategoryID'
+                            }
+                            type="text"
+                            name="id"
+                            placeholder="Enter Category Id"
+                            onChange={onChangeCategory}
+                        />
                     </Form.Group>
 
-                    {arrMsgCategory && <p className={cx('msgError')}>{arrMsgCategory}</p>}
-                    {!arrMsgCategory && arrMsgCategoryHoan && <p className={cx('msgError')}>{arrMsgCategoryHoan.Id[0]}</p>}
+                    {arrMsgCategory === 'CategoryID is already existed. Please enter a different CategoryID' && (
+                        <p className={cx('msgError')}>{arrMsgCategory}</p>
+                    )}
+                    {!arrMsgCategory && arrMsgCategoryHoan?.Id && (
+                        <p className={cx('msgError')}>{arrMsgCategoryHoan?.Id[0]}</p>
+                    )}
 
                     <div className={cx('btn_create-category')}>
                         <Button
