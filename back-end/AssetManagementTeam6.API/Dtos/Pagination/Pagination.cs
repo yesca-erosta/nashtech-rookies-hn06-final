@@ -1,5 +1,8 @@
-﻿namespace AssetManagementTeam6.API.Dtos.Pagination
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace AssetManagementTeam6.API.Dtos.Pagination
 {
+    [ExcludeFromCodeCoverage]
     public class Pagination<T>
     {
         public IEnumerable<T>? Source { get; set; }

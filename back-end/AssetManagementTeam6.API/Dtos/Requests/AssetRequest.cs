@@ -1,8 +1,10 @@
 ﻿using Common.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Requests
 {
+    [ExcludeFromCodeCoverage]
     public class AssetRequest
     {
         public int? Id { get; set; }

@@ -5,12 +5,14 @@ using AssetManagementTeam6.API.Services.Interfaces;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ExcludeFromCodeCoverage]
     public class AssetController : ControllerBase
     {
         private readonly IAssetService _assetService;

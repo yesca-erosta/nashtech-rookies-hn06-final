@@ -1,20 +1,23 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
-using Common.Constants;
 using FluentValidation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Validation
 {
+    [ExcludeFromCodeCoverage]
     public class AssetRequestValidator : AbstractValidator<AssetRequest>
     {
         public AssetRequestValidator()
         {
             RuleFor(x => x.AssetName)
                 .NotEmpty()
-                .WithMessage("Asset Name is required");
+                .WithMessage("Asset Name is required")
+                .Matches(StringPattern.UserFirstName).WithMessage("Invalid Name.Please try again");
                 
             RuleFor(x => x.Specification)
                 .NotEmpty()
-                .WithMessage("Specification is required");
+                .WithMessage("Specification is required")
+                .Matches(StringPattern.Specification).WithMessage("Invalid Specification.Please try again");
 
             RuleFor(x => x.InstalledDate)
                 .Cascade(CascadeMode.StopOnFirstFailure)

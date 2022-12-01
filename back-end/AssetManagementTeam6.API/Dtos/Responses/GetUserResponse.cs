@@ -1,8 +1,10 @@
 using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Responses
 {
+    [ExcludeFromCodeCoverage]
     public class GetUserResponse
     {
         public int Id { get; set; }
@@ -21,10 +23,10 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         {
             Id = user.Id;
             UserName = user.UserName;
-            StaffCode = user.StaffCode;
+            StaffCode = user.StaffCode!;
             Type = user.Type.ToString();
             Location = user.Location.ToString();
-            FullName = user.FullName;
+            FullName = user.FullName!;
             Gender = user.Gender;
             JoinedDate = user.JoinedDate;
             FirstName = user.FirstName;

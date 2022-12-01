@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 [Route("api/[controller]")]
 [ApiController]
+[ExcludeFromCodeCoverage]
 public class HeartBeatController : ControllerBase
 {
     [HttpGet]

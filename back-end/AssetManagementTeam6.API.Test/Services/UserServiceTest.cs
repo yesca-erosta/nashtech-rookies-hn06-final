@@ -8,6 +8,7 @@ using Common.Enums;
 using Moq;
 using System.Linq.Expressions;
 
+
 namespace AssetManagementTeam6.API.Test.Services
 {
     public class UserServiceTest
@@ -196,20 +197,7 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task GetUserByStaffCode_ShouldNotReturnNull()
         {
             //Arrange
-            var user = new User
-            {
-                Id = 1,
-                UserName = "dongnp13",
-                FirstName = "Dong",
-                LastName = "Nguyen Phuong",
-                DateOfBirth = new DateTime(2000, 01, 13),
-                Gender = GenderEnum.Male,
-                JoinedDate = new DateTime(2010, 10, 10),
-                Location = LocationEnum.HN,
-                NeedUpdatePwdOnLogin = true,
-                Password = "0E7517141FB53F21EE439B355B5A1D0A",
-                Type = StaffEnum.Admin,
-            };
+            var user = GetSampleUser();
 
             var expectedResult = new User
             {
@@ -259,7 +247,6 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.Null(testResult);
-
         }
 
         [Theory]
@@ -423,7 +410,6 @@ namespace AssetManagementTeam6.API.Test.Services
             Assert.Equal(expectedResult.Type, testResult!.Type);
         }
 
-        //TODO: Handling
         [Fact]
         public async Task CreateNewUser_ShouldNotReturnNull()
         {
@@ -445,8 +431,35 @@ namespace AssetManagementTeam6.API.Test.Services
 
             var convertUser = ConvertToUserRequest(user);
 
-            var expectedResult = new User
-            {
+           
+            _mockUserRepository.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(user);
+            var userService = new UserService(_mockUserRepository.Object);
+
+            //Act
+            var testResult = await userService.Create(convertUser);
+
+            //Assert
+            Assert.NotNull(testResult);
+            Assert.IsType<User>(testResult);
+            Assert.Equal(user.Id, testResult!.Id);
+            Assert.Equal(user.UserName, testResult!.UserName);
+            Assert.Equal(user.FirstName, testResult!.FirstName);
+            Assert.Equal(user.LastName, testResult!.LastName);
+            Assert.Equal(user.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(user.Gender, testResult!.Gender);
+            Assert.Equal(user.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(user.Location, testResult!.Location);
+            Assert.Equal(user.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(user.Password, testResult!.Password);
+            Assert.Equal(user.Type, testResult!.Type);
+        }
+
+        [Fact]
+        public async Task CreateNewUser_ShouldReturnNull()
+        {
+            //Arrange
+            User user = null!;
+            var convertUser = new UserRequest{
                 Id = 100,
                 UserName = "dongnp130120001",
                 FirstName = "Dong",
@@ -456,43 +469,11 @@ namespace AssetManagementTeam6.API.Test.Services
                 JoinedDate = new DateTime(2010, 10, 10),
                 Location = LocationEnum.HN,
                 NeedUpdatePwdOnLogin = true,
-                Password = null,
+                Password = "Admin@123",
                 Type = StaffEnum.Admin,
             };
 
-            _mockUserRepository.Setup(x => x.Create(user)).ReturnsAsync(user);
-            var userService = new UserService(_mockUserRepository.Object);
-
-            //Act
-            var testResult = await userService.Create(convertUser);
-
-            //Assert
-            Assert.NotNull(testResult);
-            Assert.IsType<User>(testResult);
-            Assert.Equal(expectedResult.Id, testResult!.Id);
-            Assert.Equal(expectedResult.UserName, testResult!.UserName);
-            Assert.Equal(expectedResult.FirstName, testResult!.FirstName);
-            Assert.Equal(expectedResult.LastName, testResult!.LastName);
-            Assert.Equal(expectedResult.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(expectedResult.Gender, testResult!.Gender);
-            Assert.Equal(expectedResult.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(expectedResult.Location, testResult!.Location);
-            Assert.Equal(expectedResult.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(expectedResult.Password, testResult!.Password);
-            Assert.Equal(expectedResult.Type, testResult!.Type);
-        }
-
-        //TODO: Handling
-        [Fact]
-        // [InlineData("dong", "Dong", "Nguyen Phuong", new DateTime(2000, 01, 13), new DateTime(2010, 10, 10))]
-        //string userName, string firstName, string lastName, DateTime dob, DateTime joinedDate
-        public async Task CreateNewUser_ShouldReturnNull()
-        {
-            //Arrange
-            User? user = null;
-            var convertUser = null as UserRequest;
-
-            _mockUserRepository.Setup(x => x.Create(user)).ReturnsAsync(null as User);
+            _mockUserRepository.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(user);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
@@ -502,7 +483,6 @@ namespace AssetManagementTeam6.API.Test.Services
             Assert.Null(testResult);
         }
 
-        //TODO: Handling
         [Theory]
         [InlineData(LocationEnum.HN)]
         [InlineData(LocationEnum.DN)]
@@ -511,19 +491,23 @@ namespace AssetManagementTeam6.API.Test.Services
         {
             // Arrange
             var users = GetSampleUserLists();
-            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(users);
+            var userLocations = users.Where(x => x.Location == location)?.ToList() ?? new List<User>();
+            var expectedType = typeof(List<GetUserResponse>);
+            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
             var userService = new UserService(_mockUserRepository.Object);
+            var expectedCount = userLocations.Count();
 
             // Act
-            var testResult = await userService.GetAllAsync(location) as IEnumerable<GetUserResponse>;
-
+            var testResult = await userService.GetAllAsync(location);
+            var count = testResult?.Count() ?? 0;
+            var type = testResult?.GetType();
             // Assert
-            //Assert.IsType<List<GetUserResponse>>(testResult);
-            //Assert.Equal(GetSampleUserLists().Count(), testResult.Count());
+
+            Assert.Equal(expectedType, type);
+            Assert.Equal(expectedCount, count);
             Assert.NotNull(testResult);
         }
 
-        //TODO: Handling
         [Theory]
         [InlineData(LocationEnum.HN)]
         [InlineData(LocationEnum.DN)]
@@ -532,15 +516,16 @@ namespace AssetManagementTeam6.API.Test.Services
         {
             // Arrange
             var users = new List<User>();
-            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(users);
+            var userLocations = users.Where(x => x.Location == location)?.ToList() ?? new List<User>();
+            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
             var service = new UserService(_mockUserRepository.Object);
 
             // Act
             var testResult = await service.GetAllAsync(location);
 
             // Assert
-            //Assert.IsType<List<GetUserResponse>>(testResult);
-            Assert.Equal(0, testResult.Count());
+            Assert.IsType<List<GetUserResponse>>(testResult);
+            Assert.Empty(testResult);
             Assert.NotNull(testResult);
 
         }
