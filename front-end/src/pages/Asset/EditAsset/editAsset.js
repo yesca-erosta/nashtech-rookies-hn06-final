@@ -58,6 +58,7 @@ function CreateAsset() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}> Name</Form.Label>
                     <Form.Control
+                        isInvalid={arrMsg?.AssetName}
                         type="text"
                         placeholder="Enter name"
                         name="assetName"
@@ -66,6 +67,8 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
+                {arrMsg?.AssetName && <p className={cx('msgError')}>{arrMsg?.AssetName[0]}</p>}
+
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
                     <Form.Control type="text" className={cx('input')} value={asset.category.name} disabled readOnly />
@@ -73,20 +76,24 @@ function CreateAsset() {
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Specification</Form.Label>
-                    <textarea
-                        cols="40"
-                        rows="5"
+                    <Form.Control
+                        isInvalid={arrMsg.Specification}
+                        rows={5}
+                        cols={40}
                         placeholder="Enter specification"
                         name="specification"
                         onChange={onChange}
                         value={data.specification}
                         className={cx('input-specification')}
-                    ></textarea>
+                        type="text"
+                        as="textarea"
+                    />
                 </Form.Group>
+                {arrMsg?.Specification && <p className={cx('msgError')}>{arrMsg?.Specification[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
                     <Form.Control
-                        isInvalid={arrMsg.InstalledDate}
+                        isInvalid={arrMsg?.InstalledDate}
                         type="date"
                         name="installedDate"
                         value={dateStrToDate(data.installedDate)}
@@ -94,7 +101,7 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
-                {arrMsg.InstalledDate && <p className={cx('msgError')}>{arrMsg.InstalledDate[0]}</p>}
+                {arrMsg?.InstalledDate && <p className={cx('msgError')}>{arrMsg?.InstalledDate[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input-state')}>State</Form.Label>
 

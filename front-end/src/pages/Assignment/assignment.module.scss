@@ -1,50 +1,8 @@
 .container {
-    min-width: 900px;
-    position: relative;
+    min-width: 1200px;
 
-    .table {
-        margin-top: 80px;
-        width: 1190px;
-        .actions {
-            display: flex;
-
-            .pen {
-                margin-left: 10px;
-                font-size: 16px;
-                border: none;
-                background-color: transparent;
-                cursor: pointer;
-            }
-
-            .delete {
-                margin-left: 20px;
-                color: red;
-                border: none;
-                background-color: transparent;
-                cursor: pointer;
-                font-size: 20px;
-            }
-
-            .delete:disabled {
-                color: #b7b7b7;
-            }
-        }
-    }
-
-    .title {
-        display: flex;
-
-        .triagle {
-            border: none;
-            background-color: transparent;
-            margin-left: 5px;
-        }
-    }
-
-    .paging {
-        display: flex;
-        justify-content: flex-end;
-        position: relative;
+    .main_table {
+        margin-top: 102px;
     }
 
     .title_asset {
