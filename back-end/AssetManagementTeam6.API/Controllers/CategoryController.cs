@@ -7,12 +7,14 @@ using Common.Enums;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ExcludeFromCodeCoverage]
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;

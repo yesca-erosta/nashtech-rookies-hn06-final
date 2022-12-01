@@ -1,8 +1,8 @@
-﻿using AssetManagementTeam6.Data.Entities;
-using Common.Enums;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Requests
 {
+    [ExcludeFromCodeCoverage]
     public class AssignmentRequest
     {
         public int AssetId { get; set; }
