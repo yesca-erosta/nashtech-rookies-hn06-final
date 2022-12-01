@@ -1,14 +1,16 @@
-import Table from 'react-bootstrap/Table';
 import classNames from 'classnames/bind';
 import styles from './assignment.module.scss';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
 import { BsSearch, BsFillCalendarDateFill } from 'react-icons/bs';
-import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
 import { FaFilter } from 'react-icons/fa';
-import { Button, Form, InputGroup } from 'react-bootstrap';
-import Pagination from 'react-bootstrap/Pagination';
+import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
+import DataTable from 'react-data-table-component';
+import ReactPaginate from 'react-paginate';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { convertStatetoStr } from '../Asset';
 
 const cx = classNames.bind(styles);
 
@@ -18,36 +20,6 @@ function Assignment() {
     const [showState, setShowState] = useState(false);
     const [showCategory, setShowCategory] = useState(false);
     const [placeholderState, setPlaceholderState] = useState('State');
-
-    const [isNo, setIsNo] = useState(false);
-    const [isAssetCode, setIsAssetCode] = useState(false);
-    const [isAssetName, setIsAssetName] = useState(false);
-    const [isAssignedTo, setIsAssignedTo] = useState(false);
-    const [isAssignedBy, setIsAssignedBy] = useState(false);
-    const [isAssignedDate, setIsAssignedDate] = useState(false);
-    const [isState, setIsState] = useState(false);
-
-    const handleIsNo = () => {
-        setIsNo((pre) => !pre);
-    };
-    const handleIsAssetCode = () => {
-        setIsAssetCode((pre) => !pre);
-    };
-    const handleIsAssetName = () => {
-        setIsAssetName((pre) => !pre);
-    };
-    const handleIsAssignedTo = () => {
-        setIsAssignedTo((pre) => !pre);
-    };
-    const handleIsAssignedBy = () => {
-        setIsAssignedBy((pre) => !pre);
-    };
-    const handleIsAssignedDate = () => {
-        setIsAssignedDate((pre) => !pre);
-    };
-    const handleIsState = () => {
-        setIsState((pre) => !pre);
-    };
 
     let navigate = useNavigate();
 
@@ -75,9 +47,6 @@ function Assignment() {
     const handleState = () => {
         setShowState((pre) => !pre);
     };
-    const handleCategory = () => {
-        setShowCategory((pre) => !pre);
-    };
 
     const handleChangeCheckboxState = (e, type) => {
         setCheckedState({ ...checkedState, [type]: e.target.checked });
@@ -99,7 +68,92 @@ function Assignment() {
     };
 
     const handleCancelState = () => {
-        setShowState((pre) => !pre);
+        setShowState(false);
+    };
+
+    const columns = [
+        {
+            name: 'Asset Code',
+            selector: (row) => row.assetCode,
+            sortable: true,
+        },
+        {
+            name: 'Asset Name',
+            selector: (row) => row.assetName,
+            sortable: true,
+            cell: (row) => {
+                return <Link>{row.assetName}</Link>;
+            },
+        },
+        {
+            name: 'Category',
+            sortable: true,
+            selector: (row) => row.category?.name,
+        },
+        {
+            name: 'State',
+            selector: (row) => row.state,
+            sortable: true,
+            cell: (row) => {
+                return <div>{convertStatetoStr(row.state)}</div>;
+            },
+        },
+        {
+            name: 'Action',
+            selector: (row) => row.null,
+            cell: (row) => [
+                <Link
+                    to={`./editasset`}
+                    key={row.assetCode}
+                    state={{ asset: row }}
+                    className={styles.customPen}
+                    style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                >
+                    <FontAwesomeIcon icon={faPen} />
+                </Link>,
+                <Link
+                    key={`keyDelete_${row.assetCode}`}
+                    to={'#'}
+                    style={
+                        row.state === 4
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+                            : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
+                    }
+                >
+                    <FontAwesomeIcon icon={faRemove} />
+                </Link>,
+            ],
+        },
+    ];
+
+    const CustomPagination = (e) => {
+        // const count = Math.ceil(totalPageHoan / perPage);
+        return (
+            <Row className="mx-0">
+                <Col className="d-flex justify-content-end" sm="12">
+                    <ReactPaginate
+                        previousLabel={'Previous'}
+                        nextLabel={'Next'}
+                        // forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
+                        // onPageChange={handlePageClick}
+                        // pageCount={count || 1}
+                        breakLabel={'...'}
+                        pageRangeDisplayed={2}
+                        marginPagesDisplayed={2}
+                        activeClassName={'active '}
+                        pageClassName={'page-item text-color'}
+                        nextLinkClassName={'page-link text-color'}
+                        nextClassName={'page-item next text-color'}
+                        previousClassName={'page-item prev text-color'}
+                        previousLinkClassName={'page-link text-color'}
+                        pageLinkClassName={'page-link text-color'}
+                        breakClassName="page-item text-color"
+                        breakLinkClassName="page-link text-color"
+                        containerClassName={'pagination react-paginate pagination-sm justify-content-end pr-1 mt-3'}
+                    />
+                </Col>
+            </Row>
+        );
     };
 
     return (
@@ -107,7 +161,6 @@ function Assignment() {
             <div className={cx('title_asset')}>
                 <h1>Assignment List</h1>
             </div>
-
             <div className={cx('filterbox')}>
                 <div>
                     <InputGroup>
@@ -126,7 +179,7 @@ function Assignment() {
                         <Form.Control placeholder="Assigned Date" />
 
                         <InputGroup.Text>
-                            <button className={cx('input')} onClick={handleCategory}>
+                            <button className={cx('input')}>
                                 <BsFillCalendarDateFill />
                             </button>
                         </InputGroup.Text>
@@ -149,7 +202,6 @@ function Assignment() {
                     Create new assignment
                 </Button>
             </div>
-
             {showState && (
                 <div className={cx('dropdown')} ref={ref}>
                     <div className={cx('dropdown_container')}>
@@ -183,119 +235,24 @@ function Assignment() {
                 </div>
             )}
 
-            <div className={cx('table')}>
-                <Table responsive="sm">
-                    <thead>
-                        <tr>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>No.</div>
-                                        <button className={cx('triagle')} onClick={handleIsNo}>
-                                            {isNo ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>Asset Code</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssetCode}>
-                                            {isAssetCode ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>Asset Name</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssetName}>
-                                            {isAssetName ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div>Assigned to</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssignedTo}>
-                                            {isAssignedTo ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div> Assigned by</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssignedBy}>
-                                            {isAssignedBy ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div> Assigned Date</div>
-                                        <button className={cx('triagle')} onClick={handleIsAssignedDate}>
-                                            {isAssignedDate ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                            <th>
-                                <>
-                                    <div className={cx('title')}>
-                                        <div> State</div>
-                                        <button className={cx('triagle')} onClick={handleIsState}>
-                                            {isState ? <GoTriangleUp /> : <GoTriangleDown />}
-                                        </button>
-                                    </div>
-                                </>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {/* {.map((item, index) => (
-                            <tr key={index}>
-                                <td>{index + 1}</td>
-                                <td>{item.asset}</td>
-                                <td>{item.name}</td>
-                                <td>{item.assignedTo}</td>
-                                <td>{item.assignedBy}</td>
-                                <td>{item.assignedDate}</td>
-                                <td>{item.state}</td>
-                                <td>
-                                    <div className={cx('actions')}>
-                                        <button className={cx('pen')} disabled={false} onClick={navigateToEditAsset}>
-                                            <BsFillPencilFill />
-                                        </button>
-                                        <button className={cx('delete')} disabled={false}>
-                                            <TiDeleteOutline />
-                                        </button>
-                                        <button className={cx('delete')} disabled={false}>
-                                            <MdRefresh style={{ color: '#0d6efd' }} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        ))} */}
-                    </tbody>
-                </Table>
-            </div>
-
-            <div className={cx('paging')}>
-                <Pagination>
-                    <Pagination.Item disabled>Previous</Pagination.Item>
-                    <Pagination.Item active={1}>1</Pagination.Item>
-                    <Pagination.Item active={''}>2</Pagination.Item>
-                    <Pagination.Item active={''}>3</Pagination.Item>
-                    <Pagination.Item>Next</Pagination.Item>
-                </Pagination>
+            <div className={cx('main_table')}>
+                <DataTable
+                    title="Assets"
+                    columns={columns}
+                    // data={assetsHoan}
+                    noHeader
+                    defaultSortField="id"
+                    defaultSortAsc={true}
+                    highlightOnHover
+                    noDataComponent={'There are no records to display'}
+                    dense
+                    // progressPending={loading}
+                    pagination
+                    paginationComponent={CustomPagination}
+                    paginationServer
+                    sortServer
+                    // onSort={handleSort}
+                />
             </div>
         </div>
     );
