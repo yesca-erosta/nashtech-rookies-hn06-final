@@ -1,9 +1,10 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
-using Common.Constants;
 using FluentValidation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Validation
 {
+    [ExcludeFromCodeCoverage]
     public class AssetRequestValidator : AbstractValidator<AssetRequest>
     {
         public AssetRequestValidator()

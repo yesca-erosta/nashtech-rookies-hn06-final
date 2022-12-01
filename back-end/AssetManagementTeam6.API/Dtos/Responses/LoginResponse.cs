@@ -1,7 +1,9 @@
 ﻿using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Responses
 {
+    [ExcludeFromCodeCoverage]
     public class LoginResponse
     {
         public int Id { get; set; }

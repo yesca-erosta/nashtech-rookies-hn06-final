@@ -1,8 +1,10 @@
 ﻿using Common.Constants;
 using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Pagination
 {
+    [ExcludeFromCodeCoverage]
     public class PaginationQueryModel
     {
         private int _page;

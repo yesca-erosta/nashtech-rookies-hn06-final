@@ -5,6 +5,7 @@ using Common.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -13,6 +14,7 @@ namespace AssetManagementTeam6.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
