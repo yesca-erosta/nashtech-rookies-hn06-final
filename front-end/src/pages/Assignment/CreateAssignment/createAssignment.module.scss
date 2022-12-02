@@ -4,6 +4,7 @@
 
 .container {
     width: 680px;
+    // position: relative;
 
     .title {
         color: #cf2338;
@@ -33,6 +34,25 @@
         }
         .cancel-button {
             margin-left: 10px;
+        }
+    }
+
+    .table_container {
+        background-color: #fff;
+        position: absolute;
+        border: 2px solid #ced4da;
+        margin-left: 201px;
+        min-width: 600px;
+        padding: 20px;
+
+        .title_table {
+            display: flex;
+
+            .triagle {
+                border: none;
+                background-color: transparent;
+                margin-left: 5px;
+            }
         }
     }
 }
