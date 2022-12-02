@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 
 function CreateAsset() {
     const location = useLocation();
+
     const { asset } = location?.state;
 
     const initAsset = {
@@ -28,7 +29,8 @@ function CreateAsset() {
 
     const onChange = (e) => {
         if (e.target.name === 'state') {
-            setData({ ...data, [e.target.name]: parseInt(e.target.value) });
+            // value is 99 because if the value is 0, the user cannot click on the text to select it
+            setData({ ...data, [e.target.name]: parseInt(e.target.value) === 99 ? 0 : parseInt(e.target.value) });
         } else {
             setData({ ...data, [e.target.name]: e.target.value });
         }
@@ -37,10 +39,19 @@ function CreateAsset() {
     const [arrMsg, setArrMsg] = useState('');
 
     const handleUpdate = async () => {
+        // Trim() all value dataAdd
+        // KEYSEARCH: trim all properties of an object data
+        Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
+
         const res = await updateData(`${ASSET}/${asset.id}`, data);
 
         if (res.code === 'ERR_BAD_REQUEST') {
-            setArrMsg(res?.response?.data?.errors);
+            if (res?.response?.data?.errors) {
+                setArrMsg(res?.response?.data?.errors);
+            } else {
+                alert(res?.response?.data);
+                navigate('/manageasset');
+            }
         } else {
             navigate('/manageasset');
         }
@@ -67,7 +78,7 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
-                {arrMsg?.AssetName && <p className={cx('msgError')}>{arrMsg?.AssetName[0]}</p>}
+                {arrMsg?.AssetName && <p className={cx('msgErrorEdit')}>{arrMsg?.AssetName[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
@@ -77,7 +88,7 @@ function CreateAsset() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Specification</Form.Label>
                     <Form.Control
-                        isInvalid={arrMsg.Specification}
+                        isInvalid={arrMsg?.Specification}
                         rows={5}
                         cols={40}
                         placeholder="Enter specification"
@@ -89,7 +100,7 @@ function CreateAsset() {
                         as="textarea"
                     />
                 </Form.Group>
-                {arrMsg?.Specification && <p className={cx('msgError')}>{arrMsg?.Specification[0]}</p>}
+                {arrMsg?.Specification && <p className={cx('msgErrorEdit')}>{arrMsg?.Specification[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
                     <Form.Control
@@ -101,7 +112,7 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
-                {arrMsg?.InstalledDate && <p className={cx('msgError')}>{arrMsg?.InstalledDate[0]}</p>}
+                {arrMsg?.InstalledDate && <p className={cx('msgErrorEdit')}>{arrMsg?.InstalledDate[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input-state')}>State</Form.Label>
 
@@ -117,8 +128,8 @@ function CreateAsset() {
                         <Form.Check
                             label="Not available"
                             name="state"
-                            id={0}
-                            value={0}
+                            id={99}
+                            value={99}
                             type="radio"
                             defaultChecked={asset.state === 0}
                         />
