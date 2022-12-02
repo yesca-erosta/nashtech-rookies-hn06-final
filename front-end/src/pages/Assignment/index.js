@@ -18,7 +18,6 @@ function Assignment() {
     const ref = useRef();
     const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false });
     const [showState, setShowState] = useState(false);
-    const [showCategory, setShowCategory] = useState(false);
     const [placeholderState, setPlaceholderState] = useState('State');
 
     let navigate = useNavigate();
@@ -28,17 +27,13 @@ function Assignment() {
             if (showState && ref.current && !ref.current.contains(e.target)) {
                 setShowState(false);
             }
-
-            if (showCategory && ref.current && !ref.current.contains(e.target)) {
-                setShowCategory(false);
-            }
         };
         document.addEventListener('mousedown', checkIfClickedOutside);
 
         return () => {
             document.removeEventListener('mousedown', checkIfClickedOutside);
         };
-    }, [showState, showCategory]);
+    }, [showState]);
 
     const navigateToCreateAssignment = () => {
         navigate('createnewassignment');
@@ -227,7 +222,12 @@ function Assignment() {
                             <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
                                 OK
                             </Button>
-                            <Button variant="outline-secondary" size="sm" className={cx('button_cancel')} onClick={handleCancelState}>
+                            <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                className={cx('button_cancel')}
+                                onClick={handleCancelState}
+                            >
                                 Cancel
                             </Button>
                         </div>

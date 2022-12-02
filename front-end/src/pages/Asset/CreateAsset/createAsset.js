@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -137,6 +137,21 @@ function CreateAsset() {
         return Object.values(dataAdd).every((x) => x !== null && x !== '');
     }, [dataAdd]);
 
+    const ref = useRef();
+
+    useEffect(() => {
+        const checkIfClickedOutside = (e) => {
+            if (showCategory && ref.current && !ref.current.contains(e.target)) {
+                setShowCategory(false);
+            }
+        };
+        document.addEventListener('mousedown', checkIfClickedOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+        };
+    }, [showCategory]);
+
     return (
         <div className={cx('container')}>
             <h3 className={cx('title')}>Create New Asset</h3>
@@ -164,7 +179,13 @@ function CreateAsset() {
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Category</Form.Label>
                         <InputGroup>
-                            <Form.Control placeholder={'Category'} defaultValue={category.name} readOnly />
+                            <Form.Control
+                                placeholder={'Category'}
+                                defaultValue={category.name}
+                                readOnly
+                                style={{ cursor: 'pointer' }}
+                                onClick={handleShowCategory}
+                            />
                             <InputGroup.Text
                                 style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
                                 onClick={handleShowCategory}
@@ -231,7 +252,7 @@ function CreateAsset() {
             )}
 
             {showCategory && (
-                <div className={cx('container_category')}>
+                <div className={cx('container_category')} ref={ref}>
                     {categories?.map((item, index) => (
                         <div
                             className={cx('item')}
