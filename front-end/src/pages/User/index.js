@@ -19,288 +19,302 @@ import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
 
 function User() {
-  const { users, setUsers, loading, setLoading, totalRows, setTotalRows, perPage, setPerPage, queryParams, setQueryParams } =
-    useUserListContext();
-  const [show, setShow] = useState(false);
-  const [showRemove, setShowRemove] = useState(false);
-  const [userDetails, setUserDetails] = useState('');
-  const [searchValue, setSearchValue] = useState('');
-  const [userId, setUserId] = useState('');
+    const {
+        users,
+        setUsers,
+        loading,
+        setLoading,
+        totalRows,
+        setTotalRows,
+        perPage,
+        setPerPage,
+        queryParams,
+        setQueryParams,
+    } = useUserListContext();
+    const [show, setShow] = useState(false);
+    const [showRemove, setShowRemove] = useState(false);
+    const [userDetails, setUserDetails] = useState('');
+    const [searchValue, setSearchValue] = useState('');
+    const [userId, setUserId] = useState('');
 
-  const handleClose = () => {
-    setShow(false);
-    setUserDetails('');
-  };
+    const handleClose = () => {
+        setShow(false);
+        setUserDetails('');
+    };
 
-  const handleShow = (staffCode) => {
-    setShow(true);
-    setUserDetails(users.find((c) => c.staffCode === staffCode));
-  };
+    const handleShow = (staffCode) => {
+        setShow(true);
+        setUserDetails(users.find((c) => c.staffCode === staffCode));
+    };
 
-  const handleShowRemove = (row) => {
-    setUserId(row.id);
-    setShowRemove(true);
-  };
+    const handleShowRemove = (row) => {
+        setUserId(row.id);
+        setShowRemove(true);
+    };
 
-  const handleCloseRemove = () => setShowRemove(false);
+    const handleCloseRemove = () => setShowRemove(false);
 
-  const handleDisable = async (id) => {
-    setLoading(true);
-    await deleteData(USER, id);
-    getData();
-    setUserId('');
-    setShowRemove(false);
-    setLoading(false);
-  };
+    const handleDisable = async (id) => {
+        setLoading(true);
+        await deleteData(USER, id);
+        getData();
+        setUserId('');
+        setShowRemove(false);
+        setLoading(false);
+    };
 
-  const columns = [
-    {
-      name: 'Staff Code',
-      selector: (row) => row.staffCode,
-      sortable: true,
-    },
-    {
-      name: 'Full Name',
-      selector: (row) => row.fullName,
-      sortable: true,
-      cell: (row) => {
-        return <Link onClick={() => handleShow(row.staffCode)}>{row.fullName}</Link>;
-      },
-    },
-    {
-      name: 'Username',
-      selector: (row) => row.userName,
-    },
-    {
-      name: 'Joined Date',
-      selector: (row) => row.joinedDate,
-      sortable: true,
-      cell: (row) => {
-        return <div>{dateStrToStr(row.joinedDate)}</div>;
-      },
-    },
-    {
-      name: 'Type',
-      selector: (row) => row.type,
-      sortable: true,
-    },
-    {
-      name: 'Action',
-      selector: (row) => row.null,
-      cell: (row) => [
-        <Link key={row.staffCode} to={`./edituser`} state={{ user: row }} className={styles.customPen}>
-          <FontAwesomeIcon icon={faPen} />
-        </Link>,
-        <Link
-          key={`keyDelete_${row.staffCode}`}
-          to={'#'}
-          style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
-        >
-          <FontAwesomeIcon icon={faRemove} onClick={() => handleShowRemove(row)} />
-        </Link>,
-      ],
-    },
-  ];
+    const columns = [
+        {
+            name: 'Staff Code',
+            selector: (row) => row.staffCode,
+            sortable: true,
+        },
+        {
+            name: 'Full Name',
+            selector: (row) => row.fullName,
+            sortable: true,
+            cell: (row) => {
+                return <Link onClick={() => handleShow(row.staffCode)}>{row.fullName}</Link>;
+            },
+        },
+        {
+            name: 'Username',
+            selector: (row) => row.userName,
+        },
+        {
+            name: 'Joined Date',
+            selector: (row) => row.joinedDate,
+            sortable: true,
+            cell: (row) => {
+                return <div>{dateStrToStr(row.joinedDate)}</div>;
+            },
+        },
+        {
+            name: 'Type',
+            selector: (row) => row.type,
+            sortable: true,
+        },
+        {
+            name: 'Action',
+            selector: (row) => row.null,
+            cell: (row) => [
+                <Link key={row.staffCode} to={`./edituser`} state={{ user: row }} className={styles.customPen}>
+                    <FontAwesomeIcon icon={faPen} />
+                </Link>,
+                <Link
+                    key={`keyDelete_${row.staffCode}`}
+                    to={'#'}
+                    style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
+                >
+                    <FontAwesomeIcon icon={faRemove} onClick={() => handleShowRemove(row)} />
+                </Link>,
+            ],
+        },
+    ];
 
-  // Get Data
-  const getData = async () => {
-    const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    setUsers(data.source);
-  };
+    // Get Data
+    const getData = async () => {
+        const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+        setUsers(data.source);
+    };
 
-  useEffect(() => {
-    getData();
-    // I want call a function when first render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    useEffect(() => {
+        getData();
+        // I want call a function when first render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
-  const onSearch = async (value) => {
-    setLoading(true);
+    const onSearch = async (value) => {
+        setLoading(true);
 
-    setSearchValue(value);
+        setSearchValue(value);
 
-    let data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    if (value) {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
-      data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
-      );
-    } else {
-      delete queryParams.valueSearch;
-      setQueryParams(queryParams);
-      data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
-    }
-    setTotalRows(data.totalRecord);
-    setUsers(data.source);
-    setLoading(false);
-  };
+        let data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+        if (value) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
+            data = await getAllDataWithFilterBox(
+                `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
+            );
+        } else {
+            delete queryParams.valueSearch;
+            setQueryParams(queryParams);
+            data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+        }
+        setTotalRows(data.totalRecord);
+        setUsers(data.source);
+        setLoading(false);
+    };
 
-  const [selectedPage, setSelectedPage] = useState(1);
+    const [selectedPage, setSelectedPage] = useState(1);
 
-  const handlePageClick = async (event) => {
-    setSelectedPage(event.selected + 1);
-    setLoading(true);
-    setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
+    const handlePageClick = async (event) => {
+        setSelectedPage(event.selected + 1);
+        setLoading(true);
+        setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
-    const data = await getAllDataWithFilterBox(
-      `User/query` + queryToString({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
-    );
+        const data = await getAllDataWithFilterBox(
+            `User/query` + queryToString({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
+        );
 
-    setTotalRows(data.totalRecord);
-    setUsers(data.source);
-    setPerPage(10);
-    setLoading(false);
-  };
+        setTotalRows(data.totalRecord);
+        setUsers(data.source);
+        setPerPage(10);
+        setLoading(false);
+    };
 
-  const CustomPagination = (e) => {
-    const count = Math.ceil(totalRows / perPage);
+    const CustomPagination = (e) => {
+        const count = Math.ceil(totalRows / perPage);
+        return (
+            <Row className="mx-0">
+                <Col className="d-flex justify-content-end" sm="12">
+                    <ReactPaginate
+                        previousLabel={'Previous'}
+                        nextLabel={'Next'}
+                        forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
+                        onPageChange={handlePageClick}
+                        pageCount={count || 1}
+                        breakLabel={'...'}
+                        pageRangeDisplayed={2}
+                        marginPagesDisplayed={2}
+                        activeClassName={'active '}
+                        pageClassName={'page-item text-color'}
+                        nextLinkClassName={'page-link text-color'}
+                        nextClassName={'page-item next text-color'}
+                        previousClassName={'page-item prev text-color'}
+                        previousLinkClassName={'page-link text-color'}
+                        pageLinkClassName={'page-link text-color'}
+                        breakClassName="page-item text-color"
+                        breakLinkClassName="page-link text-color"
+                        containerClassName={'pagination react-paginate pagination-sm justify-content-end pr-1 mt-3'}
+                    />
+                </Col>
+            </Row>
+        );
+    };
+
+    const getNameSort = (column) => {
+        if (column.id === 1) {
+            return 'StaffCode';
+        }
+        if (column.id === 2) {
+            return 'Name';
+        }
+        if (column.id === 4) {
+            return 'JoinedDate';
+        }
+        if (column.id === 5) {
+            return 'Type';
+        }
+        return 'StaffCode';
+    };
+
+    const getDataSort = async (column, sortDirection) => {
+        if (sortDirection === 'asc') {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` });
+
+            const data = await getAllDataWithFilterBox(
+                `User/query` +
+                    queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` }),
+            );
+            setUsers(data.source);
+            setPerPage(10);
+        } else {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` });
+
+            const data = await getAllDataWithFilterBox(
+                `User/query` +
+                    queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` }),
+            );
+            setUsers(data.source);
+            setPerPage(10);
+        }
+    };
+
+    const handleSort = async (column, sortDirection) => {
+        setLoading(true);
+
+        await getDataSort(column, sortDirection);
+
+        setSelectedPage(1);
+
+        setLoading(false);
+    };
+
+    const msgNoData = () => {
+        if (loading) {
+            return (
+                <div style={{ fontSize: '24px', textAlign: '-webkit-center', fontWeight: 'bold', padding: '24px' }}>
+                    Loading...
+                </div>
+            );
+        } else {
+            return <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>There are no records to display</div>;
+        }
+    };
+
     return (
-      <Row className="mx-0">
-        <Col className="d-flex justify-content-end" sm="12">
-          <ReactPaginate
-            previousLabel={'Previous'}
-            nextLabel={'Next'}
-            forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
-            onPageChange={handlePageClick}
-            pageCount={count || 1}
-            breakLabel={'...'}
-            pageRangeDisplayed={2}
-            marginPagesDisplayed={2}
-            activeClassName={'active '}
-            pageClassName={'page-item text-color'}
-            nextLinkClassName={'page-link text-color'}
-            nextClassName={'page-item next text-color'}
-            previousClassName={'page-item prev text-color'}
-            previousLinkClassName={'page-link text-color'}
-            pageLinkClassName={'page-link text-color'}
-            breakClassName="page-item text-color"
-            breakLinkClassName="page-link text-color"
-            containerClassName={'pagination react-paginate pagination-sm justify-content-end pr-1 mt-3'}
-          />
-        </Col>
-      </Row>
+        <div className="main tableMain">
+            <h1 className="tableTitle">User List</h1>
+            <div className="tableExtension">
+                <div className="tableExtensionLeft">
+                    <TypeFilter
+                        setDataState={setUsers}
+                        setTotalRows={setTotalRows}
+                        setQueryParams={setQueryParams}
+                        queryParams={queryParams}
+                        setLoading={setLoading}
+                    />
+                </div>
+
+                <div className="tableExtensionRight">
+                    <SearchUser onSearch={onSearch} searchValue={searchValue} />
+                    <ButtonCreate />
+                </div>
+            </div>
+            {users ? (
+                <DataTable
+                    title="Users"
+                    columns={columns}
+                    data={users}
+                    noHeader
+                    defaultSortField="id"
+                    defaultSortAsc={true}
+                    highlightOnHover
+                    noDataComponent={'There are no records to display'}
+                    dense
+                    progressPending={loading}
+                    pagination
+                    paginationComponent={CustomPagination}
+                    paginationServer
+                    sortServer
+                    onSort={handleSort}
+                />
+            ) : (
+                msgNoData()
+            )}
+
+            <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
+
+            <Modal show={showRemove} onHide={handleCloseRemove}>
+                <Modal.Header>
+                    <Modal.Title>Are you sure?</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Label>Do you want to disable this user?</Form.Label>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer style={{ justifyContent: 'flex-start' }}>
+                    <Button variant="danger" onClick={() => handleDisable(userId)}>
+                        Disable
+                    </Button>
+                    <Button variant="outline-secondary" onClick={handleCloseRemove}>
+                        Cancel
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </div>
     );
-  };
-
-  const getNameSort = (column) => {
-    if (column.id === 1) {
-      return 'StaffCode';
-    }
-    if (column.id === 2) {
-      return 'Name';
-    }
-    if (column.id === 4) {
-      return 'JoinedDate';
-    }
-    if (column.id === 5) {
-      return 'Type';
-    }
-    return 'StaffCode';
-  };
-
-  const getDataSort = async (column, sortDirection) => {
-    if (sortDirection === 'asc') {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` });
-
-      const data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` }),
-      );
-      setUsers(data.source);
-      setPerPage(10);
-    } else {
-      setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` });
-
-      const data = await getAllDataWithFilterBox(
-        `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` }),
-      );
-      setUsers(data.source);
-      setPerPage(10);
-    }
-  };
-
-  const handleSort = async (column, sortDirection) => {
-    setLoading(true);
-
-    await getDataSort(column, sortDirection);
-
-    setSelectedPage(1);
-
-    setLoading(false);
-  };
-
-  const msgNoData = () => {
-    if (loading) {
-      return (
-        <div style={{ fontSize: '24px', textAlign: '-webkit-center', fontWeight: 'bold', padding: '24px' }}>Loading...</div>
-      );
-    } else {
-      return <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>There are no records to display</div>;
-    }
-  };
-
-  return (
-    <div className="main tableMain">
-      <h1 className="tableTitle">User List</h1>
-      <div className="tableExtension">
-        <div className="tableExtensionLeft">
-          <TypeFilter
-            setDataState={setUsers}
-            setTotalRows={setTotalRows}
-            setQueryParams={setQueryParams}
-            queryParams={queryParams}
-            setLoading={setLoading}
-          />
-        </div>
-
-        <div className="tableExtensionRight">
-          <SearchUser onSearch={onSearch} searchValue={searchValue} />
-          <ButtonCreate />
-        </div>
-      </div>
-      {users ? (
-        <DataTable
-          title="Users"
-          columns={columns}
-          data={users}
-          noHeader
-          defaultSortField="id"
-          defaultSortAsc={true}
-          highlightOnHover
-          noDataComponent={'There are no records to display'}
-          dense
-          progressPending={loading}
-          pagination
-          paginationComponent={CustomPagination}
-          paginationServer
-          sortServer
-          onSort={handleSort}
-        />
-      ) : (
-        msgNoData()
-      )}
-      
-      <ModalDetails userDetails={userDetails} handleClose={handleClose} show={show} />
-
-      <Modal show={showRemove} onHide={handleCloseRemove}>
-        <Modal.Header>
-          <Modal.Title>Are you sure?</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Label>Do you want to disable this user?</Form.Label>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer style={{ justifyContent: 'flex-start' }}>
-          <Button variant="danger" onClick={() => handleDisable(userId)}>
-            Disable
-          </Button>
-          <Button variant="secondary" onClick={handleCloseRemove}>
-            Cancel
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </div>
-  );
 }
 
 export default User;

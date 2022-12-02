@@ -160,7 +160,7 @@ function Header() {
                     <Button variant="danger" onClick={handleCloseRemoveAccessToken} href="/">
                         Log out
                     </Button>
-                    <Button variant="outline-primary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Cancel
                     </Button>
                 </Modal.Footer>
@@ -233,7 +233,7 @@ function Header() {
                     <Button variant="danger" onClick={handleSave} disabled={disable}>
                         Save
                     </Button>
-                    <Button variant="outline-primary" onClick={handleCloseChangePassword} href="">
+                    <Button variant="outline-secondary" onClick={handleCloseChangePassword} href="">
                         Cancel
                     </Button>
                 </Modal.Footer>
@@ -245,7 +245,7 @@ function Header() {
                 </Modal.Header>
                 <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-primary" onClick={handleCloseSuccess}>
+                    <Button variant="outline-secondary" onClick={handleCloseSuccess}>
                         Close
                     </Button>
                 </Modal.Footer>

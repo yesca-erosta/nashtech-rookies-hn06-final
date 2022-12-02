@@ -220,7 +220,7 @@ function CreateAsset() {
                         </Button>
 
                         <Button
-                            variant="outline-success"
+                            variant="outline-secondary"
                             className={cx('cancel-button')}
                             onClick={() => navigate('/manageasset')}
                         >
@@ -305,7 +305,7 @@ function CreateAsset() {
                         >
                             Save
                         </Button>
-                        <Button variant="outline-primary" style={{ marginLeft: 20 }} onClick={handleCancelCategory}>
+                        <Button variant="outline-secondary" style={{ marginLeft: 20 }} onClick={handleCancelCategory}>
                             Cancel
                         </Button>
                     </div>

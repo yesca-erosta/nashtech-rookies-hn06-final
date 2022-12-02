@@ -197,7 +197,7 @@ function CreateUser() {
                     <Button variant="danger" onClick={onSaveAdd} disabled={!isInputComplete}>
                         Save
                     </Button>
-                    <Button variant="light" className={cx('cancel-button')} onClick={onCancelAdd}>
+                    <Button variant="outline-secondary" className={cx('cancel-button')} onClick={onCancelAdd}>
                         Cancel
                     </Button>
                 </div>
