@@ -13,8 +13,8 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.AssetName)
                 .NotEmpty()
                 .WithMessage("Asset Name is required")
-                .Matches(StringPattern.UserFirstName).WithMessage("Invalid Name. Please try again");
-                
+                .Matches(StringPattern.Name).WithMessage("Invalid Name. Please try again");
+                //edit
             RuleFor(x => x.Specification)
                 .NotEmpty()
                 .WithMessage("Specification is required")

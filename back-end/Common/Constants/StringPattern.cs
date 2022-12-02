@@ -13,7 +13,7 @@
         #region Category
         public const string CategoryID = "^([A-Z]{2,8})$";
         #endregion
-
+        //
         #region Asset
         //public const string 
         #endregion
