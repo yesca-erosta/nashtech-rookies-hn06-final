@@ -23,7 +23,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var asset = await _assetRepository.GetOneAsync(asset => asset.Id == createRequest.AssetId);
 
-            var assignedTo = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedToID);
+            var assignedTo = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedToId);
 
            var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
 
@@ -40,7 +40,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 AssignedById = createRequest.AssignedById,
                 AssignedDate = createRequest.AssignedDate,
                 AssignedTo = assignedTo,
-                AssignedToID = createRequest.AssignedToID,
+                AssignedToId = createRequest.AssignedToId,
                 Note = createRequest.Note,
                 State = AssignmentStateEnum.WaitingForAcceptance
             };
@@ -69,7 +69,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId)
         {
-            var result = await _assignmentRepository.GetOneAsync(a => a.AssignedToID == assignedUserId);
+            var result = await _assignmentRepository.GetOneAsync(a => a.AssignedToId == assignedUserId);
             if (result == null)
             {
                 return null!;
