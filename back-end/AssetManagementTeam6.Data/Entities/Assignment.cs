@@ -1,6 +1,4 @@
 ﻿using Common.Enums;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetManagementTeam6.Data.Entities
 {
@@ -8,7 +6,7 @@ namespace AssetManagementTeam6.Data.Entities
     {
         public int AssetId { get; set; }
         public Asset Asset { get; set; }
-        public int AssignedToID { get; set; }
+        public int AssignedToId { get; set; }
         public User AssignedTo { get; set; }
         public int? AssignedById { get; set; }
         public User? AssignedBy { get; set; }

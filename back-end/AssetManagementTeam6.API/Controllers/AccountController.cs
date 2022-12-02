@@ -98,7 +98,7 @@ namespace AssetManagementTeam6.API.Controllers
             if (user == null)
                 return StatusCode(500, "Sorry the Request failed");
 
-            return Ok();
+            return Ok(user);
         }
 
         //[HttpGet("{id}")]
