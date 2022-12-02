@@ -26,8 +26,8 @@ namespace AssetManagementTeam6.API.Services.Implements
             {
                 UserName = user.UserName,
                 Password = user.Password,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
+                FirstName = user.FirstName!,
+                LastName = user.LastName!,
                 Gender = user.Gender,
                 DateOfBirth = user.DateOfBirth,
                 Location = user.Location,
@@ -51,8 +51,8 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return userByLocation.Select(user => new GetUserResponse(user)
             {
-                StaffCode = user.StaffCode,
-                FullName = user.FullName,
+                StaffCode = user.StaffCode!,
+                FullName = user.FullName!,
                 UserName = user.UserName,
                 JoinedDate = user.JoinedDate,
                 Type = user.Type.ToString(),
@@ -60,7 +60,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 DateOfBirth = user.DateOfBirth
-            });
+            }).ToList();
         }
 
         public async Task<User?> GetUserById(int id)
@@ -148,8 +148,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                     break;
                 default:
                     users = users?.OrderBy(u => u.FullName)?.ToList();
-                    break;
-               
+                    break;              
             }
 
             //paging
@@ -195,9 +194,14 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<User?> Update(int id, UserRequest updateRequest)
         {
 
-            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == id);
+            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == updateRequest.Id);
 
-            userUpdate.DateOfBirth = updateRequest.DateOfBirth;
+            if (userUpdate == null) 
+            {
+                return null;
+            }
+
+            userUpdate!.DateOfBirth = updateRequest.DateOfBirth;
             userUpdate.Gender = updateRequest.Gender;
             userUpdate.JoinedDate = updateRequest.JoinedDate;
             userUpdate.Type = updateRequest.Type;

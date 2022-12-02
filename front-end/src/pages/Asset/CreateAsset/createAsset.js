@@ -10,6 +10,7 @@ import styles from './createAsset.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
 import { ASSET, CATEGORY } from '../../../constants';
+import { dateStrToDate } from '../../../lib/helper';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +23,8 @@ function CreateAsset() {
 
     const initCategory = { id: '', name: '' };
     const [category, setCategory] = useState(initCategory);
+
+    const [loading, setLoading] = useState(false);
 
     const [dataAdd, setDataAdd] = useState({
         assetName: '',
@@ -49,6 +52,12 @@ function CreateAsset() {
     });
 
     const handleCreate = async () => {
+        setLoading(true);
+
+        // Trim() all value dataAdd
+        // KEYSEARCH: trim all properties of an object dataAdd
+        Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
+
         const res = await createData(ASSET, dataAdd);
 
         if (res.code === 'ERR_BAD_REQUEST') {
@@ -59,6 +68,7 @@ function CreateAsset() {
         } else {
             navigate('/manageasset');
         }
+        setLoading(false);
     };
 
     const getDataCategory = async () => {
@@ -82,10 +92,11 @@ function CreateAsset() {
     const [arrMsgCategory, setArrMsgCategory] = useState('');
     const [arrMsgCategoryHoan, setArrMsgCategoryHoan] = useState();
 
-    console.log('arrMsgCategoryHoan', arrMsgCategoryHoan);
     const onCreateCategory = async () => {
+        setArrMsgCategoryHoan();
+        setArrMsgCategory('');
         const res = await createData(CATEGORY, createCategoryHoan);
-        console.log('res', res);
+
         if (res.code === 'ERR_BAD_REQUEST') {
             if (res?.response?.data?.errors) {
                 setArrMsgCategoryHoan(res?.response?.data?.errors);
@@ -105,7 +116,7 @@ function CreateAsset() {
     const [createCategoryHoan, setCreateCategoryHoan] = useState(initCategory);
 
     const onChangeCategory = (e) => {
-        setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value });
+        setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value.trim() });
     };
 
     const handleChangeAdd = (e) => {
@@ -130,85 +141,94 @@ function CreateAsset() {
         <div className={cx('container')}>
             <h3 className={cx('title')}>Create New Asset</h3>
 
-            <Form className={cx('form')}>
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Name</Form.Label>
-                    <Form.Control
-                        isInvalid={arrMsg.AssetName}
-                        type="text"
-                        className={cx('input')}
-                        placeholder="Enter name"
-                        name="assetName"
-                        onChange={handleChangeAdd}
-                    />
-                </Form.Group>
-                {arrMsg.AssetName && <p className={cx('msgError')}>{arrMsg.AssetName[0]}</p>}
-
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Category</Form.Label>
-                    <InputGroup>
-                        <Form.Control placeholder={'Category'} defaultValue={category.name} />
-                        <InputGroup.Text
-                            style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
-                            onClick={handleShowCategory}
-                        >
-                            <GoTriangleDown />
-                        </InputGroup.Text>
-                    </InputGroup>
-                </Form.Group>
-
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Specification</Form.Label>
-                    <Form.Group className="w-100" controlId="exampleForm.ControlTextarea1">
+            {loading ? (
+                <div style={{ fontSize: '24px', textAlign: '-webkit-center', fontWeight: 'bold', padding: '24px' }}>
+                    Loading...
+                </div>
+            ) : (
+                <Form className={cx('form')}>
+                    <Form.Group className={cx('common-form')}>
+                        <Form.Label className={cx('title_input')}>Name</Form.Label>
                         <Form.Control
-                            isInvalid={arrMsg.Specification}
+                            isInvalid={arrMsg.AssetName}
                             type="text"
-                            name="specification"
+                            className={cx('input')}
+                            placeholder="Enter name"
+                            name="assetName"
                             onChange={handleChangeAdd}
-                            as="textarea"
-                            className={cx('input-specification')}
-                            rows={5}
-                            cols={40}
-                            placeholder="Enter specification"
+                            value={dataAdd.assetName}
                         />
                     </Form.Group>
-                </Form.Group>
-                {arrMsg.Specification && <p className={cx('msgError')}>{arrMsg.Specification[0]}</p>}
+                    {arrMsg.AssetName && <p className={cx('msgErrorBg')}>{arrMsg.AssetName[0]}</p>}
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
-                    <Form.Control
-                        isInvalid={arrMsg.InstalledDate}
-                        type="date"
-                        className={cx('input')}
-                        name="installedDate"
-                        onChange={handleChangeAdd}
-                    />
-                </Form.Group>
-                {arrMsg.InstalledDate && <p className={cx('msgError')}>{arrMsg.InstalledDate[0]}</p>}
+                    <Form.Group className={cx('common-form')}>
+                        <Form.Label className={cx('title_input')}>Category</Form.Label>
+                        <InputGroup>
+                            <Form.Control placeholder={'Category'} defaultValue={category.name} readOnly />
+                            <InputGroup.Text
+                                style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
+                                onClick={handleShowCategory}
+                            >
+                                <GoTriangleDown />
+                            </InputGroup.Text>
+                        </InputGroup>
+                    </Form.Group>
 
-                <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
-                    <div key={`state-radio`} onChange={handleChangeAdd} className={cx('input-radio-state')}>
-                        <Form.Check label="Not Available" name="state" type="radio" value={0} id={`state-radio-1`} />
-                        <Form.Check label="Available" name="state" type="radio" value={1} id={`state-radio-2`} />
+                    <Form.Group className={cx('common-form')}>
+                        <Form.Label className={cx('title_input')}>Specification</Form.Label>
+                        <Form.Group className="w-100" controlId="exampleForm.ControlTextarea1">
+                            <Form.Control
+                                isInvalid={arrMsg.Specification}
+                                type="text"
+                                name="specification"
+                                onChange={handleChangeAdd}
+                                as="textarea"
+                                className={cx('input-specification')}
+                                rows={5}
+                                cols={40}
+                                placeholder="Enter specification"
+                                value={dataAdd.specification}
+                            />
+                        </Form.Group>
+                    </Form.Group>
+                    {arrMsg.Specification && <p className={cx('msgErrorBg')}>{arrMsg.Specification[0]}</p>}
+
+                    <Form.Group className={cx('common-form')}>
+                        <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
+                        <Form.Control
+                            isInvalid={arrMsg.InstalledDate}
+                            type="date"
+                            className={cx('input')}
+                            name="installedDate"
+                            onChange={handleChangeAdd}
+                            value={dateStrToDate(dataAdd.installedDate)}
+                        />
+                    </Form.Group>
+                    {arrMsg.InstalledDate && <p className={cx('msgErrorBg')}>{arrMsg.InstalledDate[0]}</p>}
+
+                    <Form.Group className={cx('common-form')}>
+                        <Form.Label className={cx('title_input-state')}>State</Form.Label>
+                        <div key={`state-radio`} onChange={handleChangeAdd} className={cx('input-radio-state')}>
+                            <Form.Check label="Not Available" name="state" type="radio" value={0} id={`state-radio-1`} />
+                            <Form.Check label="Available" name="state" type="radio" value={1} id={`state-radio-2`} />
+                        </div>
+                    </Form.Group>
+
+                    <div className={cx('button')}>
+                        <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>
+                            Save
+                        </Button>
+
+                        <Button
+                            variant="outline-success"
+                            className={cx('cancel-button')}
+                            onClick={() => navigate('/manageasset')}
+                        >
+                            Cancel
+                        </Button>
                     </div>
-                </Form.Group>
-
-                <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>
-                        Save
-                    </Button>
-
-                    <Button
-                        variant="outline-success"
-                        className={cx('cancel-button')}
-                        onClick={() => navigate('/manageasset')}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            </Form>
+                </Form>
+            )}
 
             {showCategory && (
                 <div className={cx('container_category')}>
@@ -242,20 +262,40 @@ function CreateAsset() {
                     <Form.Group>
                         <Form.Label>Category Name:</Form.Label>
                         <Form.Control
+                            isInvalid={
+                                arrMsgCategoryHoan?.Name ||
+                                arrMsgCategory === 'Category is already existed. Please enter a different category'
+                            }
                             type="text"
                             name="name"
                             placeholder="Enter Category Name"
                             onChange={onChangeCategory}
                         />
                     </Form.Group>
-
+                    {arrMsgCategory === 'Category is already existed. Please enter a different category' && (
+                        <p className={cx('msgError')}>{arrMsgCategory}</p>
+                    )}
+                    {arrMsgCategoryHoan?.Name && <p className={cx('msgError')}>{arrMsgCategoryHoan?.Name[0]}</p>}
                     <Form.Group>
                         <Form.Label>Category ID:</Form.Label>
-                        <Form.Control type="text" name="id" placeholder="Enter Category Id" onChange={onChangeCategory} />
+                        <Form.Control
+                            isInvalid={
+                                arrMsgCategoryHoan?.Id ||
+                                arrMsgCategory === 'CategoryID is already existed. Please enter a different CategoryID'
+                            }
+                            type="text"
+                            name="id"
+                            placeholder="Enter Category Id"
+                            onChange={onChangeCategory}
+                        />
                     </Form.Group>
 
-                    {arrMsgCategory && <p className={cx('msgError')}>{arrMsgCategory}</p>}
-                    {!arrMsgCategory && arrMsgCategoryHoan && <p className={cx('msgError')}>{arrMsgCategoryHoan.Id[0]}</p>}
+                    {arrMsgCategory === 'CategoryID is already existed. Please enter a different CategoryID' && (
+                        <p className={cx('msgError')}>{arrMsgCategory}</p>
+                    )}
+                    {!arrMsgCategory && arrMsgCategoryHoan?.Id && (
+                        <p className={cx('msgError')}>{arrMsgCategoryHoan?.Id[0]}</p>
+                    )}
 
                     <div className={cx('btn_create-category')}>
                         <Button
