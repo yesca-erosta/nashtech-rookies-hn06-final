@@ -134,10 +134,15 @@ function Header() {
                 <div className={cx('inner-page')}>{name}</div>
 
                 <div className={cx('inner-name')}>
-                    <div>{token.userName}</div>
                     <div>
                         <Dropdown>
-                            <Dropdown.Toggle variant="" style={{ color: 'white' }} />
+                            <Dropdown.Toggle
+                                id="dropdown-button-dark-example1"
+                                variant=""
+                                style={{ color: 'white', fontWeight: 500, fontSize: 22 }}
+                            >
+                                {token.userName}
+                            </Dropdown.Toggle>
 
                             <Dropdown.Menu style={{ color: 'white' }}>
                                 <Dropdown.Item>Action</Dropdown.Item>
