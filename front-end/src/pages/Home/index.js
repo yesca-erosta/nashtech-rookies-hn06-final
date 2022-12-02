@@ -15,7 +15,7 @@ const cx = classNames.bind(styles);
 
 function Home() {
     const [hideNew, setHideNew] = useState(false);
-    const { token, oldPasswordLogin } = useAppContext();
+    const { token, setToken, oldPasswordLogin } = useAppContext();
     const [showFirstChangePassword, setShowFirstChangePassWord] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [disable, setDisable] = useState(true);
@@ -32,7 +32,7 @@ function Home() {
     };
 
     useEffect(() => {
-        if (token.needUpdatePwdOnLogin) {
+        if (token.needUpdatePwdOnLogin === true) {
             setShowFirstChangePassWord(true);
         } else {
             setShowFirstChangePassWord(false);
@@ -65,6 +65,10 @@ function Home() {
             }),
         });
 
+        const data = await result.json();
+
+        setToken(data);
+
         if (result.status === 200) {
             setShowFirstChangePassWord(false);
             setShow(true);
@@ -84,16 +88,7 @@ function Home() {
 
     return (
         <div>
-            <Modal
-                show={showFirstChangePassword}
-                onHide={() => {
-                    if (token.needUpdatePwdOnLogin) {
-                        setShowFirstChangePassWord(true);
-                    } else {
-                        setShowFirstChangePassWord(false);
-                    }
-                }}
-            >
+            <Modal show={showFirstChangePassword} onHide={() => setShowFirstChangePassWord(false)}>
                 <Modal.Header>
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
@@ -150,7 +145,7 @@ function Home() {
                 </Modal.Header>
                 <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-primary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

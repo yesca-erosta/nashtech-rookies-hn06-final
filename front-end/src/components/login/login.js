@@ -70,6 +70,12 @@ const Login = () => {
         localStorage.setItem(USER_INFORMATION, JSON.stringify(data));
     };
 
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
+    };
+
     return (
         <section className="screen">
             <div className="body">
@@ -118,6 +124,7 @@ const Login = () => {
                                 setIsPasswordError('');
                                 setIsLoginError(false);
                             }}
+                            onKeyUp={handleOnChangeEnter}
                         />
                         {isPasswordError && <label className="form_item_error">{isPasswordError}</label>}
                     </div>
