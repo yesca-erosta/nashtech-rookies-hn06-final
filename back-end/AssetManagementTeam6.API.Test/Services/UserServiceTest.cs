@@ -37,6 +37,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Password = SystemFunction.CreateMD5("Admin@123"),
                 Type = StaffEnum.Admin,
             };
+
         }
 
         public static readonly object[][] CorrectUpdateData =
@@ -201,7 +202,6 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.Null(testResult);
-
         }
 
         [Fact]
