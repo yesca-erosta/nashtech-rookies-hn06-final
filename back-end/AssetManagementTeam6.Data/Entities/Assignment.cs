@@ -1,6 +1,4 @@
 ﻿using Common.Enums;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AssetManagementTeam6.Data.Entities
 {
