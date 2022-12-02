@@ -27,6 +27,23 @@ namespace AssetManagementTeam6.API.Test.Services
             };
         }
 
+        public Asset GetExpectedResult()
+        {
+            return new Asset
+            {
+                Id = 1,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                //AssetCode = "LA00001",
+                Category = GetCategorySample()
+                
+            };
+        }
+
         public AssetRequest GetSampleAssetRequest() { 
             return new AssetRequest
             {
@@ -50,16 +67,13 @@ namespace AssetManagementTeam6.API.Test.Services
                 Location = LocationEnum.HN,
                 Specification = "null",
                 CategoryId = "LA",
-                AssetCode = "LA00001",
-                Category =
-                {
-                    Id = "LA",
-                    Name = "Laptop"
-                }
+                //AssetCode = "LA00001",
+                Category = GetCategorySample()
+                
             };
         }
 
-        public IEnumerable<Asset> GetSampleAssetLists()
+        public List<Asset> GetSampleAssetLists()
         {
             return new List<Asset>
             {
@@ -73,11 +87,8 @@ namespace AssetManagementTeam6.API.Test.Services
                 Specification = "null",
                 CategoryId = "LA",
                 AssetCode ="LA00001",
-                Category =
-                {
-                    Id = "LA",
-                    Name = "Laptop"
-                }
+                Category = GetCategorySample()
+
             },
                 new Asset
             {
@@ -89,26 +100,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Specification = "null",
                 CategoryId = "MO",
                 AssetCode ="MO00002",
-                Category =
-                {
-                    Id = "MO",
-                    Name = "Monitor"
-                }
-            },new Asset
-            {
-                Id = 3,
-                AssetName = "PC Sample",
-                InstalledDate = new DateTime(2000, 01, 13),
-                State = StateEnum.NotAvailable,
-                Location = LocationEnum.HN,
-                Specification = "null",
-                CategoryId = "PC",
-                AssetCode = "PC00003",
-                Category =
-                {
-                    Id = "PC",
-                    Name = "Personal computer"
-                }
+                Category = GetCategorySample()
             }
         };
         }
@@ -133,6 +125,8 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task getAssetById_ShouldReturnNotNull()
         {
             var asset = GetSampleAsset();
+
+            var expectedResult = GetExpectedResult();
             _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
             var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
 
@@ -141,21 +135,42 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.NotNull(result);
-            Assert.Equal(asset.AssetName, result.AssetName);
-            Assert.Equal(asset.Specification, result.Specification);
-            Assert.Equal(asset.Location, result.Location);
-            Assert.Equal(asset.CategoryId, result.CategoryId);
-            Assert.Equal(asset.State, result.State);
-            Assert.Equal(asset.InstalledDate, result.InstalledDate);
-            Assert.Equal(asset.Id, result.Id);
-            Assert.Equal(asset.AssetCode, result.AssetCode);
-            Assert.Equal(asset.Category, result.Category); 
+            Assert.Equal(expectedResult.AssetName, result.AssetName);
+            Assert.Equal(expectedResult.Specification, result.Specification);
+            Assert.Equal(expectedResult.Location, result.Location);
+            Assert.Equal(expectedResult.CategoryId, result.CategoryId);
+            Assert.Equal(expectedResult.State, result.State);
+            Assert.Equal(expectedResult.InstalledDate, result.InstalledDate);
+            Assert.Equal(expectedResult.Id, result.Id);
+            Assert.Equal(expectedResult.AssetCode, result.AssetCode);
+            Assert.Equal(expectedResult.Category.Id, result.Category.Id);
+            Assert.Equal(expectedResult.Category.Name, result.Category.Name);
+
+        }
+
+        [Fact]
+        public async Task Create_ShouldReturnCategoryNull()
+        {
+            Category category = null;
+
+            var assetRequest = GetSampleAssetRequest();
+
+            _mockCategoryRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+            //_mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.Create(assetRequest);
+
+            //Arrange
+            Assert.Null(result);
         }
 
         [Fact]
         public async Task Create_ShouldReturnNull()
         {
-            var asset = GetSampleAsset();
+            Asset asset = null;
 
             var category = GetCategorySample();
 
@@ -182,6 +197,8 @@ namespace AssetManagementTeam6.API.Test.Services
 
             var assetRequest = GetSampleAssetRequest();
 
+            var expectedResult = GetExpectedResult();
+
             _mockCategoryRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
             _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
 
@@ -191,7 +208,87 @@ namespace AssetManagementTeam6.API.Test.Services
             var result = await assetService.Create(assetRequest);
 
             //Arrange
+            Assert.NotNull(result);
+            Assert.Equal(expectedResult.AssetName, result.AssetName);
+            Assert.Equal(expectedResult.Specification, result.Specification);
+            Assert.Equal(expectedResult.Location, result.Location);
+            Assert.Equal(expectedResult.CategoryId, result.CategoryId);
+            Assert.Equal(expectedResult.State, result.State);
+            Assert.Equal(expectedResult.InstalledDate, result.InstalledDate);
+            Assert.Equal(expectedResult.Id, result.Id);
+            Assert.Equal(expectedResult.AssetCode, result.AssetCode);
+            Assert.Equal(expectedResult.Category.Id, result.Category.Id);
+            Assert.Equal(expectedResult.Category.Name, result.Category.Name);
+        }
+
+        //TODO : State
+        [Theory]
+        [InlineData(LocationEnum.HN)]
+        [InlineData(LocationEnum.HCM)]
+        [InlineData(LocationEnum.DN)]
+        public async Task GetAll_ShouldReturnNull(LocationEnum location)
+        {
+            var asset = new List<Asset>();       
+
+            var assetLocation = asset?.Where(x => x.Location == location).ToList() ?? new List<Asset>();
+            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetLocation);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.GetAllAsync(location);
+
+            //Arrange
             Assert.Null(result);
         }
+
+        [Theory]
+        [InlineData(LocationEnum.HN)]
+        public async Task GetAll_ShouldReturnNotNull(LocationEnum location)
+        {
+            var assetList = GetSampleAssetLists();
+
+            var expectedResult = new List<Asset>
+            {
+                new Asset
+            {
+                Id = 1,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00001",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 2,
+                AssetName = "Monitor Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "MO",
+                AssetCode ="MO00002",
+                Category = GetCategorySample()
+            }
+            };
+
+            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetList);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.GetAllAsync(location);
+
+            //Arrange
+            Assert.NotNull(result);
+            Asset.Equals(result.Count(), expectedResult.Count());
+        }
+
+
     }
 }
