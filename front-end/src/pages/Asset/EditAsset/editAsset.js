@@ -78,7 +78,7 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
-                {arrMsg?.AssetName && <p className={cx('msgError')}>{arrMsg?.AssetName[0]}</p>}
+                {arrMsg?.AssetName && <p className={cx('msgErrorEdit')}>{arrMsg?.AssetName[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Category</Form.Label>
@@ -100,7 +100,7 @@ function CreateAsset() {
                         as="textarea"
                     />
                 </Form.Group>
-                {arrMsg?.Specification && <p className={cx('msgError')}>{arrMsg?.Specification[0]}</p>}
+                {arrMsg?.Specification && <p className={cx('msgErrorEdit')}>{arrMsg?.Specification[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
                     <Form.Control
@@ -112,7 +112,7 @@ function CreateAsset() {
                         className={cx('input')}
                     />
                 </Form.Group>
-                {arrMsg?.InstalledDate && <p className={cx('msgError')}>{arrMsg?.InstalledDate[0]}</p>}
+                {arrMsg?.InstalledDate && <p className={cx('msgErrorEdit')}>{arrMsg?.InstalledDate[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input-state')}>State</Form.Label>
 
