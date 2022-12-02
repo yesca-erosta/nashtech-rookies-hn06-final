@@ -227,7 +227,7 @@ function Assignment() {
                             <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
                                 OK
                             </Button>
-                            <Button variant="light" size="sm" className={cx('button_cancel')} onClick={handleCancelState}>
+                            <Button variant="outline-secondary" size="sm" className={cx('button_cancel')} onClick={handleCancelState}>
                                 Cancel
                             </Button>
                         </div>

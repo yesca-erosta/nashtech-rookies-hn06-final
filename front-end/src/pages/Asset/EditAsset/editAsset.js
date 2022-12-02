@@ -145,7 +145,13 @@ function CreateAsset() {
                         Save
                     </Button>
 
-                    <Button variant="outline-success" className={cx('cancel-button')} href="/manageasset">
+                    <Button
+                        variant="outline-secondary"
+                        className={cx('cancel-button')}
+                        onClick={() => {
+                            navigate('/manageasset');
+                        }}
+                    >
                         Cancel
                     </Button>
                 </div>
