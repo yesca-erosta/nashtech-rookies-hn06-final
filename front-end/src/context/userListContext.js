@@ -23,6 +23,7 @@ const UsersListProvider = ({ children }) => {
   const [totalRows, setTotalRows] = useState(0);
   const [perPage, setPerPage] = useState(10);
   const [loading, setLoading] = useState(false);
+  const [selectedPageUser, setSelectedPageUser] = useState(1);
   const [queryParams, setQueryParams] = useState({
     page: 1,
     pageSize: 10,
@@ -58,6 +59,8 @@ const UsersListProvider = ({ children }) => {
     setPerPage,
     queryParams,
     setQueryParams,
+    setSelectedPageUser,
+    selectedPageUser
   };
 
   return <UserListContext.Provider value={contextValue}>{children}</UserListContext.Provider>;

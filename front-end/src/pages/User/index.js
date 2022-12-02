@@ -30,6 +30,8 @@ function User() {
         setPerPage,
         queryParams,
         setQueryParams,
+        setSelectedPageUser,
+        selectedPageUser,
     } = useUserListContext();
     const [show, setShow] = useState(false);
     const [showRemove, setShowRemove] = useState(false);
@@ -116,6 +118,7 @@ function User() {
     const getData = async () => {
         const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
         setUsers(data.source);
+        setTotalRows(data.totalRecord);
     };
 
     useEffect(() => {
@@ -149,6 +152,7 @@ function User() {
 
     const handlePageClick = async (event) => {
         setSelectedPage(event.selected + 1);
+        setSelectedPageUser(event.selected + 1);
         setLoading(true);
         setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
@@ -162,6 +166,16 @@ function User() {
         setLoading(false);
     };
 
+    const forcePage = () => {
+        if (selectedPageUser === 1) {
+            if (selectedPage !== 0) {
+                return selectedPage - 1;
+            } else return 0;
+        } else {
+            return selectedPageUser - 1;
+        }
+    };
+
     const CustomPagination = (e) => {
         const count = Math.ceil(totalRows / perPage);
         return (
@@ -170,7 +184,7 @@ function User() {
                     <ReactPaginate
                         previousLabel={'Previous'}
                         nextLabel={'Next'}
-                        forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
+                        forcePage={forcePage()}
                         onPageChange={handlePageClick}
                         pageCount={count || 1}
                         breakLabel={'...'}
