@@ -48,7 +48,7 @@ function CreateAssignment() {
                 <div className={cx('button')}>
                     <Button variant="danger">Save</Button>
 
-                    <Button variant="outline-success" className={cx('cancel-button')}>
+                    <Button variant="outline-secondary" className={cx('cancel-button')}>
                         Cancel
                     </Button>
                 </div>

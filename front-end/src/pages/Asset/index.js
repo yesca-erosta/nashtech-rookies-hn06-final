@@ -635,7 +635,7 @@ function Asset() {
                                         OK
                                     </Button>
                                     <Button
-                                        variant="light"
+                                        variant="outline-secondary"
                                         size="sm"
                                         className={cx('button_cancel')}
                                         onClick={handleCancelState}
@@ -675,7 +675,7 @@ function Asset() {
                                         OK
                                     </Button>
                                     <Button
-                                        variant="light"
+                                        variant="outline-secondary"
                                         size="sm"
                                         className={cx('button_cancel')}
                                         onClick={handleCancelCategory}
