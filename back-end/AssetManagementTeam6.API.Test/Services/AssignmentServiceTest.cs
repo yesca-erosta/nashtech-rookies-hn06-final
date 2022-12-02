@@ -28,7 +28,7 @@ namespace AssetManagementTeam6.API.Test.Services
             var assignment = new Assignment
             {
                 AssetId = 1,
-                AssignedToID = 2,
+                AssignedToId = 2,
                 AssignedById = 1,
                 AssignedDate = DateTime.UtcNow,
                 State = AssignmentStateEnum.WaitingForAcceptance,
@@ -63,7 +63,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 AssetId = assignment.Id,
                 AssignedById = assignment.AssignedById,
                 AssignedDate = assignment.AssignedDate,
-                AssignedToID = assignment.AssignedToID,
+                AssignedToId = assignment.AssignedToId,
                 Note = assignment.Note,
             });
 
@@ -72,8 +72,149 @@ namespace AssetManagementTeam6.API.Test.Services
             Assert.Equal(assignment.Id, testResult!.Id);
             Assert.Equal(assignment.AssignedById, testResult.AssignedById);
             Assert.Equal(assignment.AssignedDate, testResult.AssignedDate);
-            Assert.Equal(assignment.AssignedToID, testResult.AssignedToID);
+            Assert.Equal(assignment.AssignedToId, testResult.AssignedToId);
             Assert.Equal(assignment.Note, testResult.Note);
+        }
+
+        [Fact]
+        public async Task CreateNewAssignment_ShouldReturnNullWithAsset()
+        {
+            //Arrange
+            var assignment = new Assignment
+            {
+                AssetId = 1,
+                AssignedToId = 2,
+                AssignedById = 1,
+                AssignedDate = DateTime.UtcNow,
+                State = AssignmentStateEnum.WaitingForAcceptance,
+                Note = "Unit Test"
+            };
+
+            Asset asset = null!;
+
+            var assignedTo = new User
+            {
+                Id = 2
+            };
+
+            var assignedBy = new User
+            {
+                Id = 1
+            };
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedTo);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedBy);
+            _mockAssignmentRepository.Setup(x => x.Create(It.IsAny<Assignment>())).ReturnsAsync(assignment);
+
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            var testResult = await assignmentService.Create(new AssignmentRequest
+            {
+                AssetId = assignment.Id,
+                AssignedById = assignment.AssignedById,
+                AssignedDate = assignment.AssignedDate,
+                AssignedToId = assignment.AssignedToId,
+                Note = assignment.Note,
+            });
+
+            //Assert
+            Assert.Null(testResult);
+        }
+
+        //TODO: Handling
+        [Fact]
+        public async Task CreateNewAssignment_ShouldNotReturnNullWithAssignedTo()
+        {
+            //Arrange
+            var assignment = new Assignment
+            {
+                AssetId = 1,
+                AssignedToId = 2,
+                AssignedById = 1,
+                AssignedDate = DateTime.UtcNow,
+                State = AssignmentStateEnum.WaitingForAcceptance,
+                Note = "Unit Test"
+            };
+
+            var asset = new Asset
+            {
+                Id = 1
+            };
+
+            User assignedTo = null!;
+
+            var assignedBy = new User
+            {
+                Id = 1
+            };
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedTo);
+            //_mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedBy);
+            _mockAssignmentRepository.Setup(x => x.Create(It.IsAny<Assignment>())).ReturnsAsync(assignment);
+
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            var testResult = await assignmentService.Create(new AssignmentRequest
+            {
+                AssetId = assignment.Id,
+                AssignedById = assignment.AssignedById,
+                AssignedDate = assignment.AssignedDate,
+                AssignedToId = assignment.AssignedToId,
+                Note = assignment.Note,
+            });
+
+            //Assert
+            Assert.Null(testResult);
+        }
+        //TODO: Handling
+        [Fact]
+        public async Task CreateNewAssignment_ShouldNotReturnWithAssignedBy()
+        {
+            //Arrange
+            var assignment = new Assignment
+            {
+                AssetId = 1,
+                AssignedToId = 2,
+                AssignedById = 1,
+                AssignedDate = DateTime.UtcNow,
+                State = AssignmentStateEnum.WaitingForAcceptance,
+                Note = "Unit Test"
+            };
+
+            var asset = new Asset
+            {
+                Id = 1
+            };
+
+            var assignedTo = new User
+            {
+                Id = 2
+            };
+
+            User assignedBy = null!;
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedTo);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(assignedBy);
+            _mockAssignmentRepository.Setup(x => x.Create(It.IsAny<Assignment>())).ReturnsAsync(assignment);
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            var testResult = await assignmentService.Create(new AssignmentRequest
+            {
+                AssetId = assignment.Id,
+                AssignedById = assignment.AssignedById,
+                AssignedDate = assignment.AssignedDate,
+                AssignedToId = assignment.AssignedToId,
+                Note = assignment.Note,
+            });
+
+            //Assert
+            Assert.Null(testResult);
         }
     }
 }
