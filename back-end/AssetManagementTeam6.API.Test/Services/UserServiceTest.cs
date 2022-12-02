@@ -35,6 +35,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Password = SystemFunction.CreateMD5("Admin@123"),
                 Type = StaffEnum.Admin,
             };
+
         }
 
         public UserRequest ConvertToUserRequest(User user)
@@ -131,7 +132,6 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.Null(testResult);
-
         }
 
         [Fact]
@@ -542,7 +542,6 @@ namespace AssetManagementTeam6.API.Test.Services
             //Assert.IsType<List<GetUserResponse>>(testResult);
             Assert.Equal(0, testResult.Count());
             Assert.NotNull(testResult);
-
         }
 
     }
