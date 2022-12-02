@@ -111,6 +111,9 @@ namespace AssetManagementTeam6.API.Controllers
             if (asset == null)
                 return NotFound();
 
+            if ((int)asset.State == 4)
+                return BadRequest("Cannot edit because state is Assigned");
+
             var user = await _userService.GetUserById(userId.Value);
 
             requestModel.Location = user!.Location;
@@ -134,6 +137,9 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (asset == null)
                 return StatusCode(500, "Can't found asset in the system");
+
+            if ((int)asset.State == 4)
+                return BadRequest("State Invalid");
 
             var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(id);
 

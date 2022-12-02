@@ -16,13 +16,13 @@ namespace AssetManagementTeam6.API.Validation
              .Cascade(CascadeMode.StopOnFirstFailure)
              .NotEmpty().WithMessage("Category ID is required")
              .NotNull().WithMessage("Category ID is required")
-             .Matches(StringPattern.CategoryID).WithMessage("the Category ID is invalid!");
-
+             .Matches(StringPattern.CategoryID).WithMessage("The Category ID is invalid!");
+            //Edit
             RuleFor(x => x.Name)
             .Cascade(CascadeMode.StopOnFirstFailure)
             .NotEmpty().WithMessage("Category Name is required")
             .NotNull().WithMessage("Category Name is required")
-            .Matches(StringPattern.Name).WithMessage("the Category Name is invalid!");
+            .Matches(StringPattern.Name).WithMessage("The Category Name is invalid!");
         }
     }
 }

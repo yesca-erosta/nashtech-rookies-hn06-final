@@ -167,7 +167,7 @@ const EditUser = () => {
                             Save
                         </Button>
                         <Button
-                            variant="light"
+                            variant="outline-secondary"
                             onClick={() => {
                                 navigate('/manageruser');
                             }}

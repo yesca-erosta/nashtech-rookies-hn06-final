@@ -10,7 +10,7 @@ import DataTable from 'react-data-table-component';
 import { BsSearch } from 'react-icons/bs';
 import { FaFilter } from 'react-icons/fa';
 import ReactPaginate from 'react-paginate';
-import { deleteData, getAllData, getAllDataWithFilterBox } from '../../apiServices';
+import { deleteData, getAllData, getAllDataWithFilterBox, getOneData } from '../../apiServices';
 import { ASSET } from '../../constants';
 import { queryToStringForAsset } from '../../lib/helper';
 import { DetailAsset } from './DetailAsset/DetailAsset';
@@ -349,9 +349,16 @@ function Asset() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const [isShowModalCantDelete, setIsShowModalCantDelete] = useState(false);
+
     const handleDelete = async () => {
         setLoading(true);
-        await deleteData(ASSET, assetId);
+        const res = await deleteData(ASSET, assetId);
+
+        if (res.code === 'ERR_BAD_REQUEST') {
+            setIsShowModalCantDelete(true);
+        }
+
         getData();
         setAssetId('');
         setShowDelete(false);
@@ -363,11 +370,11 @@ function Asset() {
         setAssetDetails(assetsHoan.find((c) => c.assetCode === assetCode));
     };
 
-    const handleClickEdit = (e, state) => {
-        if (state === 4) {
+    const handleClickEdit = async (e, asset) => {
+        const res = await getOneData(ASSET, asset.id);
+
+        if (res.state === 4) {
             e.preventDefault();
-        } else {
-            navigate('./editasset');
         }
     };
 
@@ -403,8 +410,8 @@ function Asset() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    onClick={(e) => handleClickEdit(e, row.state)}
-                    to={`./editasset`}
+                    onClick={(e) => handleClickEdit(e, row)}
+                    to={row.state === 4 ? `.` : `./editasset`}
                     key={row.assetCode}
                     state={{ asset: row }}
                     className={styles.customPen}
@@ -431,6 +438,7 @@ function Asset() {
 
     const fetchAssets = async (page) => {
         setLoading(true);
+
         setQueryParams({ ...queryParams, page: page, pageSize: 10 });
 
         const data = await getAllDataWithFilterBox(
@@ -635,7 +643,7 @@ function Asset() {
                                         OK
                                     </Button>
                                     <Button
-                                        variant="light"
+                                        variant="outline-secondary"
                                         size="sm"
                                         className={cx('button_cancel')}
                                         onClick={handleCancelState}
@@ -675,7 +683,7 @@ function Asset() {
                                         OK
                                     </Button>
                                     <Button
-                                        variant="light"
+                                        variant="outline-secondary"
                                         size="sm"
                                         className={cx('button_cancel')}
                                         onClick={handleCancelCategory}
@@ -754,6 +762,29 @@ function Asset() {
                         Cancel
                     </Button>
                 </Modal.Footer>
+            </Modal>
+
+            <Modal
+                show={isShowModalCantDelete}
+                onHide={() => {
+                    setIsShowModalCantDelete(false);
+                }}
+            >
+                <Modal.Header closeButton>
+                    {isShowModalCantDelete && <Modal.Title>Cannot Delete Asset</Modal.Title>}
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        {isShowModalCantDelete && (
+                            <Form.Label>
+                                Cannot delete the asset because it belongs to one or more historical assignments
+                            </Form.Label>
+                        )}
+
+                        {/* TODO: */}
+                        <Form.Label>If the asset is not able to be used anymore, please update ...</Form.Label>
+                    </Form>
+                </Modal.Body>
             </Modal>
         </div>
     );
