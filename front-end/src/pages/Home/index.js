@@ -15,7 +15,7 @@ const cx = classNames.bind(styles);
 
 function Home() {
     const [hideNew, setHideNew] = useState(false);
-    const { token, setToken, oldPasswordLogin } = useAppContext();
+    const { token, oldPasswordLogin } = useAppContext();
     const [showFirstChangePassword, setShowFirstChangePassWord] = useState(false);
     const [newPassword, setNewPassword] = useState('');
     const [disable, setDisable] = useState(true);
@@ -64,10 +64,6 @@ function Home() {
                 newPassword: newPassword,
             }),
         });
-
-        const data = await result.json();
-
-        setToken(data);
 
         if (result.status === 200) {
             setShowFirstChangePassWord(false);
