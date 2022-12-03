@@ -14,16 +14,13 @@ namespace AssetManagementTeam6.API.Test.Services
 {
     public class UserServiceTest
     {
-        private Mock<IUserRepository> _mockUserRepository;
+        private readonly Mock<IUserRepository> _mockUserRepository;
+        private readonly User _sampleUser;
 
         public UserServiceTest()
         {
             _mockUserRepository = new Mock<IUserRepository>();
-        }
-
-        public User GetSampleUser()
-        {
-            return new User
+            _sampleUser = new User
             {
                 Id = 1,
                 UserName = "dongnp13",
@@ -97,95 +94,9 @@ namespace AssetManagementTeam6.API.Test.Services
             };
         }
 
-        public IEnumerable<User> GetSampleUserLists()
+        public List<User> GetSampleUserLists()
         {
-            return new List<User>
-            {
-                new User {
-                    Id = 1,
-                    //StaffCode = "SD0001",
-                    FirstName = "Dong",
-                    LastName = "Nguyen Phuong",
-                    UserName = "dongnp13",
-                    DateOfBirth = new DateTime(2000,01,01),
-                    Password = SystemFunction.CreateMD5("Admin@123"),
-                    JoinedDate = new DateTime(2022,01,01),
-                    Type = StaffEnum.Admin,
-                    Gender = GenderEnum.Male,
-                    Location = LocationEnum.HN,
-                    NeedUpdatePwdOnLogin = false,
-                },
-                new User {
-                    Id = 2,
-                    //StaffCode = "SD0001",
-                    FirstName = "Hoan",
-                    LastName = "Nguyen Van",
-                    UserName = "hoannv",
-                    DateOfBirth = new DateTime(2001,11,01),
-                    Password = SystemFunction.CreateMD5("Admin@1234"),
-                    JoinedDate = new DateTime(2012,01,01),
-                    Type = StaffEnum.Admin,
-                    Gender = GenderEnum.Male,
-                    Location = LocationEnum.DN,
-                    NeedUpdatePwdOnLogin = true,
-                },
-                 new User {
-                    Id = 3,
-                    //StaffCode = "SD0001",
-                    FirstName = "Tai",
-                    LastName = "Pham Tien",
-                    UserName = "taitienpham",
-                    DateOfBirth = new DateTime(2000,05,03),
-                    Password = SystemFunction.CreateMD5("Tientai@2k"),
-                    JoinedDate = new DateTime(2010,02,02),
-                    Type = StaffEnum.Staff,
-                    Gender = GenderEnum.Male,
-                    Location = LocationEnum.HN,
-                    NeedUpdatePwdOnLogin = false,
-                },
-                  new User {
-                    Id = 4,
-                    //StaffCode = "SD0001",
-                    FirstName = "Tien",
-                    LastName = "Nguyen Ngoc",
-                    UserName = "tiennguyen99",
-                    DateOfBirth = new DateTime(1999,09,05),
-                    Password = SystemFunction.CreateMD5("TienTien@123"),
-                    JoinedDate = new DateTime(2005,10,12),
-                    Type = StaffEnum.Admin,
-                    Gender = GenderEnum.Male,
-                    Location = LocationEnum.HCM,
-                    NeedUpdatePwdOnLogin = true,
-                },
-                    new User {
-                    Id = 1,
-                    //StaffCode = "SD0001",
-                    FirstName = "Hai",
-                    LastName = "Nguyen Thanh",
-                    UserName = "haint2k",
-                    DateOfBirth = new DateTime(1992,01,12),
-                    Password = SystemFunction.CreateMD5("Admin@123"),
-                    JoinedDate = new DateTime(2020,08,11),
-                    Type = StaffEnum.Admin,
-                    Gender = GenderEnum.Male,
-                    Location = LocationEnum.HN,
-                    NeedUpdatePwdOnLogin = false,
-                },
-                      new User {
-                    Id = 1,
-                    //StaffCode = "SD0001",
-                    FirstName = "Trang",
-                    LastName = "Le Thu",
-                    UserName = "tranglt2k2",
-                    DateOfBirth = new DateTime(2002,02,02),
-                    Password = SystemFunction.CreateMD5("Admin@123"),
-                    JoinedDate = new DateTime(2022,01,01),
-                    Type = StaffEnum.Staff,
-                    Gender = GenderEnum.Female,
-                    Location = LocationEnum.HN,
-                    NeedUpdatePwdOnLogin = false,
-                },
-            };
+            return TestBase.ReadJsonFromFile<List<User>>("dummy_user_data.json"); ;
         }
 
         [Fact]
@@ -201,31 +112,13 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.Null(testResult);
-
         }
 
         [Fact]
         public async Task GetUserById_ShouldNotReturnNull()
         {
             //Arrange
-            var user = GetSampleUser();
-
-            var expectedResult = new User
-            {
-                Id = 1,
-                UserName = "dongnp13",
-                FirstName = "Dong",
-                LastName = "Nguyen Phuong",
-                DateOfBirth = new DateTime(2000, 01, 13),
-                Gender = GenderEnum.Male,
-                JoinedDate = new DateTime(2010, 10, 10),
-                Location = LocationEnum.HN,
-                NeedUpdatePwdOnLogin = true,
-                Password = "0E7517141FB53F21EE439B355B5A1D0A",
-                Type = StaffEnum.Admin,
-            };
-
-            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_sampleUser);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
@@ -233,17 +126,17 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.NotNull(testResult);
-            Assert.Equal(expectedResult.Id, testResult!.Id);
-            Assert.Equal(expectedResult.UserName, testResult!.UserName);
-            Assert.Equal(expectedResult.FirstName, testResult!.FirstName);
-            Assert.Equal(expectedResult.LastName, testResult!.LastName);
-            Assert.Equal(expectedResult.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(expectedResult.Gender, testResult!.Gender);
-            Assert.Equal(expectedResult.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(expectedResult.Location, testResult!.Location);
-            Assert.Equal(expectedResult.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(expectedResult.Password, testResult!.Password);
-            Assert.Equal(expectedResult.Type, testResult!.Type);
+            Assert.Equal(_sampleUser.Id, testResult!.Id);
+            Assert.Equal(_sampleUser.UserName, testResult!.UserName);
+            Assert.Equal(_sampleUser.FirstName, testResult!.FirstName);
+            Assert.Equal(_sampleUser.LastName, testResult!.LastName);
+            Assert.Equal(_sampleUser.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(_sampleUser.Gender, testResult!.Gender);
+            Assert.Equal(_sampleUser.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(_sampleUser.Location, testResult!.Location);
+            Assert.Equal(_sampleUser.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(_sampleUser.Password, testResult!.Password);
+            Assert.Equal(_sampleUser.Type, testResult!.Type);
         }
 
         [Fact]
@@ -266,24 +159,7 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task GetUserByStaffCode_ShouldNotReturnNull()
         {
             //Arrange
-            var user = GetSampleUser();
-
-            var expectedResult = new User
-            {
-                Id = 1,
-                UserName = "dongnp13",
-                FirstName = "Dong",
-                LastName = "Nguyen Phuong",
-                DateOfBirth = new DateTime(2000, 01, 13),
-                Gender = GenderEnum.Male,
-                JoinedDate = new DateTime(2010, 10, 10),
-                Location = LocationEnum.HN,
-                NeedUpdatePwdOnLogin = true,
-                Password = "0E7517141FB53F21EE439B355B5A1D0A",
-                Type = StaffEnum.Admin,
-            };
-
-            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_sampleUser);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
@@ -291,17 +167,17 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.NotNull(testResult);
-            Assert.Equal(expectedResult.Id, testResult!.Id);
-            Assert.Equal(expectedResult.UserName, testResult!.UserName);
-            Assert.Equal(expectedResult.FirstName, testResult!.FirstName);
-            Assert.Equal(expectedResult.LastName, testResult!.LastName);
-            Assert.Equal(expectedResult.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(expectedResult.Gender, testResult!.Gender);
-            Assert.Equal(expectedResult.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(expectedResult.Location, testResult!.Location);
-            Assert.Equal(expectedResult.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(expectedResult.Password, testResult!.Password);
-            Assert.Equal(expectedResult.Type, testResult!.Type);
+            Assert.Equal(_sampleUser.Id, testResult!.Id);
+            Assert.Equal(_sampleUser.UserName, testResult!.UserName);
+            Assert.Equal(_sampleUser.FirstName, testResult!.FirstName);
+            Assert.Equal(_sampleUser.LastName, testResult!.LastName);
+            Assert.Equal(_sampleUser.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(_sampleUser.Gender, testResult!.Gender);
+            Assert.Equal(_sampleUser.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(_sampleUser.Location, testResult!.Location);
+            Assert.Equal(_sampleUser.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(_sampleUser.Password, testResult!.Password);
+            Assert.Equal(_sampleUser.Type, testResult!.Type);
         }
         [Fact]
         public async Task LoginUser_ShouldReturnNull()
@@ -382,24 +258,7 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task GetUserByUserName_ShouldNotReturnNull()
         {
             //Arrange
-            var user = GetSampleUser();
-
-            var expectedResult = new User
-            {
-                Id = 1,
-                UserName = "dongnp13",
-                FirstName = "Dong",
-                LastName = "Nguyen Phuong",
-                DateOfBirth = new DateTime(2000, 01, 13),
-                Gender = GenderEnum.Male,
-                JoinedDate = new DateTime(2010, 10, 10),
-                Location = LocationEnum.HN,
-                NeedUpdatePwdOnLogin = true,
-                Password = "0E7517141FB53F21EE439B355B5A1D0A",
-                Type = StaffEnum.Admin,
-            };
-
-            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_sampleUser);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
@@ -407,17 +266,17 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Assert
             Assert.NotNull(testResult);
-            Assert.Equal(expectedResult.Id, testResult!.Id);
-            Assert.Equal(expectedResult.UserName, testResult!.UserName);
-            Assert.Equal(expectedResult.FirstName, testResult!.FirstName);
-            Assert.Equal(expectedResult.LastName, testResult!.LastName);
-            Assert.Equal(expectedResult.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(expectedResult.Gender, testResult!.Gender);
-            Assert.Equal(expectedResult.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(expectedResult.Location, testResult!.Location);
-            Assert.Equal(expectedResult.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(expectedResult.Password, testResult!.Password);
-            Assert.Equal(expectedResult.Type, testResult!.Type);
+            Assert.Equal(_sampleUser.Id, testResult!.Id);
+            Assert.Equal(_sampleUser.UserName, testResult!.UserName);
+            Assert.Equal(_sampleUser.FirstName, testResult!.FirstName);
+            Assert.Equal(_sampleUser.LastName, testResult!.LastName);
+            Assert.Equal(_sampleUser.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(_sampleUser.Gender, testResult!.Gender);
+            Assert.Equal(_sampleUser.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(_sampleUser.Location, testResult!.Location);
+            Assert.Equal(_sampleUser.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(_sampleUser.Password, testResult!.Password);
+            Assert.Equal(_sampleUser.Type, testResult!.Type);
         }
 
         [Fact]
@@ -440,50 +299,33 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task ChangePassword_ShouldNotReturnNull()
         {
             //Arrange
-            var user = GetSampleUser();
-
-            var expectedResult = new User
-            {
-                Id = 1,
-                UserName = "dongnp13",
-                FirstName = "Dong",
-                LastName = "Nguyen Phuong",
-                DateOfBirth = new DateTime(2000, 01, 13),
-                Gender = GenderEnum.Male,
-                JoinedDate = new DateTime(2010, 10, 10),
-                Location = LocationEnum.HN,
-                NeedUpdatePwdOnLogin = true,
-                Password = "0E7517141FB53F21EE439B355B5A1D0A",
-                Type = StaffEnum.Admin,
-            };
-
-            _mockUserRepository.Setup(x => x.Update(It.IsAny<User>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.Update(It.IsAny<User>())).ReturnsAsync(_sampleUser);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
-            var testResult = await userService.ChangePassword(user);
+            var testResult = await userService.ChangePassword(_sampleUser);
 
             //Assert
             Assert.NotNull(testResult);
             Assert.IsType<User>(testResult);
-            Assert.Equal(expectedResult.Id, testResult!.Id);
-            Assert.Equal(expectedResult.UserName, testResult!.UserName);
-            Assert.Equal(expectedResult.FirstName, testResult!.FirstName);
-            Assert.Equal(expectedResult.LastName, testResult!.LastName);
-            Assert.Equal(expectedResult.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(expectedResult.Gender, testResult!.Gender);
-            Assert.Equal(expectedResult.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(expectedResult.Location, testResult!.Location);
-            Assert.Equal(expectedResult.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(expectedResult.Password, testResult!.Password);
-            Assert.Equal(expectedResult.Type, testResult!.Type);
+            Assert.Equal(_sampleUser.Id, testResult!.Id);
+            Assert.Equal(_sampleUser.UserName, testResult!.UserName);
+            Assert.Equal(_sampleUser.FirstName, testResult!.FirstName);
+            Assert.Equal(_sampleUser.LastName, testResult!.LastName);
+            Assert.Equal(_sampleUser.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(_sampleUser.Gender, testResult!.Gender);
+            Assert.Equal(_sampleUser.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(_sampleUser.Location, testResult!.Location);
+            Assert.Equal(_sampleUser.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(_sampleUser.Password, testResult!.Password);
+            Assert.Equal(_sampleUser.Type, testResult!.Type);
         }
 
         [Fact]
         public async Task CreateNewUser_ShouldNotReturnNull()
         {
             //Arrange
-            var user = new User
+            var userRequest = new UserRequest
             {
                 Id = 100,
                 UserName = "dongnp130120001",
@@ -498,29 +340,26 @@ namespace AssetManagementTeam6.API.Test.Services
                 Type = StaffEnum.Admin,
             };
 
-            var convertUser = ConvertToUserRequest(user);
-
-
-            _mockUserRepository.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.Create(It.IsAny<User>())).ReturnsAsync(_sampleUser);
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
-            var testResult = await userService.Create(convertUser);
+            var testResult = await userService.Create(userRequest);
 
             //Assert
             Assert.NotNull(testResult);
             Assert.IsType<User>(testResult);
-            Assert.Equal(user.Id, testResult!.Id);
-            Assert.Equal(user.UserName, testResult!.UserName);
-            Assert.Equal(user.FirstName, testResult!.FirstName);
-            Assert.Equal(user.LastName, testResult!.LastName);
-            Assert.Equal(user.DateOfBirth, testResult!.DateOfBirth);
-            Assert.Equal(user.Gender, testResult!.Gender);
-            Assert.Equal(user.JoinedDate, testResult!.JoinedDate);
-            Assert.Equal(user.Location, testResult!.Location);
-            Assert.Equal(user.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
-            Assert.Equal(user.Password, testResult!.Password);
-            Assert.Equal(user.Type, testResult!.Type);
+            Assert.Equal(_sampleUser.Id, testResult!.Id);
+            Assert.Equal(_sampleUser.UserName, testResult!.UserName);
+            Assert.Equal(_sampleUser.FirstName, testResult!.FirstName);
+            Assert.Equal(_sampleUser.LastName, testResult!.LastName);
+            Assert.Equal(_sampleUser.DateOfBirth, testResult!.DateOfBirth);
+            Assert.Equal(_sampleUser.Gender, testResult!.Gender);
+            Assert.Equal(_sampleUser.JoinedDate, testResult!.JoinedDate);
+            Assert.Equal(_sampleUser.Location, testResult!.Location);
+            Assert.Equal(_sampleUser.NeedUpdatePwdOnLogin, testResult!.NeedUpdatePwdOnLogin);
+            Assert.Equal(_sampleUser.Password, testResult!.Password);
+            Assert.Equal(_sampleUser.Type, testResult!.Type);
         }
 
         [Fact]
@@ -528,7 +367,7 @@ namespace AssetManagementTeam6.API.Test.Services
         {
             //Arrange
             User user = null!;
-            var convertUser = new UserRequest
+            var userRequest = new UserRequest
             {
                 Id = 100,
                 UserName = "dongnp130120001",
@@ -547,7 +386,7 @@ namespace AssetManagementTeam6.API.Test.Services
             var userService = new UserService(_mockUserRepository.Object);
 
             //Act
-            var testResult = await userService.Create(convertUser);
+            var testResult = await userService.Create(userRequest);
 
             //Assert
             Assert.Null(testResult);
@@ -644,8 +483,7 @@ namespace AssetManagementTeam6.API.Test.Services
         {
             //Arrange
             User user = null!;
-            var getUser = GetSampleUser();
-            var convertUser = new UserRequest
+            var userRequest = new UserRequest
             {
                 Id = id,
                 DateOfBirth = dob,
@@ -655,12 +493,12 @@ namespace AssetManagementTeam6.API.Test.Services
                 Location = LocationEnum.HN,
             };
 
-            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(getUser);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_sampleUser);
             _mockUserRepository.Setup(x => x.Update(It.IsAny<User>())).ReturnsAsync(user);
             var service = new UserService(_mockUserRepository.Object);
 
             //Act
-            var testResult = await service.Update(id, convertUser);
+            var testResult = await service.Update(id, userRequest);
 
             //Assert
             Assert.Null(testResult);
@@ -705,20 +543,21 @@ namespace AssetManagementTeam6.API.Test.Services
             //Arrange
             var users = GetSampleUserLists();
             var userLocations = users.Where(x => x.Location == location)?.ToList() ?? new List<User>();
-            var expectedTypeLocation = typeof(List<GetUserResponse?>);
-            var expectedCountLocation = userLocations.Count();
+
             var queryModel = new PaginationQueryModel
             {
                 Page = page,
                 PageSize = pageSize,
                 Sort = sort,
-                StaffCodeOrName = nameToQuery.Trim().ToLower(),
+                StaffCodeOrName = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
                 Types = types,
             };
 
-            //var userTypes = 
+            var expectedOutput = GetExpectedPaginationUserOutput(userLocations, queryModel);
+            var expectedCount = expectedOutput.Source?.Count() ?? 0;
+            var expectedType = expectedOutput?.Source?.GetType();
 
-             _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
+            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
 
             var userService = new UserService(_mockUserRepository.Object);
 
@@ -727,19 +566,101 @@ namespace AssetManagementTeam6.API.Test.Services
             var count = testResult?.Source?.Count() ?? 0;
             var type = testResult?.Source?.GetType();
 
-            //Assert
-            Assert.Equal(expectedTypeLocation, type);
-            Assert.Equal(expectedCountLocation, count);
             Assert.NotNull(testResult);
+            Assert.Equal(expectedCount, count);
+            Assert.Equal(expectedType, type);
+        }
+
+        private Pagination<GetUserResponse?> GetExpectedPaginationUserOutput(List<User>? users, PaginationQueryModel queryModel)
+        {
+            // filter by type
+            if (queryModel.Types != null)
+            {
+                users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
+            }
+
+            // search user by staffcode or fullname
+            var nameToQuery = "";
+            if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
+            {
+                nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+                users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
+                                        u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
+            }
+
+            //sorting
+            var sortOption = queryModel.Sort ??= Constants.NameAcsending;
+
+            switch (sortOption)
+            {
+                case Constants.NameAcsending:
+                    users = users?.OrderBy(u => u.FullName)?.ToList();
+                    break;
+                case Constants.NameDescending:
+                    users = users?.OrderByDescending(u => u.FullName)?.ToList();
+                    break;
+                case Constants.StaffCodeAcsending:
+                    users = users?.OrderBy(u => u.StaffCode)?.ToList();
+                    break;
+                case Constants.StaffCodeDescending:
+                    users = users?.OrderByDescending(u => u.StaffCode)?.ToList();
+                    break;
+                case Constants.JoinedDateAcsending:
+                    users = users?.OrderBy(u => u.JoinedDate)?.ToList();
+                    break;
+                case Constants.JoinedDateDescending:
+                    users = users?.OrderByDescending(u => u.JoinedDate)?.ToList();
+                    break;
+                case Constants.TypeAcsending:
+                    users = users?.OrderBy(u => u.Type)?.ToList();
+                    break;
+                case Constants.TypeDescending:
+                    users = users?.OrderByDescending(u => u.Type)?.ToList();
+                    break;
+                default:
+                    users = users?.OrderBy(u => u.FullName)?.ToList();
+                    break;
+            }
+
+            //paging
+            if (users == null || !users.Any())
+            {
+                return new Pagination<GetUserResponse?>
+                {
+                    Source = null,
+                    TotalPage = 1,
+                    TotalRecord = 0,
+                    QueryModel = queryModel
+                };
+            }
+
+            var output = new Pagination<GetUserResponse>();
+
+            output.TotalRecord = users.Count();
+
+            var listUsers = users.Select(user => new GetUserResponse(user));
+
+            output.Source = listUsers.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                    .Take(queryModel.PageSize)
+                                    .ToList();
+
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output!;
         }
 
         [Fact]
         public async Task DeleteUserSuccess_ShouldReturnTrue()
         {
             //Arrange
-            var user = GetSampleUser();
-
-            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(user);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_sampleUser);
 
             var userService = new UserService(_mockUserRepository.Object);
 
