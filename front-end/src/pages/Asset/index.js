@@ -569,7 +569,7 @@ function Asset() {
     };
 
     return (
-        <div className={cx('main tableMain')} style={{ fontSize: 20 }}>
+        <div className={cx('main tableMain')}>
             <h4 className={cx('tableTitle')}>Asset List</h4>
             <div className={cx('tableExtension')}>
                 <div className={cx('filterbox')}>
@@ -704,7 +704,8 @@ function Asset() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                         />
-                        <InputGroup.Text>
+
+                        <InputGroup.Text style={{ cursor: 'pointer' }}>
                             <button
                                 className={cx('input_search')}
                                 onClick={() => handleSearch(search)}
