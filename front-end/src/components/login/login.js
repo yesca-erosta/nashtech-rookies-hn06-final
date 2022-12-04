@@ -44,6 +44,8 @@ const Login = () => {
             }),
         });
 
+        setUserName(userName.trim());
+
         const data = await result.json();
 
         if (data.token) {
@@ -61,6 +63,11 @@ const Login = () => {
         }
 
         if (!userName || !password) {
+            setIsLoginError(false);
+        }
+
+        if (userName.trim() === '') {
+            setIsUserNameError('User name is required');
             setIsLoginError(false);
         }
 

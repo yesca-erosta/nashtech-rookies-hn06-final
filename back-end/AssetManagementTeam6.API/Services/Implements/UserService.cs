@@ -194,7 +194,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<User?> Update(int id, UserRequest updateRequest)
         {
 
-            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == updateRequest.Id);
+            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == id);
 
             if (userUpdate == null) 
             {
