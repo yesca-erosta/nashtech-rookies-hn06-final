@@ -268,7 +268,7 @@ function User() {
 
     return (
         <div className="main tableMain">
-            <h1 className="tableTitle">User List</h1>
+            <h1 style={{ color: 'red' }}>User List</h1>
             <div className="tableExtension">
                 <div className="tableExtensionLeft">
                     <TypeFilter

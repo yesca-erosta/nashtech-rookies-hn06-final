@@ -55,6 +55,21 @@
             }
         }
     }
+
+    .header_search {
+        display: flex;
+        justify-content: space-between;
+
+        .title_search {
+            color: #cf2338;
+            width: 200px;
+        }
+
+        .icon_search {
+            background-color: transparent;
+            border: none;
+        }
+    }
 }
 
 .input-specification {

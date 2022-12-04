@@ -4,9 +4,11 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import styles from './createAssignment.module.scss';
 import { BsSearch } from 'react-icons/bs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
+import { getAllDataWithFilterBox } from '../../../apiServices';
+import { queryToStringForAsset } from '../../../lib/helper';
 
 const cx = classNames.bind(styles);
 
@@ -20,6 +22,18 @@ function CreateAssignment() {
     const [isAssetCode, setIsAssetCode] = useState(false);
     const [isAssetName, setIsAssetName] = useState(false);
     const [isCategory, setIsCategory] = useState(false);
+
+    const [dataUser, setdataUser] = useState([]);
+    const [dataAsset, setdataAsset] = useState([]);
+
+    const [searchUser, setSearchUser] = useState();
+
+    const [queryParams, setQueryParams] = useState({
+        page: 1,
+        pageSize: 10,
+        sort: 'AssetCodeAcsending',
+        states: '0,1,4',
+    });
 
     const handleIsStaffCode = () => {
         setIsStaffCode((pre) => !pre);
@@ -39,6 +53,50 @@ function CreateAssignment() {
     };
     const handleIsCategory = () => {
         setIsCategory((pre) => !pre);
+    };
+
+    // get data user
+    const GetDataUser = async () => {
+        const data = await getAllDataWithFilterBox(`User/query?page=1&pageSize=10`);
+        setdataUser(data.source);
+    };
+
+    useEffect(() => {
+        GetDataUser();
+
+        // I want call a function when first render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // get data asset
+    const GetDataAsset = async () => {
+        const data = await getAllDataWithFilterBox(`Asset/query?page=1&pageSize=10`);
+        setdataAsset(data.source);
+    };
+
+    useEffect(() => {
+        GetDataAsset();
+
+        // I want call a function when first render
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    //Search User
+    const handleSearchUser = async (valueSearch) => {
+        setSearchUser(valueSearch);
+
+        let data = await getAllDataWithFilterBox(`Asset/query` + queryToStringForAsset(queryParams));
+        if (valueSearch) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: valueSearch });
+            data = await getAllDataWithFilterBox(
+                `Asset/query` + queryToStringForAsset({ ...queryParams, page: 1, pageSize: 10, valueSearch: valueSearch }),
+            );
+        } else {
+            delete queryParams.valueSearch;
+            setQueryParams(queryParams);
+            data = await getAllDataWithFilterBox(`Asset/query?page=1&pageSize=10`);
+        }
+        setdataUser(data.source);
     };
 
     return (
@@ -93,7 +151,23 @@ function CreateAssignment() {
 
             {isShowListUser && (
                 <div className={cx('table_container')}>
-                    <h4 style={{ color: '#cf2338' }}>Select User</h4>
+                    <div className={cx('header_search')}>
+                        <h4 className={cx('title_search')}>Select User</h4>
+                        <InputGroup style={{ width: 200 }}>
+                            <Form.Control
+                                className={cx('input_search')}
+                                placeholder="Search..."
+                                value={searchUser}
+                                onChange={(e) => setSearchUser(e.target.value)}
+                            />
+
+                            <InputGroup.Text style={{ cursor: 'pointer' }}>
+                                <button className={cx('icon_search')} onClick={() => handleSearchUser(searchUser)}>
+                                    <BsSearch style={{ border: 'none' }} />
+                                </button>
+                            </InputGroup.Text>
+                        </InputGroup>
+                    </div>
 
                     <Table>
                         <thead>
@@ -132,14 +206,16 @@ function CreateAssignment() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <Form.Check type="checkbox" />
-                                </td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
+                            {dataUser.map((item) => (
+                                <tr key={item.assetCode}>
+                                    <td>
+                                        <Form.Check type="checkbox" />
+                                    </td>
+                                    <td>{item.staffCode}</td>
+                                    <td>{item.fullName}</td>
+                                    <td>{item.type}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </Table>
 
@@ -148,7 +224,7 @@ function CreateAssignment() {
                         <Button
                             variant="outline-secondary"
                             onClick={() => setIsShowListUser(false)}
-                            style={{ marginLeft: 30 }}
+                            style={{ marginLeft: 20 }}
                         >
                             Cancel
                         </Button>
@@ -158,8 +234,18 @@ function CreateAssignment() {
 
             {isShowListAsset && (
                 <div className={cx('table_container')}>
-                    <h3 style={{ color: '#cf2338' }}>Select Asset</h3>
+                    <div className={cx('header_search')}>
+                        <h4 className={cx('title_search')}>Select Asset</h4>
+                        <InputGroup style={{ width: 200 }}>
+                            <Form.Control className={cx('input_search')} placeholder="Search..." />
 
+                            <InputGroup.Text style={{ cursor: 'pointer' }}>
+                                <button className={cx('icon_search')}>
+                                    <BsSearch style={{ border: 'none' }} />
+                                </button>
+                            </InputGroup.Text>
+                        </InputGroup>
+                    </div>
                     <Table>
                         <thead>
                             <tr>
@@ -197,14 +283,16 @@ function CreateAssignment() {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>
-                                    <Form.Check type="checkbox" />
-                                </td>
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
+                            {dataAsset.map((item) => (
+                                <tr key={item.assetCode}>
+                                    <td>
+                                        <Form.Check type="checkbox" />
+                                    </td>
+                                    <td>{item.assetCode}</td>
+                                    <td>{item.assetName}</td>
+                                    <td>{item.category.name}</td>
+                                </tr>
+                            ))}
                         </tbody>
                     </Table>
 
@@ -213,7 +301,7 @@ function CreateAssignment() {
                         <Button
                             variant="outline-secondary"
                             onClick={() => setIsShowListAsset(false)}
-                            style={{ marginLeft: 30 }}
+                            style={{ marginLeft: 20 }}
                         >
                             Cancel
                         </Button>
