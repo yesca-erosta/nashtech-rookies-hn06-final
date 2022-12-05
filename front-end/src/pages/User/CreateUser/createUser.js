@@ -6,15 +6,12 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
-// import { useUserListContext } from '../../../context/userListContext';
 
 import styles from './createUser.module.scss';
 
 const cx = classNames.bind(styles);
 
 function CreateUser() {
-    // const { users, setUsers } = useUserListContext();
-
     let navigate = useNavigate();
     const [hidePass, setHidePass] = useState(true);
     const [dataAdd, setDataAdd] = useState({
