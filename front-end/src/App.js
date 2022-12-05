@@ -1,18 +1,16 @@
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
-import { publicRoutes } from './routes/index';
-import DefaultLayout from './layouts/DefaultLayout';
 import { Fragment } from 'react';
+import { BrowserRouter as Router, Outlet, Route, Routes } from 'react-router-dom';
+import Login from './components/login/login';
 import AuthProvider from './context/RequiredAuth/authContext';
 import RequiredAuth from './context/RequiredAuth/requiredAuth';
-import Login from './components/login/login';
+import DefaultLayout from './layouts/DefaultLayout';
 import NotFound from './pages/NotFound/notFound';
-import UsersProvider from './context/userListContext';
+import { publicRoutes } from './routes/index';
 
 function App() {
   return (
     <div>
       <AuthProvider>
-        <UsersProvider>
           <Router>
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -43,7 +41,6 @@ function App() {
             </Routes>
             <Outlet />
           </Router>
-        </UsersProvider>
       </AuthProvider>
     </div>
   );
