@@ -10,7 +10,6 @@ import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
-import { convertStatetoStr } from '../Asset';
 
 const cx = classNames.bind(styles);
 
@@ -68,31 +67,41 @@ function Assignment() {
 
     const columns = [
         {
-            name: 'Asset Code',
+            name: 'No.',
             selector: (row) => row.assetCode,
             sortable: true,
         },
         {
-            name: 'Asset Name',
+            name: 'Asset Code',
             selector: (row) => row.assetName,
             sortable: true,
-            cell: (row) => {
-                return <Link>{row.assetName}</Link>;
-            },
         },
         {
-            name: 'Category',
+            name: 'Asset Name',
             sortable: true,
             selector: (row) => row.category?.name,
+        },
+        {
+            name: 'Assigned to',
+            selector: (row) => row.state,
+            sortable: true,
+        },
+        {
+            name: 'Assigned by',
+            selector: (row) => row.state,
+            sortable: true,
+        },
+        {
+            name: 'Assigned Date',
+            selector: (row) => row.state,
+            sortable: true,
         },
         {
             name: 'State',
             selector: (row) => row.state,
             sortable: true,
-            cell: (row) => {
-                return <div>{convertStatetoStr(row.state)}</div>;
-            },
         },
+
         {
             name: 'Action',
             selector: (row) => row.null,

@@ -1,8 +1,8 @@
 using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
-using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
@@ -19,30 +19,26 @@ namespace AssetManagementTeam6.API.Controllers
     {
         private readonly IUserService _userService;
         private readonly IAssignmentService _assignmentService;
-        public UserController(IUserService userService, IAssignmentService assignmentService)
+        private readonly IUserProvider _userProvider;
+        public UserController(IUserService userService, IAssignmentService assignmentService, IUserProvider userProvider)
         {
             _userService = userService;
             _assignmentService = assignmentService;
+            _userProvider = userProvider;
         }
 
         [HttpGet()]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var userId = this.GetCurrentLoginUserId();
-
-            if (userId == null)
-                return NotFound();
-
-            var user = await _userService.GetUserById(userId.Value);
-
-            var location = user.Location;
+            var location = _userProvider.GetLocation();
+            if (location == null) return NotFound();
 
             try
             {
-                var entities = await _userService.GetAllAsync(location);
+                var entities = await _userService.GetAllAsync(location.Value);
 
-                return new JsonResult(entities);
+                return Ok(entities);
             }
             catch
             {
@@ -59,14 +55,10 @@ namespace AssetManagementTeam6.API.Controllers
             if (isExistedUser != null)
                 return StatusCode(409, $"The user name {requestModel.UserName} has already existed in the system");
 
-            var userId = this.GetCurrentLoginUserId();
+            var location = _userProvider.GetLocation();
+            if (location == null) return NotFound();
 
-            if (userId == null)
-                return NotFound();
-
-            var user = await _userService.GetUserById(userId.Value);
-
-            requestModel.Location = user.Location;
+            requestModel.Location = location.Value;
 
             var result = await _userService.Create(requestModel);
 
@@ -82,8 +74,7 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody][CustomizeValidator(RuleSet = "default, UpdateUser")] UserRequest requestModel)
         {
-
-            var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -102,7 +93,7 @@ namespace AssetManagementTeam6.API.Controllers
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
 
-            result.Password = null;
+            result.Password = null!;
 
             return Ok(result);
         }
@@ -132,7 +123,7 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpGet("query")]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
-            var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();

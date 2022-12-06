@@ -25,7 +25,6 @@
   <ItemGroup>
     <Folder Include="Dtos\Models\" />
     <Folder Include="Extensions\" />
-    <Folder Include="Heplers\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Models\" />
   </ItemGroup>
