@@ -13,11 +13,13 @@
         #region Category
         public const string CategoryID = "^([A-Z]{2,8})$";
         #endregion
-        //
+        
         #region Asset
-        //public const string 
-        #endregion
         public const string Specification = @"^[a-zA-Z](.{0,49})$";
+        #endregion
 
+        #region Assignment
+        public const string Note = @"^[a-zA-Z](.{0,49})$";
+        #endregion
     }
 }

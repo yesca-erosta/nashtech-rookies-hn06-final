@@ -149,7 +149,7 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 Page = page,
                 PageSize = pageSize,
-                StaffCodeOrName = valueSearch,
+                ValueSearch = valueSearch,
                 Types = listTypes.Count != 0 ? listTypes : null,
                 Sort = sort
             };
