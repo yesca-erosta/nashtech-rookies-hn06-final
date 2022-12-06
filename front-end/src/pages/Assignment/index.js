@@ -1,26 +1,21 @@
 import classNames from 'classnames/bind';
-import styles from './assignment.module.scss';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import styles from './assignment.module.scss';
 
-import { BsSearch, BsFillCalendarDateFill } from 'react-icons/bs';
-import { FaFilter } from 'react-icons/fa';
+import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import { BsFillCalendarDateFill, BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
+import { StateFilter } from './StateFilter/StateFilter';
 
 const cx = classNames.bind(styles);
 
 function Assignment() {
-    const ref = useRef();
-    const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false });
-    const [showState, setShowState] = useState(false);
-    const [placeholderState, setPlaceholderState] = useState('State');
-
     let navigate = useNavigate();
 
     const columns = [
@@ -86,63 +81,12 @@ function Assignment() {
                 >
                     <FontAwesomeIcon icon={faRemove} />
                 </Link>,
-                <Link
-                    key={`keyDelete_${row.id}`}
-                    to={'#'}
-                    style={
-                        row.state === 4
-                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
-                            : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
-                    }
-                >
-                    <FontAwesomeIcon icon={faRemove} />
-                </Link>,
             ],
         },
     ];
 
-    useEffect(() => {
-        const checkIfClickedOutside = (e) => {
-            if (showState && ref.current && !ref.current.contains(e.target)) {
-                setShowState(false);
-            }
-        };
-        document.addEventListener('mousedown', checkIfClickedOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', checkIfClickedOutside);
-        };
-    }, [showState]);
-
     const navigateToCreateAssignment = () => {
         navigate('createnewassignment');
-    };
-
-    const handleState = () => {
-        setShowState((pre) => !pre);
-    };
-
-    const handleChangeCheckboxState = (e, type) => {
-        setCheckedState({ ...checkedState, [type]: e.target.checked });
-    };
-
-    const handleOkState = () => {
-        setShowState((pre) => !pre);
-        if (checkedState.accepted && checkedState.waitingForAccepted) {
-            return setPlaceholderState('Accepted, Waiting for acceptance');
-        }
-        if (checkedState.accepted) {
-            return setPlaceholderState('Accepted');
-        }
-        if (checkedState.waitingForAccepted) {
-            return setPlaceholderState('Waiting for acceptance');
-        }
-
-        return setPlaceholderState('State');
-    };
-
-    const handleCancelState = () => {
-        setShowState(false);
     };
 
     const [loading, setLoading] = useState(false);
@@ -241,55 +185,13 @@ function Assignment() {
                 <h1>Assignment List</h1>
             </div>
             <div className={cx('filterbox')}>
-                <div style={{ position: 'relative' }}>
-                    <InputGroup>
-                        <Form.Control placeholder={placeholderState} />
-
-                        <InputGroup.Text>
-                            <button className={cx('input')} onClick={handleState}>
-                                <FaFilter />
-                            </button>
-                        </InputGroup.Text>
-                    </InputGroup>
-
-                    {showState && (
-                        <div className={cx('dropdown')} ref={ref}>
-                            <div className={cx('dropdown_container')}>
-                                <div className={cx('dropdown_title')}>Select type(s)</div>
-                                <div>
-                                    <Form.Check
-                                        type={'checkbox'}
-                                        label={`Accepted`}
-                                        id={`accepted`}
-                                        onChange={(e) => handleChangeCheckboxState(e, 'accepted')}
-                                        checked={checkedState.accepted}
-                                    />
-                                    <Form.Check
-                                        type={'checkbox'}
-                                        label={`Waiting for aceepted`}
-                                        id={`waitingForAccepted`}
-                                        onChange={(e) => handleChangeCheckboxState(e, 'waitingForAccepted')}
-                                        checked={checkedState.waitingForAccepted}
-                                    />
-                                </div>
-
-                                <div className={cx('button')}>
-                                    <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
-                                        OK
-                                    </Button>
-                                    <Button
-                                        variant="outline-secondary"
-                                        size="sm"
-                                        className={cx('button_cancel')}
-                                        onClick={handleCancelState}
-                                    >
-                                        Cancel
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                <StateFilter
+                    setLoading={setLoading}
+                    setQueryParams={setQueryParams}
+                    queryParams={queryParams}
+                    setDataAssignments={setDataAssignments}
+                    setTotalPage={setTotalPage}
+                />
 
                 <div>
                     <InputGroup>
