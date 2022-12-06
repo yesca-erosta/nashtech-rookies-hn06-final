@@ -1,4 +1,5 @@
-﻿using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
@@ -86,6 +87,31 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
 
             return result;
+        }
+
+        public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
+        {
+            var assignments = await _assignmentRepository.GetListAsync();
+
+            var output = new Pagination<GetAssignmentResponse>();
+
+            output.TotalRecord = assignments.Count();
+
+            var listAssignments = assignments.Select(ass => new GetAssignmentResponse(ass));
+
+            output.Source = listAssignments.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                   .Take(queryModel.PageSize)
+                                   .ToList();
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output!;
         }
     }
 }
