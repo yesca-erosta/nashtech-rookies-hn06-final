@@ -175,18 +175,18 @@ function CreateAsset() {
                         />
                     </Form.Group>
                     {arrMsg.AssetName && <p className={cx('msgErrorBg')}>{arrMsg.AssetName[0]}</p>}
-
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Category</Form.Label>
                         <InputGroup>
                             <Form.Control
                                 placeholder={'Category'}
-                                defaultValue={category.name}
+                                value={category.name}
                                 readOnly
                                 style={{ cursor: 'pointer' }}
                                 onClick={handleShowCategory}
                             />
                             <InputGroup.Text
+                                className={cx('input-gr-text-category')}
                                 style={{ backgroundColor: 'transparent', fontSize: 20, cursor: 'pointer' }}
                                 onClick={handleShowCategory}
                             >
@@ -194,6 +194,31 @@ function CreateAsset() {
                             </InputGroup.Text>
                         </InputGroup>
                     </Form.Group>
+
+                    {showCategory && (
+                        <div className={cx('container_category')} ref={ref}>
+                            {categories?.map((item, index) => (
+                                <div
+                                    className={cx('item')}
+                                    key={index}
+                                    name={'categoryId'}
+                                    onClick={() => {
+                                        setCategory({ id: item.id, name: item.name });
+                                        setShowCategory(false);
+                                    }}
+                                >
+                                    {item.name}
+                                </div>
+                            ))}
+
+                            <div className={cx('addNew')} onClick={handleCreateCategory}>
+                                <div>
+                                    <HiPlusSm style={{ color: 'red', fontSize: 20, marginRight: 6, marginBottom: 3 }} />
+                                </div>
+                                <div>Add new category</div>
+                            </div>
+                        </div>
+                    )}
 
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Specification</Form.Label>
@@ -249,31 +274,6 @@ function CreateAsset() {
                         </Button>
                     </div>
                 </Form>
-            )}
-
-            {showCategory && (
-                <div className={cx('container_category')} ref={ref}>
-                    {categories?.map((item, index) => (
-                        <div
-                            className={cx('item')}
-                            key={index}
-                            name={'categoryId'}
-                            onClick={() => {
-                                setCategory({ id: item.id, name: item.name });
-                                setShowCategory(false);
-                            }}
-                        >
-                            {item.name}
-                        </div>
-                    ))}
-
-                    <div className={cx('addNew')} onClick={handleCreateCategory}>
-                        <div>
-                            <HiPlusSm style={{ color: 'red', fontSize: 20, marginRight: 6, marginBottom: 3 }} />
-                        </div>
-                        <div>Add new category</div>
-                    </div>
-                </div>
             )}
 
             {createCategory && (

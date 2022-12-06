@@ -10,7 +10,6 @@ import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
 import { USER } from '../../constants';
-import { useUserListContext } from '../../context/userListContext';
 import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
 import { ModalDetails } from './ModalDetails/ModalDetails';
@@ -19,20 +18,16 @@ import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
 
 function User() {
-    const {
-        users,
-        setUsers,
-        loading,
-        setLoading,
-        totalRows,
-        setTotalRows,
-        perPage,
-        setPerPage,
-        queryParams,
-        setQueryParams,
-        setSelectedPageUser,
-        selectedPageUser,
-    } = useUserListContext();
+    const [users, setUsers] = useState([]);
+    const [totalRows, setTotalRows] = useState(0);
+    const [perPage, setPerPage] = useState(10);
+    const [loading, setLoading] = useState(false);
+    const [queryParams, setQueryParams] = useState({
+        page: 1,
+        pageSize: 10,
+        types: '0,1',
+        sort: 'NameAcsending',
+    });
     const [show, setShow] = useState(false);
     const [showRemove, setShowRemove] = useState(false);
     const [userDetails, setUserDetails] = useState('');
@@ -114,6 +109,24 @@ function User() {
         },
     ];
 
+    const fetchUsers = async (page) => {
+        setLoading(true);
+        setQueryParams({ ...queryParams, page: page, pageSize: perPage });
+
+        const data = await getAllDataWithFilterBox(
+            `User/query` + queryToString({ ...queryParams, page: page, pageSize: perPage }),
+        );
+
+        setUsers(data.source);
+        setTotalRows(data.totalRecord);
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        fetchUsers(1); // fetch page 1 of users
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     // Get Data
     const getData = async () => {
         const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
@@ -152,7 +165,6 @@ function User() {
 
     const handlePageClick = async (event) => {
         setSelectedPage(event.selected + 1);
-        setSelectedPageUser(event.selected + 1);
         setLoading(true);
         setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
@@ -166,16 +178,6 @@ function User() {
         setLoading(false);
     };
 
-    const forcePage = () => {
-        if (selectedPageUser === 1) {
-            if (selectedPage !== 0) {
-                return selectedPage - 1;
-            } else return 0;
-        } else {
-            return selectedPageUser - 1;
-        }
-    };
-
     const CustomPagination = (e) => {
         const count = Math.ceil(totalRows / perPage);
         return (
@@ -184,7 +186,7 @@ function User() {
                     <ReactPaginate
                         previousLabel={'Previous'}
                         nextLabel={'Next'}
-                        forcePage={forcePage()}
+                        forcePage={selectedPage !== 0 ? selectedPage - 1 : 0}
                         onPageChange={handlePageClick}
                         pageCount={count || 1}
                         breakLabel={'...'}
