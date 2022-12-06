@@ -82,8 +82,7 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
-        {
-            //var userId = this.GetCurrentLoginUserId();
+        {          
             var userId = _userProvider.GetUserId();
 
             if (userId == null)
@@ -101,9 +100,7 @@ namespace AssetManagementTeam6.API.Controllers
             if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
                 return BadRequest("Invalid Assignment");
 
-            //var user = await _userService.GetUserById(userId.Value);
-
-            //requestModel.Location = user!.Location;
+            requestModel.AssignedById = userId;
 
             var result = await _assignmentService.Update(id, requestModel);
 
@@ -124,14 +121,6 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (assignment.State != AssignmentStateEnum.WaitingForAcceptance && assignment.State != AssignmentStateEnum.Declined)
                 return BadRequest("Invalid Assignment");
-
-            //var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(id);
-
-            //if (assignedAsset != null)
-            //{
-            //    return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments.\n" +
-            //                            "If the asset is not able to used anymore, please update its state in Edit Asset page");
-            //}
 
             await _assignmentService.Delete(id);
 
