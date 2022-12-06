@@ -114,14 +114,14 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (id < 0)
             {
-                return BadRequest("Invalid assignment");
+                return BadRequest("Invalid Id");
             }
             var assignment = await _assignmentService.GetAssignmentById(id);
             if (assignment == null)
                 return NotFound();
 
             if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
-                return BadRequest("Invalid Assignment");
+                return BadRequest("Invalid State");
 
             requestModel.AssignedById = userId;
 
@@ -143,6 +143,16 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
+
+            return Ok(result);
+        }
+
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> ChangeStateAssignment(int id, [FromBody] ChangeStateAssignment state)
+        {
+            //Enum.TryParse(state.ToString(), out AssignmentStateEnum enumValue);
+
+            var result = _assignmentService.ChangeStateAssignment(id, state.State);
 
             return Ok(result);
         }

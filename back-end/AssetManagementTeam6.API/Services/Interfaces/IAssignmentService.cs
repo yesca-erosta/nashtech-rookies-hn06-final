@@ -2,6 +2,7 @@
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.Data.Entities;
+using Common.Enums;
 
 namespace AssetManagementTeam6.API.Services.Interfaces
 {
@@ -19,5 +20,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<IEnumerable<GetUserResponse>> GetAllAssignedUser();
         Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset();
         Task<IEnumerable<GetAssignmentResponse>> GetListByUserLoggedIn(int id);
+        Task<GetAssignmentResponse> ChangeStateAssignment(int id,AssignmentStateEnum updateRequest);
+
     }
 }

@@ -110,7 +110,8 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetListByUserLoggedIn(int id)
         {
-            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id);
+            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.State == AssignmentStateEnum.WaitingForAcceptance 
+            && ass.State == AssignmentStateEnum.Accepted);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
@@ -269,6 +270,20 @@ namespace AssetManagementTeam6.API.Services.Implements
             var assignment = await _assignmentRepository.GetListAsync();
             var user = assignment.Select(x => new GetUserResponse(x.AssignedTo)).ToList();
             return user;
+        }
+
+        public async Task<GetAssignmentResponse> ChangeStateAssignment(int id,AssignmentStateEnum updateRequest)
+        {
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+
+            if (updatedAssignment == null) return null;
+
+            updatedAssignment.State = updateRequest;
+
+            var result = await _assignmentRepository.Update(updatedAssignment);
+            if (result == null) return null;
+
+            return new GetAssignmentResponse(result);       
         }
     }
 }
