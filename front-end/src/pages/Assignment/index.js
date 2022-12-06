@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styles from './assignment.module.scss';
 
-import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import { BsFillCalendarDateFill, BsSearch } from 'react-icons/bs';
+import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
 import { getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
@@ -18,10 +18,38 @@ const cx = classNames.bind(styles);
 function Assignment() {
     let navigate = useNavigate();
 
+    // search
+    const [search, setSearch] = useState();
+    const handleSearch = async (value) => {
+        setLoading(true);
+        setSearch(value);
+
+        let data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        if (value) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
+            );
+        } else {
+            delete queryParams.valueSearch;
+            setQueryParams(queryParams);
+            data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        }
+        setDataAssignments(data.source);
+        setLoading(false);
+    };
+
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(search);
+        }
+    };
+
     const columns = [
         {
             name: 'No.',
-            selector: (row, index) => index,
+            selector: (row, index) => index + 1,
             sortable: true,
         },
         {
@@ -81,6 +109,17 @@ function Assignment() {
                 >
                     <FontAwesomeIcon icon={faRemove} />
                 </Link>,
+                <Link
+                    key={`keyReturn_${row.id}`}
+                    to={'#'}
+                    style={
+                        row.state === 4
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+                            : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
+                    }
+                >
+                    <FontAwesomeIcon icon={faRefresh} />
+                </Link>,
             ],
         },
     ];
@@ -110,6 +149,7 @@ function Assignment() {
 
     useEffect(() => {
         getData();
+
         // I want call a function when first render
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -129,7 +169,9 @@ function Assignment() {
     };
 
     useEffect(() => {
-        fetchAssets(1); // fetch page 1 of Assets
+        fetchAssets(1);
+
+        // fetch page 1 of Assets
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -195,21 +237,29 @@ function Assignment() {
 
                 <div>
                     <InputGroup>
-                        <Form.Control placeholder="Assigned Date" />
-
-                        <InputGroup.Text>
-                            <button className={cx('input')}>
-                                <BsFillCalendarDateFill />
-                            </button>
-                        </InputGroup.Text>
+                        <Form.Group className={cx('common-form')}>
+                            <Form.Control type="date" />
+                        </Form.Group>
+                        <button>
+                            <BsSearch />
+                        </button>
                     </InputGroup>
                 </div>
 
+                {/* search */}
                 <div>
                     <InputGroup>
-                        <Form.Control />
+                        <Form.Control
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onKeyUp={handleOnChangeEnter}
+                        />
                         <InputGroup.Text>
-                            <button className={cx('input')}>
+                            <button
+                                className={cx('input')}
+                                onClick={() => handleSearch(search)}
+                                onKeyUp={handleOnChangeEnter}
+                            >
                                 <BsSearch />
                             </button>
                         </InputGroup.Text>
