@@ -1,5 +1,7 @@
 ﻿using AssetManagementTeam6.API.Attributes;
+using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -16,17 +18,19 @@ namespace AssetManagementTeam6.API.Controllers
     {
         private readonly IAssignmentService _assignmentService;
         private readonly IUserService _userService;
-        public AssignmentController(IAssignmentService assignmentService, IUserService userService)
+        private readonly IUserProvider _userProvider;
+        public AssignmentController(IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
         {
             _assignmentService = assignmentService;
             _userService = userService;
+            _userProvider = userProvider;
         }
 
         [HttpPost]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssignmentRequest requestModel)
         {
-            var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -41,6 +45,36 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
+
+            return Ok(result);
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> GetAll()
+        {
+           try
+            {
+                var entities = await _assignmentService.GetAllAsync();
+
+                return Ok(entities);
+            }
+            catch
+            {
+                return BadRequest("Bad request");
+            }
+        }
+
+        [HttpGet("query")]
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
+        {
+            var queryModel = new PaginationQueryModel
+            {
+                Page = page,
+                PageSize = pageSize,
+            };
+
+            var result = await _assignmentService.GetPagination(queryModel);
 
             return Ok(result);
         }

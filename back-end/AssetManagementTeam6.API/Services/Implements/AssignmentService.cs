@@ -1,4 +1,6 @@
-﻿using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
@@ -25,9 +27,11 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assignedTo = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedToId);
 
-           var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
+            var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
 
-            if(asset == null || assignedTo == null)
+            var assetAssigned = await _assignmentRepository.GetOneAsync(ass => ass.AssetId == createRequest.AssetId);
+
+            if (asset == null || assignedTo == null || assetAssigned != null)
             {
                 return null;
             }
@@ -52,7 +56,14 @@ namespace AssetManagementTeam6.API.Services.Implements
                 return null;
             }
 
-            return  createdAssignment;
+            return createdAssignment;
+        }
+
+        public async Task<IEnumerable<GetAssignmentResponse>> GetAllAsync()
+        {
+            var assignments = await _assignmentRepository.GetListAsync();
+
+            return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
 
         public async Task<Assignment> GetAssignmentByAssignedAsset(int assetId)
@@ -76,6 +87,31 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
 
             return result;
+        }
+
+        public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
+        {
+            var assignments = await _assignmentRepository.GetListAsync();
+
+            var output = new Pagination<GetAssignmentResponse>();
+
+            output.TotalRecord = assignments.Count();
+
+            var listAssignments = assignments.Select(ass => new GetAssignmentResponse(ass));
+
+            output.Source = listAssignments.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                   .Take(queryModel.PageSize)
+                                   .ToList();
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output!;
         }
     }
 }

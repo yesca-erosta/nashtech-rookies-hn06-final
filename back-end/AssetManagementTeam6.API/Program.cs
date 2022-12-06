@@ -1,4 +1,5 @@
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.API.Validation;
@@ -48,7 +49,7 @@ builder.Services.AddTransient<ICategoryRepository, CategoryRepository>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 builder.Services.AddTransient<IAssignmentRepository, AssignmentRepository>();
 builder.Services.AddTransient<IAssignmentService, AssignmentService>();
-
+builder.Services.AddTransient<IUserProvider, UserProvider>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

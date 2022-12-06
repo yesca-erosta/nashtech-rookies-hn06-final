@@ -1,6 +1,7 @@
 ﻿using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
@@ -18,16 +19,19 @@ namespace AssetManagementTeam6.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
+        private readonly IUserProvider _userProvider;
+        public CategoryController(ICategoryService categoryService, IUserProvider userProvider)
         {
             _categoryService = categoryService;
+            _userProvider = userProvider;
         }
 
         [HttpGet()]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAll()
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -47,7 +51,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync(CategoryRequest requestModel)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -76,7 +81,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetOneAsync(string id)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();

@@ -1,6 +1,7 @@
 using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
@@ -18,18 +19,21 @@ namespace AssetManagementTeam6.API.Controllers
         private readonly IAssetService _assetService;
         private readonly IUserService _userService;
         private readonly IAssignmentService _assignmentService;
-        public AssetController(IAssetService assetService,IUserService userService, IAssignmentService assignmentService)
+        private readonly IUserProvider _userProvider;
+        public AssetController(IAssetService assetService,IUserService userService, IAssignmentService assignmentService, IUserProvider userProvider)
         {
             _assetService = assetService;
             _userService = userService;
             _assignmentService = assignmentService;
+            _userProvider = userProvider;
         }
 
         [HttpGet("{id}")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -46,7 +50,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAllAsync()
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -72,7 +77,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssetRequest requestModel)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -97,7 +103,8 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssetRequest requestModel)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -158,7 +165,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? sort,string? states,string? category)
         {
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return NotFound();
@@ -176,7 +184,7 @@ namespace AssetManagementTeam6.API.Controllers
                 {
                     var tryParseOk = (Enum.TryParse(typeValue, out StateEnum enumValue));
                     if (tryParseOk)
-                        listStates.Add(enumValue); ;
+                        listStates.Add(enumValue);
                 }
             }
 

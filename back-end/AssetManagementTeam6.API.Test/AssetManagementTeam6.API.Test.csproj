@@ -27,4 +27,10 @@
     <ProjectReference Include="..\AssetManagementTeam6.Data\AssetManagementTeam6.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="TestData\dummy_user_data.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
