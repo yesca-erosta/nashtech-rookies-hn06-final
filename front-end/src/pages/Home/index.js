@@ -32,7 +32,7 @@ function Home() {
     };
 
     useEffect(() => {
-        if (token.needUpdatePwdOnLogin) {
+        if (token.needUpdatePwdOnLogin === true) {
             setShowFirstChangePassWord(true);
         } else {
             setShowFirstChangePassWord(false);
@@ -150,7 +150,7 @@ function Home() {
                 </Modal.Header>
                 <Modal.Body>Your password has been changed successfully!</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-primary" onClick={handleClose}>
+                    <Button variant="outline-secondary" onClick={handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

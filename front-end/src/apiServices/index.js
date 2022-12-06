@@ -35,6 +35,24 @@ export const getAllData = async (url) => {
   return data;
 };
 
+export const getOneData = async (url, id) => {
+  let data = [];
+  await axios({
+    method: 'get',
+    url: `${BASE_URL}/${url}/${id}`,
+    headers: { Authorization: `Bearer ${localStorage.getItem(TOKEN_KEY)}` },
+    data: null,
+  })
+    .then((response) => {
+      data = response.data;
+    })
+    .catch((err) => {
+      data = err;
+    });
+  return data;
+};
+
+
 export const deleteData = async (url, id) => {
   let data = [];
   await axios({
@@ -47,7 +65,7 @@ export const deleteData = async (url, id) => {
       data = [...response.data];
     })
     .catch((err) => {
-      console.log({ err });
+      data = err;
     });
   return data;
 };

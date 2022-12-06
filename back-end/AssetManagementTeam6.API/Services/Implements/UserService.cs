@@ -152,7 +152,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
 
             //paging
-            if (users == null || users.Count() == 0)
+            if (users == null || !users.Any())
             {
                 return new Pagination<GetUserResponse?>
                 {
@@ -182,7 +182,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             output.QueryModel = queryModel;
 
-            return output;
+            return output!;
         }
 
         public async Task<User?> ChangePassword(User updateRequest)
@@ -194,7 +194,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<User?> Update(int id, UserRequest updateRequest)
         {
 
-            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == updateRequest.Id);
+            var userUpdate = await _userRepository.GetOneAsync(user => user.Id == id);
 
             if (userUpdate == null) 
             {

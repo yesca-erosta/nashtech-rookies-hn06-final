@@ -1,5 +1,6 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
+using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
 using Common.Constants;
 using Microsoft.AspNetCore.Authorization;
@@ -18,9 +19,11 @@ namespace AssetManagementTeam6.API.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IUserService _userService;
-        public AccountController(IUserService userService)
+        private readonly IUserProvider _userProvider;
+        public AccountController(IUserService userService, IUserProvider userProvider)
         {
             _userService = userService;
+            _userProvider = userProvider;
         }
 
         [HttpPost]
@@ -37,7 +40,8 @@ namespace AssetManagementTeam6.API.Controllers
                     new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                     new Claim(ClaimTypes.Role, user.Type.ToString()),
                     new Claim("UserId", user.Id.ToString()),
-                    new Claim("UserName", user.UserName)
+                    new Claim("UserName", user.UserName),
+                    new Claim("Location", ((int)user.Location).ToString())
                 };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConstant.Key));
@@ -70,7 +74,8 @@ namespace AssetManagementTeam6.API.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest requestModel)
         {
 
-            var userId = this.GetCurrentLoginUserId();
+            //var userId = this.GetCurrentLoginUserId();
+            var userId = _userProvider.GetUserId();
 
             if (userId == null)
                 return BadRequest("Password is incorrect!");
@@ -98,7 +103,7 @@ namespace AssetManagementTeam6.API.Controllers
             if (user == null)
                 return StatusCode(500, "Sorry the Request failed");
 
-            return Ok();
+            return Ok(user);
         }
 
         //[HttpGet("{id}")]

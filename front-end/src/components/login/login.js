@@ -44,6 +44,8 @@ const Login = () => {
             }),
         });
 
+        setUserName(userName.trim());
+
         const data = await result.json();
 
         if (data.token) {
@@ -64,10 +66,21 @@ const Login = () => {
             setIsLoginError(false);
         }
 
+        if (userName.trim() === '') {
+            setIsUserNameError('User name is required');
+            setIsLoginError(false);
+        }
+
         setToken(data);
         localStorage.setItem(TOKEN_KEY, data.token);
         setOldPasswordLogin(password);
         localStorage.setItem(USER_INFORMATION, JSON.stringify(data));
+    };
+
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleLogin();
+        }
     };
 
     return (
@@ -118,6 +131,7 @@ const Login = () => {
                                 setIsPasswordError('');
                                 setIsLoginError(false);
                             }}
+                            onKeyUp={handleOnChangeEnter}
                         />
                         {isPasswordError && <label className="form_item_error">{isPasswordError}</label>}
                     </div>

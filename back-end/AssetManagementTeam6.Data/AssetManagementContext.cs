@@ -71,7 +71,7 @@ namespace AssetManagementTeam6.Data
                     Gender = GenderEnum.Male,
                     Type = StaffEnum.Admin,
                     JoinedDate = DateTime.UtcNow,
-                    Location = LocationEnum.HN,
+                    Location = LocationEnum.DN,
                     NeedUpdatePwdOnLogin = false,
                     Password = "0E7517141FB53F21EE439B355B5A1D0A",
                     UserName = "admindn"
@@ -321,7 +321,7 @@ namespace AssetManagementTeam6.Data
                      AssetId = 1,
                      AssignedById = 1,
                      AssignedDate = DateTime.UtcNow,
-                     AssignedToID = 2,
+                     AssignedToId = 2,
                      Note = "OKE CON DE",
                      State = AssignmentStateEnum.Accepted
                  },
@@ -331,7 +331,7 @@ namespace AssetManagementTeam6.Data
                     AssetId = 2,
                     AssignedById = 1,
                     AssignedDate = DateTime.UtcNow,
-                    AssignedToID = 3,
+                    AssignedToId = 3,
                     Note = "OKE CON DE DE",
                     State = AssignmentStateEnum.WaitingForAcceptance
                 }
