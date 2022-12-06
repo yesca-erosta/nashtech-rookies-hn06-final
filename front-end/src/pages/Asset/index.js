@@ -14,6 +14,7 @@ import { deleteData, getAllData, getAllDataWithFilterBox, getOneData } from '../
 import { ASSET } from '../../constants';
 import { queryToStringForAsset } from '../../lib/helper';
 import { DetailAsset } from './DetailAsset/DetailAsset';
+import { ModalDelete } from './showDelete/showDelete';
 
 const cx = classNames.bind(styles);
 
@@ -745,10 +746,11 @@ function Asset() {
                 msgNoData()
             )}
             <DetailAsset showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} />
+            <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
 
             {/* TODO: handle modal delete */}
             {/* <ModalDelete showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} /> */}
-
+            {/* 
             <Modal show={showDelete} onHide={() => setShowDelete(false)}>
                 <Modal.Header>
                     <Modal.Title>Are you sure?</Modal.Title>
@@ -766,7 +768,7 @@ function Asset() {
                         Cancel
                     </Button>
                 </Modal.Footer>
-            </Modal>
+            </Modal> */}
 
             <Modal
                 show={isShowModalCantDelete}
