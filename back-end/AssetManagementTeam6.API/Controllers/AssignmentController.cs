@@ -68,10 +68,26 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpGet("query")]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
+            var listTypes = new List<AssignmentStateEnum>();
+
+            if (!string.IsNullOrWhiteSpace(types))
+            {
+                var typeArr = types.Split(",");
+                foreach (string typeValue in typeArr)
+                {
+                    var tryParseOk = (Enum.TryParse(typeValue, out AssignmentStateEnum enumValue));
+                    if (tryParseOk)
+                        listTypes.Add(enumValue);
+                }
+            }
+
             var queryModel = new PaginationQueryModel
             {
                 Page = page,
                 PageSize = pageSize,
+                ValueSearch = valueSearch,
+                AssignmentStates = listTypes.Count != 0 ? listTypes : null,
+                Sort = sort
             };
 
             var result = await _assignmentService.GetPagination(queryModel);
@@ -79,20 +95,27 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("available-asset")]
+        public async Task<IActionResult> GetAvailableAsset()
+        {
+            var result = await _assignmentService.CheckAvailableAsset();
+
+            if (result == null)
+                return Ok("Empty asset");
+
+            return Ok(result);
+        }
+
         [AuthorizeRoles(StaffRoles.Admin)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
-        {          
+        {
             var userId = _userProvider.GetUserId();
-
-            if (userId == null)
-                return NotFound();
 
             if (id < 0)
             {
                 return BadRequest("Invalid assignment");
             }
-
             var assignment = await _assignmentService.GetAssignmentById(id);
             if (assignment == null)
                 return NotFound();
@@ -103,6 +126,20 @@ namespace AssetManagementTeam6.API.Controllers
             requestModel.AssignedById = userId;
 
             var result = await _assignmentService.Update(id, requestModel);
+            return Ok(result);
+        }
+
+        [HttpGet("getlistbyuserid")]
+        public async Task<IActionResult> GetListByUserId()
+        {
+            var userId = _userProvider.GetUserId();
+            if (userId == null)
+                return NotFound();
+            var user = await _userService.GetUserById(userId.Value);
+
+            if (user == null) return StatusCode(500, "Sorry the request failed");
+
+            var result = await _assignmentService.GetListByUserLoggedIn(userId.Value);
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");

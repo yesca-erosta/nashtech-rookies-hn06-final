@@ -17,5 +17,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<bool> Delete(int id);
         Task<IEnumerable<GetAssetResponse>> GetAllAssignedAsset();
         Task<IEnumerable<GetUserResponse>> GetAllAssignedUser();
+        Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset();
+        Task<IEnumerable<GetAssignmentResponse>> GetListByUserLoggedIn(int id);
     }
 }

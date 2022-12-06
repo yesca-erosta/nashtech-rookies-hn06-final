@@ -203,9 +203,9 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 Page = page,
                 PageSize = pageSize,
-                StaffCodeOrName = valueSearch,
-                State = listStates.Count != 0 ? listStates : null,
-                Category = listCategory.Count != 0 ? listCategory : null,
+                ValueSearch = valueSearch,
+                AssetStates = listStates.Count != 0 ? listStates : null,
+                Categories = listCategory.Count != 0 ? listCategory : null,
                 Sort = sort
             };
 
