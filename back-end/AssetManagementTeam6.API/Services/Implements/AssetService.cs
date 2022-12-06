@@ -88,21 +88,21 @@ namespace AssetManagementTeam6.API.Services.Implements
             var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != StateEnum.Recycled && x.State != StateEnum.WaitingForRecycling);
 
             // filter by type
-            if (queryModel.State != null)
+            if (queryModel.AssetStates != null)
             {
-                assets = assets?.Where(u => queryModel.State.Contains(u.State))?.ToList();
+                assets = assets?.Where(u => queryModel.AssetStates.Contains(u.State))?.ToList();
             }
 
-            if (queryModel.Category != null)
+            if (queryModel.Categories != null)
             {
-                assets = assets.Where(u => queryModel.Category.Contains(u.CategoryId))?.ToList();
+                assets = assets.Where(u => queryModel.Categories.Contains(u.CategoryId))?.ToList();
             }
 
             // search asset by assetcode or name
             var nameToQuery = "";
-            if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
             {
-                nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
 
                 assets = assets?.Where(u => u!.AssetName!.ToLower().Contains(nameToQuery) ||
                                         u!.AssetCode!.ToLower().Contains(nameToQuery))?.ToList();
