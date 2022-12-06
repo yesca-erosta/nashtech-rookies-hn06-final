@@ -213,7 +213,6 @@ function Asset() {
     };
 
     // Category
-
     const [categories, setCategories] = useState([]);
 
     const getDataCategory = async () => {
