@@ -9,7 +9,7 @@ import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPen, faRemove } from '@fortawesome/free-solid-svg-icons';
+import { faPen, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 
@@ -20,13 +20,38 @@ function Assignment() {
     const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false });
     const [showState, setShowState] = useState(false);
     const [placeholderState, setPlaceholderState] = useState('State');
-
     let navigate = useNavigate();
+
+    // search
+    const [search, setSearch] = useState();
+    const handleSearch = async (value) => {
+        setSearch(value);
+
+        let data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        if (value) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, valueSearch: value }),
+            );
+        } else {
+            delete queryParams.valueSearch;
+            setQueryParams(queryParams);
+            data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        }
+        setDataAssignments(data.source);
+    };
+
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleSearch(search);
+        }
+    };
 
     const columns = [
         {
             name: 'No.',
-            selector: (row, index) => index,
+            selector: (row, index) => index + 1,
             sortable: true,
         },
         {
@@ -92,10 +117,10 @@ function Assignment() {
                     style={
                         row.state === 4
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
-                            : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
+                            : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRemove} />
+                    <FontAwesomeIcon icon={faRefresh} />
                 </Link>,
             ],
         },
@@ -303,11 +328,20 @@ function Assignment() {
                     </InputGroup>
                 </div>
 
+                {/* search */}
                 <div>
                     <InputGroup>
-                        <Form.Control />
+                        <Form.Control
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            onKeyUp={handleOnChangeEnter}
+                        />
                         <InputGroup.Text>
-                            <button className={cx('input')}>
+                            <button
+                                className={cx('input')}
+                                onClick={() => handleSearch(search)}
+                                onKeyUp={handleOnChangeEnter}
+                            >
                                 <BsSearch />
                             </button>
                         </InputGroup.Text>
