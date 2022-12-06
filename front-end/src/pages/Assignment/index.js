@@ -3,7 +3,7 @@ import styles from './assignment.module.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
-import { BsSearch, BsFillCalendarDateFill } from 'react-icons/bs';
+import { BsSearch } from 'react-icons/bs';
 import { FaFilter } from 'react-icons/fa';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
@@ -191,6 +191,7 @@ function Assignment() {
 
     useEffect(() => {
         getData();
+
         // I want call a function when first render
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -210,7 +211,9 @@ function Assignment() {
     };
 
     useEffect(() => {
-        fetchAssets(1); // fetch page 1 of Assets
+        fetchAssets(1);
+
+        // fetch page 1 of Assets
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -318,13 +321,12 @@ function Assignment() {
 
                 <div>
                     <InputGroup>
-                        <Form.Control placeholder="Assigned Date" />
-
-                        <InputGroup.Text>
-                            <button className={cx('input')}>
-                                <BsFillCalendarDateFill />
-                            </button>
-                        </InputGroup.Text>
+                        <Form.Group className={cx('common-form')}>
+                            <Form.Control type="date" />
+                        </Form.Group>
+                        <button>
+                            <BsSearch />
+                        </button>
                     </InputGroup>
                 </div>
 
