@@ -29,6 +29,7 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         public List<StaffEnum>? Types { get; set; }
         public List<string>? Category { get; set; }
         public List<StateEnum>? State { get; set; }
+        public List<RequestForReturnStateEnum>? RequestForReturnState { get; set; }
         //sorting
         public string? Sort { get; set; }
     }
