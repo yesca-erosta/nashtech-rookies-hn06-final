@@ -23,12 +23,16 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         }
 
         // searching
-        public string? StaffCodeOrName { get; set; }
+        public string? ValueSearch { get; set; }
 
         // filter 
         public List<StaffEnum>? Types { get; set; }
-        public List<string>? Category { get; set; }
-        public List<StateEnum>? State { get; set; }
+        public List<string>? Categories { get; set; }
+        public List<StateEnum>? AssetStates { get; set; }
+        public List<AssignmentStateEnum>? AssignmentStates { get; set; }
+        //TODO
+        public List<DateTime> FilterDates { get; set; }
+
         //sorting
         public string? Sort { get; set; }
     }

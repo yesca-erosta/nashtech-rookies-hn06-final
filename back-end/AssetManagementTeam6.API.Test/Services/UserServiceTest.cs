@@ -533,7 +533,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Page = page,
                 PageSize = pageSize,
                 Sort = sort,
-                StaffCodeOrName = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
+                ValueSearch = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
                 Types = types,
             };
 
@@ -565,9 +565,9 @@ namespace AssetManagementTeam6.API.Test.Services
 
             // search user by staffcode or fullname
             var nameToQuery = "";
-            if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
             {
-                nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
                 users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
                                         u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
             }

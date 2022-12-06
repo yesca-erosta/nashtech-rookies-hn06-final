@@ -45,7 +45,6 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.DateOfBirth)
                     .Cascade(CascadeMode.StopOnFirstFailure)
                     .Must(BeOver18).WithMessage("User is under 18. Please select a different date.");
-                    //.Must(BeUnder100).WithMessage("User is over 100. Please select a different date.");
 
             RuleFor(m => m.JoinedDate)
                     .Cascade(CascadeMode.StopOnFirstFailure)
