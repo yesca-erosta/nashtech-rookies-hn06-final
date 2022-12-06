@@ -1,4 +1,5 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
@@ -96,11 +97,31 @@ namespace AssetManagementTeam6.API.Test.Services
                 AssetName = "Monitor Sample",
                 InstalledDate = new DateTime(2000, 01, 13),
                 State = StateEnum.NotAvailable,
-                Location = LocationEnum.HN,
+                Location = LocationEnum.HCM,
                 Specification = "null",
                 CategoryId = "MO",
                 AssetCode ="MO00002",
-                Category = GetCategorySample()
+                Category = new Category()
+                {
+                    Id = "MO",
+                    Name = "Monitor"
+                }
+            },
+                 new Asset
+            {
+                Id = 3,
+                AssetName = "PC Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.DN,
+                Specification = "null",
+                CategoryId = "PC",
+                AssetCode ="PC00003",
+                Category = new Category()
+                {
+                    Id = "PC",
+                    Name = "Personal Computer"
+                }
             }
         };
         }
@@ -200,7 +221,48 @@ namespace AssetManagementTeam6.API.Test.Services
             var expectedResult = GetExpectedResult();
 
             _mockCategoryRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
-            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockAssetRepository.Setup(x => x.Create(It.IsAny<Asset>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.Create(assetRequest);
+
+            //Arrange
+            Assert.NotNull(result);
+            Assert.Equal(expectedResult.AssetName, result.AssetName);
+            Assert.Equal(expectedResult.Specification, result.Specification);
+            Assert.Equal(expectedResult.Location, result.Location);
+            Assert.Equal(expectedResult.CategoryId, result.CategoryId);
+            Assert.Equal(expectedResult.State, result.State);
+            Assert.Equal(expectedResult.InstalledDate, result.InstalledDate);
+            Assert.Equal(expectedResult.Id, result.Id);
+            Assert.Equal(expectedResult.AssetCode, result.AssetCode);
+            Assert.Equal(expectedResult.Category.Id, result.Category.Id);
+            Assert.Equal(expectedResult.Category.Name, result.Category.Name);
+        }
+
+        [Fact]
+        public async Task Create_ShouldReurnAssetWithStateChange_WhenDateInFuture()
+        {
+            var asset = GetSampleAsset();
+
+            var category = GetCategorySample();
+
+            var assetRequest = new AssetRequest
+            {
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2022, 12, 3),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA"
+            };
+
+            var expectedResult = GetExpectedResult();
+
+            _mockCategoryRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Category, bool>>>())).ReturnsAsync(category);
+            _mockAssetRepository.Setup(x => x.Create(It.IsAny<Asset>())).ReturnsAsync(asset);
 
             var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
 
@@ -228,10 +290,9 @@ namespace AssetManagementTeam6.API.Test.Services
         [InlineData(LocationEnum.DN)]
         public async Task GetAll_ShouldReturnNull(LocationEnum location)
         {
-            var asset = new List<Asset>();       
+            List<Asset> asset = null;       
 
-            var assetLocation = asset?.Where(x => x.Location == location).ToList() ?? new List<Asset>();
-            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetLocation);
+            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
 
             var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
 
@@ -244,6 +305,8 @@ namespace AssetManagementTeam6.API.Test.Services
 
         [Theory]
         [InlineData(LocationEnum.HN)]
+        [InlineData(LocationEnum.HCM)]
+        [InlineData(LocationEnum.DN)]
         public async Task GetAll_ShouldReturnNotNull(LocationEnum location)
         {
             var assetList = GetSampleAssetLists();
@@ -269,11 +332,27 @@ namespace AssetManagementTeam6.API.Test.Services
                 AssetName = "Monitor Sample",
                 InstalledDate = new DateTime(2000, 01, 13),
                 State = StateEnum.NotAvailable,
-                Location = LocationEnum.HN,
+                Location = LocationEnum.HCM,
                 Specification = "null",
                 CategoryId = "MO",
                 AssetCode ="MO00002",
                 Category = GetCategorySample()
+            },
+               new Asset
+            {
+                Id = 3,
+                AssetName = "PC Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = StateEnum.NotAvailable,
+                Location = LocationEnum.DN,
+                Specification = "null",
+                CategoryId = "PC",
+                AssetCode ="PC00003",
+                Category = new Category()
+                {
+                    Id = "PC",
+                    Name = "Personal Computer"
+                }
             }
             };
 
@@ -286,9 +365,162 @@ namespace AssetManagementTeam6.API.Test.Services
 
             //Arrange
             Assert.NotNull(result);
-            Asset.Equals(result.Count(), expectedResult.Count());
+            Assert.Equal(result.Count(), 1);   
         }
 
+        [Fact]
+        public async Task GetAssetByName_ShouldReturnNull()
+        {
+            Asset asset = null;
+            string assetName = null;
+
+            var assetRequest = GetSampleAssetRequest();
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.GetAssetByName(assetName);
+
+            //Arrange
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task GetAssetByName_ShouldReturnNotNull()
+        {
+            Asset asset = GetSampleAsset();
+            string assetName = "Laptop Sample";
+
+            var assetRequest = GetSampleAssetRequest();
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.GetAssetByName(assetName);
+
+            //Arrange
+            Assert.NotNull(result);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldNotFoundAsset()
+        {
+            Asset asset = null;
+
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.Delete(1);
+
+            //Arrange
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldReturnTrue()
+        {
+            Asset asset = GetSampleAsset();
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockAssetRepository.Setup(x => x.Delete(asset)).ReturnsAsync(true);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.Delete(1);
+
+            //Arrange
+            Assert.True(result);
+        }
+
+        [Fact]
+        public async Task Delete_ShouldReturnFalse()
+        {
+            Asset asset = GetSampleAsset();
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockAssetRepository.Setup(x => x.Delete(asset)).ReturnsAsync(false);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //Act
+            var result = await assetService.Delete(1);
+
+            //Arrange
+            Assert.False(result);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnNull()
+        {
+            var assetRequest = GetSampleAssetRequest();
+            Asset asset = null;
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //act
+            var result = await assetService.Update(1,assetRequest);
+
+            //Arrange
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnNullUpdate()
+        {
+            var assetRequest = GetSampleAssetRequest();
+            Asset asset = null;
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockAssetRepository.Setup(x => x.Update(It.IsAny<Asset>())).ReturnsAsync(asset);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //act
+            var result = await assetService.Update(1, assetRequest);
+
+            //Arrange
+            Assert.Null(result);
+        }
+
+        [Fact]
+        public async Task Update_ShouldReturnUpdatedAsset()
+        {
+            var assetRequest = GetSampleAssetRequest();
+            Asset asset = GetSampleAsset();
+
+            var expectedResult = GetExpectedResult();
+
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
+            _mockAssetRepository.Setup(x => x.Update(It.IsAny<Asset>())).ReturnsAsync(expectedResult);
+
+            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
+
+            //act
+            var result = await assetService.Update(1, assetRequest);
+
+            //Arrange
+            Assert.NotNull(result);
+            Assert.Equal(expectedResult.AssetName, result.AssetName);
+            Assert.Equal(expectedResult.Specification, result.Specification);
+            Assert.Equal(expectedResult.Location, result.Location);
+            Assert.Equal(expectedResult.CategoryId, result.CategoryId);
+            Assert.Equal(expectedResult.State, result.State);
+            Assert.Equal(expectedResult.InstalledDate, result.InstalledDate);
+            Assert.Equal(expectedResult.Id, result.Id);
+            Assert.Equal(expectedResult.AssetCode, result.AssetCode);
+            Assert.Equal(expectedResult.Category.Id, result.Category.Id);
+            Assert.Equal(expectedResult.Category.Name, result.Category.Name);
+        }
 
     }
 }
