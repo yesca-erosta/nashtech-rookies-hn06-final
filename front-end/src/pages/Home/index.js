@@ -84,7 +84,16 @@ function Home() {
 
     return (
         <div>
-            <Modal show={showFirstChangePassword} onHide={() => setShowFirstChangePassWord(false)}>
+            <Modal
+                show={showFirstChangePassword}
+                onHide={() => {
+                    if (token.needUpdatePwdOnLogin) {
+                        setShowFirstChangePassWord(true);
+                    } else {
+                        setShowFirstChangePassWord(false);
+                    }
+                }}
+            >
                 <Modal.Header>
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
