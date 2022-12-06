@@ -1,14 +1,15 @@
 import classNames from 'classnames/bind';
-import { InputGroup, Modal, Table } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import styles from './createAssignment.module.scss';
 import { BsSearch } from 'react-icons/bs';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
 import { getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToStringForAsset } from '../../../lib/helper';
+import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
+import { ModalUser } from '../Modal/ModalUser/ModalUser';
+import styles from './createAssignment.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -81,6 +82,9 @@ function CreateAssignment() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const [nameAsset, setNameAsset] = useState();
+
+    console.log('nameAsset', nameAsset);
     //Search User
     const handleSearchUser = async (valueSearch) => {
         setSearchUser(valueSearch);
@@ -98,6 +102,8 @@ function CreateAssignment() {
         }
         setdataUser(data.source);
     };
+
+    const onSaveAsset = (assetCode) => {};
 
     return (
         <div className={cx('container')}>
@@ -117,7 +123,7 @@ function CreateAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Asset</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter asset'} readOnly />
+                        <Form.Control placeholder={'Enter asset'} readOnly value={nameAsset} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
                             <BsSearch />
                         </InputGroup.Text>
@@ -149,7 +155,9 @@ function CreateAssignment() {
                 </div>
             </Form>
 
-            {isShowListUser && (
+            {isShowListUser && <ModalUser />}
+
+            {/* {isShowListUser && (
                 <div className={cx('table_container')}>
                     <div className={cx('header_search')}>
                         <h4 className={cx('title_search')}>Select User</h4>
@@ -230,9 +238,11 @@ function CreateAssignment() {
                         </Button>
                     </Modal.Footer>
                 </div>
-            )}
+            )} */}
 
-            {isShowListAsset && (
+            {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setNameAsset={setNameAsset} />}
+
+            {/* {isShowListAsset && (
                 <div className={cx('table_container')}>
                     <div className={cx('header_search')}>
                         <h4 className={cx('title_search')}>Select Asset</h4>
@@ -307,7 +317,7 @@ function CreateAssignment() {
                         </Button>
                     </Modal.Footer>
                 </div>
-            )}
+            )} */}
         </div>
     );
 }
