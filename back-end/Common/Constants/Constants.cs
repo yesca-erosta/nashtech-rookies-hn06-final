@@ -25,5 +25,8 @@
         public const string AssetCategoryNameDescending = "AssetCategoryNameDescending";
         public const string AssetStateAcsending = "AssetStateAcsending";
         public const string AssetStateDescending = "AssetStateDescending";
+
+        //Request for Return Sorting
+        public const string RequestForReturnRequestedBy = "";
     }
 }
