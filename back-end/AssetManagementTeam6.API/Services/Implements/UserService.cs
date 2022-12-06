@@ -110,11 +110,12 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             // search user by staffcode or fullname
             var nameToQuery = "";
-            if (!string.IsNullOrEmpty(queryModel.StaffCodeOrName))
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
             {
-                nameToQuery = queryModel.StaffCodeOrName.Trim().ToLower();
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
                 users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
-                                        u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
+                                        u!.StaffCode!.ToLower().Contains(nameToQuery) ||
+                                        u!.FullName!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting

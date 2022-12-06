@@ -30,7 +30,6 @@ namespace AssetManagementTeam6.Data
             SeedData(builder);
         }
 
-
         private void SeedData(ModelBuilder builder)
         {
             builder.Entity<User>().HasData(
@@ -312,7 +311,7 @@ namespace AssetManagementTeam6.Data
                      State = StateEnum.Assigned
                  }
 
-             
+
                 );
             builder.Entity<Assignment>().HasData(
                  new Assignment
@@ -322,7 +321,7 @@ namespace AssetManagementTeam6.Data
                      AssignedById = 1,
                      AssignedDate = DateTime.UtcNow,
                      AssignedToId = 2,
-                     Note = "OKE CON DE",
+                     Note = "Assignment 1",
                      State = AssignmentStateEnum.Accepted
                  },
                 new Assignment
@@ -332,7 +331,27 @@ namespace AssetManagementTeam6.Data
                     AssignedById = 1,
                     AssignedDate = DateTime.UtcNow,
                     AssignedToId = 3,
-                    Note = "OKE CON DE DE",
+                    Note = "Assignment 2",
+                    State = AssignmentStateEnum.WaitingForAcceptance
+                },
+                new Assignment
+                {
+                    Id = 3,
+                    AssetId = 3,
+                    AssignedById = 1,
+                    AssignedDate = DateTime.UtcNow,
+                    AssignedToId = 3,
+                    Note = "Assignment 3",
+                    State = AssignmentStateEnum.Accepted
+                },
+                new Assignment
+                {
+                    Id = 4,
+                    AssetId = 2,
+                    AssignedById = 1,
+                    AssignedDate = DateTime.UtcNow,
+                    AssignedToId = 2,
+                    Note = "Assignment 4",
                     State = AssignmentStateEnum.WaitingForAcceptance
                 }
             );
