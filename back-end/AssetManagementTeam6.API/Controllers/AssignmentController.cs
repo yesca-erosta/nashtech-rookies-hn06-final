@@ -1,4 +1,5 @@
 ﻿using AssetManagementTeam6.API.Attributes;
+using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Interfaces;
@@ -52,8 +53,7 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAll()
         {
-
-            try
+           try
             {
                 var entities = await _assignmentService.GetAllAsync();
 
@@ -63,6 +63,20 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 return BadRequest("Bad request");
             }
+        }
+
+        [HttpGet("query")]
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
+        {
+            var queryModel = new PaginationQueryModel
+            {
+                Page = page,
+                PageSize = pageSize,
+            };
+
+            var result = await _assignmentService.GetPagination(queryModel);
+
+            return Ok(result);
         }
     }
 }
