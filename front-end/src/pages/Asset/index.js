@@ -414,7 +414,11 @@ function Asset() {
                     key={row.assetCode}
                     state={{ asset: row }}
                     className={styles.customPen}
-                    style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={
+                        row.state === 4
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' }
+                            : { color: 'rgb(102, 101, 101)' }
+                    }
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
