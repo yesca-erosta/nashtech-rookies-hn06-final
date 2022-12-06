@@ -106,14 +106,35 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
+        [AuthorizeRoles(StaffRoles.Admin)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
+        {
+            var userId = _userProvider.GetUserId();
+
+            if (id < 0)
+            {
+                return BadRequest("Invalid Id");
+            }
+            var assignment = await _assignmentService.GetAssignmentById(id);
+            if (assignment == null)
+                return NotFound();
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                return BadRequest("Invalid State");
+
+            requestModel.AssignedById = userId;
+
+            var result = await _assignmentService.Update(id, requestModel);
+            return Ok(result);
+        }
+
         [HttpGet("getlistbyuserid")]
         public async Task<IActionResult> GetListByUserId()
         {
             var userId = _userProvider.GetUserId();
-
             if (userId == null)
                 return NotFound();
-
             var user = await _userService.GetUserById(userId.Value);
 
             if (user == null) return StatusCode(500, "Sorry the request failed");
@@ -124,6 +145,33 @@ namespace AssetManagementTeam6.API.Controllers
                 return StatusCode(500, "Sorry the Request failed");
 
             return Ok(result);
+        }
+
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> ChangeStateAssignment(int id, [FromBody] ChangeStateAssignment state)
+        {
+            //Enum.TryParse(state.ToString(), out AssignmentStateEnum enumValue);
+
+            var result = _assignmentService.ChangeStateAssignment(id, state.State);
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var assignment = await _assignmentService.GetAssignmentById(id);
+
+            if (assignment == null)
+                return StatusCode(500, "Can't found asset in the system");
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance && assignment.State != AssignmentStateEnum.Declined)
+                return BadRequest("Invalid Assignment");
+
+            await _assignmentService.Delete(id);
+
+            return Ok(assignment);
         }
     }
 }
