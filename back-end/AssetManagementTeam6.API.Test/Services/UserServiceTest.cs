@@ -75,25 +75,8 @@ namespace AssetManagementTeam6.API.Test.Services
             new object[] { LocationEnum.HN, new List<StaffEnum>() , "", Constants.TypeDescending, 1, 10 },
             new object[] { LocationEnum.HN, new List<StaffEnum>() , "", Constants.TypeDescending, 1, 2 },
             new object[] { LocationEnum.HN, new List<StaffEnum>() , "", Constants.TypeDescending, 2, 2 },
+            new object[] { LocationEnum.HN, new List<StaffEnum>() , "", Constants.TypeDescending, 100, 10 },
         };
-
-        public UserRequest ConvertToUserRequest(User user)
-        {
-            return new UserRequest
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                DateOfBirth = user.DateOfBirth,
-                Gender = user.Gender,
-                JoinedDate = user.JoinedDate,
-                Location = user.Location,
-                NeedUpdatePwdOnLogin = user.NeedUpdatePwdOnLogin,
-                Password = user.Password,
-                Type = user.Type
-            };
-        }
 
         public List<User> GetSampleUserLists()
         {

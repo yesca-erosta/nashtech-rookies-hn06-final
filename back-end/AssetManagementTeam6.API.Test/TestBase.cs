@@ -16,6 +16,7 @@ namespace AssetManagementTeam6.API.Test
             }
 
             var jsonString = File.ReadAllText(filePath);
+
             return JsonConvert.DeserializeObject<TResult>(jsonString);
         }
     }

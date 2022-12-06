@@ -29,7 +29,6 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssignmentRequest requestModel)
         {
-            //var userId = this.GetCurrentLoginUserId();
             var userId = _userProvider.GetUserId();
 
             if (userId == null)
@@ -47,6 +46,23 @@ namespace AssetManagementTeam6.API.Controllers
                 return StatusCode(500, "Sorry the Request failed");
 
             return Ok(result);
+        }
+
+        [HttpGet]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> GetAll()
+        {
+
+            try
+            {
+                var entities = await _assignmentService.GetAllAsync();
+
+                return Ok(entities);
+            }
+            catch
+            {
+                return BadRequest("Bad request");
+            }
         }
     }
 }
