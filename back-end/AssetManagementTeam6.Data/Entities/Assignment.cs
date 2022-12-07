@@ -14,6 +14,5 @@ namespace AssetManagementTeam6.Data.Entities
         public AssignmentStateEnum State { get; set; }
         public string? Note { get; set; }
     
-
     }
 }
