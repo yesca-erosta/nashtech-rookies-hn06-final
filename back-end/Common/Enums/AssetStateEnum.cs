@@ -1,6 +1,6 @@
 ﻿namespace Common.Enums
 {
-    public enum StateEnum
+    public enum AssetStateEnum
     {
         NotAvailable,   
         Available,
