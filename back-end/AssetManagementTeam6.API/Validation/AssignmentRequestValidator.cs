@@ -13,11 +13,11 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.AssignedDate)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .Must(IsAssignedDate)
-                .WithMessage("Assigned Date only accept for current date or future date");
+                .WithMessage("The assigned date must be current date or future date");
             RuleFor(x => x.Note)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .Matches(StringPattern.Note)
-                .WithMessage("Invalid Note. Please try again");
+                .WithMessage("The note should not be longer than 255 characters");
         }
 
         protected bool IsAssignedDate(DateTime date)
