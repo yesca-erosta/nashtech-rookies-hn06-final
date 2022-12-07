@@ -16,14 +16,16 @@ namespace AssetManagementTeam6.API.Controllers
     [ExcludeFromCodeCoverage]
     public class AssignmentController : ControllerBase
     {
+        private readonly IAssetService _assetService;
         private readonly IAssignmentService _assignmentService;
         private readonly IUserService _userService;
         private readonly IUserProvider _userProvider;
-        public AssignmentController(IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
+        public AssignmentController(IAssetService assetService,IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
         {
             _assignmentService = assignmentService;
             _userService = userService;
             _userProvider = userProvider;
+            _assetService = assetService;
         }
 
         [HttpPost]
@@ -41,6 +43,11 @@ namespace AssetManagementTeam6.API.Controllers
 
             requestModel.AssignedById = user.Id;
 
+            var asset =await _assetService.GetAssetById(requestModel.AssetId);
+
+            if (asset.State != AssetStateEnum.Available)
+                return BadRequest("Asset Not Available");
+
             var result = await _assignmentService.Create(requestModel);
 
             if (result == null)
@@ -53,32 +60,32 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAll()
         {
-           try
+            try
             {
-                var entities = await _assignmentService.GetAllAsync();
+               var entities = await _assignmentService.GetAllAsync();
 
-                return Ok(entities);
+               return Ok(entities);
             }
             catch
             {
-                return BadRequest("Bad request");
+               return BadRequest("Bad request");
             }
         }
 
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states, string? sort)
         {
-            var listTypes = new List<AssignmentStateEnum>();
+            var listStates = new List<AssignmentStateEnum>();
 
-            if (!string.IsNullOrWhiteSpace(types))
+            if (!string.IsNullOrWhiteSpace(states))
             {
-                var typeArr = types.Split(",");
+                var typeArr = states.Split(",");
                 foreach (string typeValue in typeArr)
                 {
                     var tryParseOk = (Enum.TryParse(typeValue, out AssignmentStateEnum enumValue));
                     if (tryParseOk)
-                        listTypes.Add(enumValue);
+                        listStates.Add(enumValue);
                 }
             }
 
@@ -87,7 +94,7 @@ namespace AssetManagementTeam6.API.Controllers
                 Page = page,
                 PageSize = pageSize,
                 ValueSearch = valueSearch,
-                AssignmentStates = listTypes.Count != 0 ? listTypes : null,
+                AssignmentStates = listStates.Count != 0 ? listStates : null,
                 Sort = sort
             };
 
@@ -154,18 +161,34 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPut("accepted/{id}")]
-        [AuthorizeRoles(StaffRoles.Admin)]
+        [AuthorizeRoles(StaffRoles.Staff)]
         public async Task<IActionResult> AcceptedAssignment(int id)
         {
+            var assignment = await _assignmentService.GetAssignmentById(id);
+
+            if (assignment == null) return NotFound("Assignment Not Found");
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+
+            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
+
             var result = await _assignmentService.AcceptedAssignment(id);
 
             return Ok(result);
         }
 
         [HttpPut("declined/{id}")]
-        [AuthorizeRoles(StaffRoles.Admin)]
+        [AuthorizeRoles(StaffRoles.Staff)]
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
+            var assignment = await _assignmentService.GetAssignmentById(id);
+
+            if (assignment == null) return NotFound("Assignment not found");
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+
+            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
+
             var result = await _assignmentService.DeclinedAssignment(id);
 
             return Ok(result);

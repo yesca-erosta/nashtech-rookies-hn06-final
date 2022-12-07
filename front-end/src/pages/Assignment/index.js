@@ -17,6 +17,7 @@ const cx = classNames.bind(styles);
 
 function Assignment() {
     let navigate = useNavigate();
+    const [date, setDate] = useState('');
 
     // search
     const [search, setSearch] = useState();
@@ -49,7 +50,7 @@ function Assignment() {
     const columns = [
         {
             name: 'No.',
-            selector: (row, index) => index + 1,
+            selector: (row) => row.id,
             sortable: true,
         },
         {
@@ -156,7 +157,7 @@ function Assignment() {
 
     const [totalPage, setTotalPage] = useState();
 
-    const fetchAssets = async (page) => {
+    const fetchAssignments = async (page) => {
         setLoading(true);
 
         setQueryParams({ ...queryParams, page: page, pageSize: 10 });
@@ -169,9 +170,9 @@ function Assignment() {
     };
 
     useEffect(() => {
-        fetchAssets(1);
+        fetchAssignments(1);
 
-        // fetch page 1 of Assets
+        // fetch page 1 of Assignments
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -219,6 +220,65 @@ function Assignment() {
         );
     };
 
+    const getNameSort = (column) => {
+        switch (column.id) {
+            case 1:
+                return 'AssignmentId';
+            case 2:
+                return 'AssignmentCode';
+            case 3:
+                return 'AssignmentName';
+            case 4:
+                return 'AssignmentAssignedTo';
+            case 5:
+                return 'AssignmentAssignedBy';
+            case 6:
+                return 'AssignmentAssignedDate';
+            case 7:
+                return 'AssignmentState';
+            default:
+                return 'AssignmentId';
+        }
+    };
+
+    const getDataSort = async (column, sortDirection) => {
+        if (sortDirection === 'asc') {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Acsending` });
+
+            const data = await getAllDataWithFilterBox(
+                `Assignment/query` +
+                    queryToStringForAssignments({
+                        ...queryParams,
+                        page: 1,
+                        pageSize: 10,
+                        sort: `${getNameSort(column)}Acsending`,
+                    }),
+            );
+            setDataAssignments(data.source);
+        } else {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, sort: `${getNameSort(column)}Descending` });
+
+            const data = await getAllDataWithFilterBox(
+                `Assignment/query` +
+                    queryToStringForAssignments({
+                        ...queryParams,
+                        page: 1,
+                        pageSize: 10,
+                        sort: `${getNameSort(column)}Descending`,
+                    }),
+            );
+            setDataAssignments(data.source);
+        }
+    };
+
+    const handleSort = async (column, sortDirection) => {
+        setLoading(true);
+        await getDataSort(column, sortDirection);
+
+        setSelectedPage(1);
+        setLoading(false);
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
@@ -236,11 +296,8 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" />
+                            <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                         </Form.Group>
-                        <button>
-                            <BsSearch />
-                        </button>
                     </InputGroup>
                 </div>
 
@@ -271,20 +328,20 @@ function Assignment() {
 
             <div className={cx('main_table')}>
                 <DataTable
-                    title="Assets"
+                    title="Assignments"
                     columns={columns}
                     data={dataAssignments}
                     noHeader
                     defaultSortAsc={true}
                     highlightOnHover
-                    // noDataComponent={'There are no records to display'}
+                    noDataComponent={'There are no records to display'}
                     dense
                     progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
-                    // sortServer
-                    // onSort={handleSort}
+                    sortServer
+                    onSort={handleSort}
                 />
             </div>
         </div>

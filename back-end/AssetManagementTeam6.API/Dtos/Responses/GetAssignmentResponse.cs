@@ -11,7 +11,11 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public string AssignedTo { get; set; }
         public string AssignedBy { get; set; }
         public DateTime AssignedDate { get; set; }
-        public string State { get; set; }
+        public AssignmentStateEnum State { get; set; }
+
+        public string Note { get; set; }
+
+        public string FullName { get; set; }
 
         public GetAssignmentResponse(Assignment assignment)
         {
@@ -21,8 +25,9 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             AssignedTo = assignment.AssignedTo.UserName;
             AssignedBy = assignment.AssignedBy?.UserName ?? "";
             AssignedDate = assignment.AssignedDate;
-            State = assignment.State == AssignmentStateEnum.WaitingForAcceptance ? "Waiting For Acceptance" : 
-                                        assignment.State == AssignmentStateEnum.Accepted ? "Accepted" : "Declined" ;
+            State = assignment.State;
+            Note = assignment.Note!;
+            FullName = assignment.AssignedTo!.FullName!;
         }
     }
 }

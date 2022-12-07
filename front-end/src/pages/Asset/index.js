@@ -567,9 +567,11 @@ function Asset() {
     };
 
     const handleSort = async (column, sortDirection) => {
+        setLoading(true);
         await getDataSort(column, sortDirection);
 
         setSelectedPage(1);
+        setLoading(false);
     };
 
     return (
