@@ -7,16 +7,17 @@ import { getAllDataWithFilterBox } from '../../../../apiServices';
 import { queryToStringForAsset } from '../../../../lib/helper';
 import styles from '../../CreateAssignment/createAssignment.module.scss';
 
-export const ModalAsset = ({ setIsShowListAsset, setNameAsset }) => {
+export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
     const cx = classNames.bind(styles);
 
     const [dataAsset, setDataAsset] = useState([]);
 
+    console.log({ dataAsset });
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
         sort: 'AssetCodeAcsending',
-        states: '0,1,4',
+        states: '1',
     });
 
     // get data asset
@@ -146,7 +147,8 @@ export const ModalAsset = ({ setIsShowListAsset, setNameAsset }) => {
 
     const checkNameByAssetCode = (assetCode) => {
         setIsShowListAsset(false);
-        setNameAsset(dataAsset?.find((data) => data.assetCode === assetCode).assetName);
+        const assetSelected = dataAsset?.find((data) => data.assetCode === assetCode);
+        setAsset(assetSelected);
     };
     const [search, setSearch] = useState();
 

@@ -146,7 +146,8 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
 
     const checkNameByStaffCode = (staffCode) => {
         setIsShowListUser(false);
-        setUser(dataUser?.find((data) => data.staffCode === staffCode).fullName);
+        const userSelected = dataUser?.find((data) => data?.staffCode === staffCode);
+        setUser(userSelected);
     };
     const [search, setSearch] = useState();
 

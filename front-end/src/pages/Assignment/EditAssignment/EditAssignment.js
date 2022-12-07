@@ -74,7 +74,7 @@ function EditAssignment() {
 
             {isShowListUser && <ModalUser setIsShowListUser={setIsShowListUser} setNameUser={setNameUser} />}
 
-            {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setNameAsset={setNameAsset} />}
+            {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setAsset={setNameAsset} />}
         </div>
     );
 }
