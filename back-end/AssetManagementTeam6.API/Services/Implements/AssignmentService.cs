@@ -142,6 +142,10 @@ namespace AssetManagementTeam6.API.Services.Implements
             {
                 assignments = assignments?.Where(u => queryModel.AssignmentStates.Contains(u.State))?.ToList();
             }
+            if(queryModel.FilterByAssignedDates != null)
+            {
+                assignments = assignments?.Where(u => u.AssignedDate.Equals(queryModel.FilterByAssignedDates)).ToList();
+            }
 
             // sorting
             var sortOption = queryModel.Sort ??= Constants.AssignmentIdAcsending;
@@ -221,13 +225,16 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
 
+            if(updatedAssignment == null)
+            {
+                return null!;
+            }
+
             updatedAssignment.Asset.State = AssetStateEnum.Assigned;
 
             updatedAssignment.State = AssignmentStateEnum.Accepted;
 
             var result = await _assignmentRepository.Update(updatedAssignment);
-
-            //await _assetRepository.Update(asset);
 
             return new GetAssignmentResponse(result!);
         }
@@ -235,6 +242,11 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<GetAssignmentResponse> DeclinedAssignment(int id)
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+
+            if (updatedAssignment == null)
+            {
+                return null!;
+            }
 
             var assetState = updatedAssignment.Asset.State;
 
