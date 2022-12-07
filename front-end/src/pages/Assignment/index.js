@@ -21,6 +21,31 @@ function Assignment() {
     let navigate = useNavigate();
     const [date, setDate] = useState('');
 
+    const onChangeDate = async (e) => {
+        setDate(e.target.value);
+        console.log('e', e.target.value);
+        setLoading(true);
+        setTimeout(async () => {
+            if (e.target.value !== '') {
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: e.target.value });
+                const data = await getAllDataWithFilterBox(
+                    `Assignment/query` +
+                        queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: e.target.value }),
+                );
+                setDataAssignments(data.source);
+                setTotalPage(data.totalRecord);
+            } else {
+                console.log('abc');
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: '' });
+                const data = await getAllDataWithFilterBox(
+                    `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: '' }),
+                );
+                setDataAssignments(data.source);
+                setTotalPage(data.totalRecord);
+            }
+            setLoading(false);
+        }, 3000);
+    };
     // search
     const [search, setSearch] = useState();
     const handleSearch = async (value) => {
@@ -40,6 +65,7 @@ function Assignment() {
             data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
         }
         setDataAssignments(data.source);
+        setTotalPage(data.totalRecord);
         setLoading(false);
     };
 
@@ -337,7 +363,7 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            <Form.Control type="date" value={date} onChange={onChangeDate} />
                         </Form.Group>
                     </InputGroup>
                 </div>

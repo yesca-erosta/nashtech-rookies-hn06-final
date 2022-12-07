@@ -110,7 +110,7 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
                             />
                             <Form.Check
                                 type={'checkbox'}
-                                label={`Waiting for aceepted`}
+                                label={`Waiting for accepted`}
                                 id={`waitingForAccepted`}
                                 value={1}
                                 name="waitingForAccepted"
