@@ -93,7 +93,7 @@ function Assignment() {
                 <Link
                     to={`./editassignment`}
                     key={row.id}
-                    state={{ asset: row }}
+                    state={{ assignment: row }}
                     className={styles.customPen}
                     style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
                 >
