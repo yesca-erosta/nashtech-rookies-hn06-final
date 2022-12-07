@@ -41,7 +41,6 @@ function EditAssignment() {
         note: assignment.note,
     });
 
-    console.log('dataAdd', dataAdd);
     useEffect(() => {
         if (user?.fullName && user?.id) setDataAdd({ ...dataAdd, assignedToId: user?.id });
 

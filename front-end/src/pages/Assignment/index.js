@@ -72,10 +72,22 @@ function Assignment() {
         setLoading(false);
     };
 
+    const convertStatetoStr = (state) => {
+        switch (state) {
+            case 0:
+                return 'Accepted';
+            case 1:
+                return 'Waiting for acceptance';
+
+            default:
+                break;
+        }
+    };
+
     const columns = [
         {
             name: 'No.',
-            selector: (row) => row.id,
+            selector: (row, index) => row.id,
             sortable: true,
         },
         {
@@ -110,6 +122,9 @@ function Assignment() {
             name: 'State',
             selector: (row) => row.state,
             sortable: true,
+            cell: (row) => {
+                return <div style={{ minWidth: 140 }}>{convertStatetoStr(row.state)}</div>;
+            },
         },
         {
             name: 'Action',
@@ -140,7 +155,7 @@ function Assignment() {
                     to={'#'}
                     style={
                         row.state === 0
-                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
