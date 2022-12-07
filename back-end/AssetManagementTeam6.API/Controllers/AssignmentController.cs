@@ -67,18 +67,18 @@ namespace AssetManagementTeam6.API.Controllers
 
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states, string? sort)
         {
-            var listTypes = new List<AssignmentStateEnum>();
+            var listStates = new List<AssignmentStateEnum>();
 
-            if (!string.IsNullOrWhiteSpace(types))
+            if (!string.IsNullOrWhiteSpace(states))
             {
-                var typeArr = types.Split(",");
-                foreach (string typeValue in typeArr)
+                var StateArr = states.Split(",");
+                foreach (string typeValue in StateArr)
                 {
                     var tryParseOk = (Enum.TryParse(typeValue, out AssignmentStateEnum enumValue));
                     if (tryParseOk)
-                        listTypes.Add(enumValue);
+                        listStates.Add(enumValue);
                 }
             }
 
@@ -87,7 +87,7 @@ namespace AssetManagementTeam6.API.Controllers
                 Page = page,
                 PageSize = pageSize,
                 ValueSearch = valueSearch,
-                AssignmentStates = listTypes.Count != 0 ? listTypes : null,
+                AssignmentStates = listStates.Count != 0 ? listStates : null,
                 Sort = sort
             };
 

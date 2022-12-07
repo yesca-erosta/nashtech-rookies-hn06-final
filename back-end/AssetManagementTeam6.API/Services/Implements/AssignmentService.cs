@@ -137,7 +137,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                                         u!.AssignedTo.UserName!.ToLower().Contains(nameToQuery)).ToList();
             }
 
-            //TODO: filter assignment by state or date
+            //TODO: filter date
             if (queryModel.AssignmentStates != null)
             {
                 assignments = assignments?.Where(u => queryModel.AssignmentStates.Contains(u.State))?.ToList();
