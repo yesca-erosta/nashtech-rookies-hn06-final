@@ -164,6 +164,14 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> AcceptedAssignment(int id)
         {
+            var assignment = await _assignmentService.GetAssignmentById(id);
+
+            if (assignment == null) return NotFound("Assignment Not Found");
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+
+            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
+
             var result = await _assignmentService.AcceptedAssignment(id);
 
             return Ok(result);
@@ -174,10 +182,12 @@ namespace AssetManagementTeam6.API.Controllers
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
             var assignment = await _assignmentService.GetAssignmentById(id);
+
             if (assignment == null) return NotFound("Assignment not found");
 
-            var assetState = assignment.Asset.State;
-            if (assetState != AssetStateEnum.Available) return BadRequest("Asset not available");
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+
+            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
 
             var result = await _assignmentService.DeclinedAssignment(id);
 

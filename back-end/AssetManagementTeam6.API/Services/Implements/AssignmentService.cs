@@ -221,32 +221,13 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
 
-            if (updatedAssignment == null) 
-            {
-                return null!;
-            } 
-
-            var asset = updatedAssignment.Asset;
-
-            if (asset.State != AssetStateEnum.Assigned)
-            {
-                asset.State = AssetStateEnum.Assigned;
-            }
-            else
-            {
-                return null!;
-            }
+            updatedAssignment.Asset.State = AssetStateEnum.Assigned;
 
             updatedAssignment.State = AssignmentStateEnum.Accepted;
 
             var result = await _assignmentRepository.Update(updatedAssignment);
 
-            if (result == null)
-            {
-                return null!;
-            }
-
-            await _assetRepository.Update(asset);
+            //await _assetRepository.Update(asset);
 
             return new GetAssignmentResponse(result!);
         }
