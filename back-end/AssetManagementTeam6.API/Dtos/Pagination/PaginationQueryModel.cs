@@ -31,7 +31,7 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         public List<AssetStateEnum>? AssetStates { get; set; }
         public List<AssignmentStateEnum>? AssignmentStates { get; set; }
         //TODO
-        public List<DateTime> FilterDates { get; set; }
+        public DateTime? FilterByAssignedDates { get; set; }
 
         //sorting
         public string? Sort { get; set; }
