@@ -13,6 +13,10 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public DateTime AssignedDate { get; set; }
         public AssignmentStateEnum State { get; set; }
 
+        public string Note { get; set; }
+
+        public string FullName { get; set; }
+
         public GetAssignmentResponse(Assignment assignment)
         {
             Id = assignment.Id;
@@ -22,6 +26,8 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             AssignedBy = assignment.AssignedBy?.UserName ?? "";
             AssignedDate = assignment.AssignedDate;
             State = assignment.State;
+            Note = assignment.Note!;
+            FullName = assignment.AssignedTo!.FullName!;
         }
     }
 }
