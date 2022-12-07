@@ -147,9 +147,12 @@ namespace AssetManagementTeam6.API.Services.Implements
             {
                 assignments = assignments?.Where(u => queryModel.AssignmentStates.Contains(u.State))?.ToList();
             }
+
             if(queryModel.FilterByAssignedDates != null)
             {
-                assignments = assignments?.Where(u => u.AssignedDate.Equals(queryModel.FilterByAssignedDates)).ToList();
+                assignments = assignments?.Where(u => u.AssignedDate.Day.Equals(queryModel.FilterByAssignedDates.Value.Day) 
+                                                    && u.AssignedDate.Month.Equals(queryModel.FilterByAssignedDates.Value.Month) 
+                                                    && u.AssignedDate.Year.Equals(queryModel.FilterByAssignedDates.Value.Year));
             }
 
             // sorting

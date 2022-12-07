@@ -12,7 +12,6 @@ export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
 
     const [dataAsset, setDataAsset] = useState([]);
 
-    console.log({ dataAsset });
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
