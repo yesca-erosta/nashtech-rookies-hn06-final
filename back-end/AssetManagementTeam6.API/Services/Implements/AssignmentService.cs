@@ -255,11 +255,10 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
 
-            if (updatedAssignment == null)
-            {
-                return null!;
-            }
+            var assetState = updatedAssignment.Asset.State;
 
+            updatedAssignment.Asset.State = AssetStateEnum.Available;
+            
             updatedAssignment.State = AssignmentStateEnum.Declined;
 
             var result = await _assignmentRepository.Update(updatedAssignment);

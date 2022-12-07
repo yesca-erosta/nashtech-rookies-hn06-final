@@ -16,14 +16,16 @@ namespace AssetManagementTeam6.API.Controllers
     [ExcludeFromCodeCoverage]
     public class AssignmentController : ControllerBase
     {
+        private readonly IAssetService _assetService;
         private readonly IAssignmentService _assignmentService;
         private readonly IUserService _userService;
         private readonly IUserProvider _userProvider;
-        public AssignmentController(IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
+        public AssignmentController(IAssetService assetService,IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
         {
             _assignmentService = assignmentService;
             _userService = userService;
             _userProvider = userProvider;
+            _assetService = assetService;
         }
 
         [HttpPost]
@@ -41,6 +43,11 @@ namespace AssetManagementTeam6.API.Controllers
 
             requestModel.AssignedById = user.Id;
 
+            var asset =await _assetService.GetAssetById(requestModel.AssetId);
+
+            if (asset.State == AssetStateEnum.Available)
+                return BadRequest("Asset Not Available");
+
             var result = await _assignmentService.Create(requestModel);
 
             if (result == null)
@@ -53,15 +60,15 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAll()
         {
-           try
+            try
             {
-                var entities = await _assignmentService.GetAllAsync();
+               var entities = await _assignmentService.GetAllAsync();
 
-                return Ok(entities);
+               return Ok(entities);
             }
             catch
             {
-                return BadRequest("Bad request");
+               return BadRequest("Bad request");
             }
         }
 
@@ -166,6 +173,12 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
+            var assignment = await _assignmentService.GetAssignmentById(id);
+            if (assignment == null) return NotFound("Assignment not found");
+
+            var assetState = assignment.Asset.State;
+            if (assetState != AssetStateEnum.Available) return BadRequest("Asset not available");
+
             var result = await _assignmentService.DeclinedAssignment(id);
 
             return Ok(result);
