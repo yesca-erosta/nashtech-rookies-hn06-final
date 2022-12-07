@@ -9,9 +9,11 @@ import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { StateFilter } from './StateFilter/StateFilter';
+import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
+import { ASSIGNMENT } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +21,31 @@ function Assignment() {
     let navigate = useNavigate();
     const [date, setDate] = useState('');
 
+    const onChangeDate = async (e) => {
+        setDate(e.target.value);
+        console.log('e', e.target.value);
+        setLoading(true);
+        setTimeout(async () => {
+            if (e.target.value !== '') {
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: e.target.value });
+                const data = await getAllDataWithFilterBox(
+                    `Assignment/query` +
+                        queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: e.target.value }),
+                );
+                setDataAssignments(data.source);
+                setTotalPage(data.totalRecord);
+            } else {
+                console.log('abc');
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: '' });
+                const data = await getAllDataWithFilterBox(
+                    `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: '' }),
+                );
+                setDataAssignments(data.source);
+                setTotalPage(data.totalRecord);
+            }
+            setLoading(false);
+        }, 3000);
+    };
     // search
     const [search, setSearch] = useState();
     const handleSearch = async (value) => {
@@ -38,6 +65,7 @@ function Assignment() {
             data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
         }
         setDataAssignments(data.source);
+        setTotalPage(data.totalRecord);
         setLoading(false);
     };
 
@@ -47,10 +75,45 @@ function Assignment() {
         }
     };
 
+    const [showDelete, setShowDelete] = useState(false);
+
+    const [assignmentId, setAssignmentId] = useState('');
+
+    const handleShowDelete = (e, assignment) => {
+        if (assignment.state === 0) {
+            e.preventDefault();
+        } else {
+            setAssignmentId(assignment.id);
+            setShowDelete(true);
+        }
+    };
+
+    const handleDelete = async () => {
+        setLoading(true);
+        await deleteData(ASSIGNMENT, assignmentId);
+
+        getData();
+        setAssignmentId('');
+        setShowDelete(false);
+        setLoading(false);
+    };
+
+    const convertStatetoStr = (state) => {
+        switch (state) {
+            case 0:
+                return 'Accepted';
+            case 1:
+                return 'Waiting for acceptance';
+
+            default:
+                break;
+        }
+    };
+
     const columns = [
         {
             name: 'No.',
-            selector: (row) => row.id,
+            selector: (row, index) => row.id,
             sortable: true,
         },
         {
@@ -85,6 +148,9 @@ function Assignment() {
             name: 'State',
             selector: (row) => row.state,
             sortable: true,
+            cell: (row) => {
+                return <div style={{ minWidth: 140 }}>{convertStatetoStr(row.state)}</div>;
+            },
         },
         {
             name: 'Action',
@@ -93,9 +159,9 @@ function Assignment() {
                 <Link
                     to={`./editassignment`}
                     key={row.id}
-                    state={{ asset: row }}
+                    state={{ assignment: row }}
                     className={styles.customPen}
-                    style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
@@ -103,19 +169,19 @@ function Assignment() {
                     key={`keyDelete_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 4
+                        row.state === 0
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRemove} />
+                    <FontAwesomeIcon icon={faRemove} onClick={(e) => handleShowDelete(e, row)} />
                 </Link>,
                 <Link
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 4
-                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+                        row.state === 0
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
@@ -138,13 +204,14 @@ function Assignment() {
         sort: 'AssignmentIdAcsending',
         states: '0,1',
     });
+    const [totalPage, setTotalPage] = useState();
 
     // Get Data
     const getData = async () => {
         setLoading(true);
         const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
         setDataAssignments(data.source);
-
+        setTotalPage(data.totalRecord);
         setLoading(false);
     };
 
@@ -154,8 +221,6 @@ function Assignment() {
         // I want call a function when first render
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const [totalPage, setTotalPage] = useState();
 
     const fetchAssignments = async (page) => {
         setLoading(true);
@@ -183,7 +248,9 @@ function Assignment() {
         setSelectedPage(event.selected + 1);
         setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
-        const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        const data = await getAllDataWithFilterBox(
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
+        );
 
         setTotalPage(data.totalRecord);
         setDataAssignments(data.source);
@@ -296,7 +363,7 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                            <Form.Control type="date" value={date} onChange={onChangeDate} />
                         </Form.Group>
                     </InputGroup>
                 </div>
@@ -344,6 +411,8 @@ function Assignment() {
                     onSort={handleSort}
                 />
             </div>
+
+            <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
         </div>
     );
 }
