@@ -197,55 +197,59 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
                     </InputGroup.Text>
                 </InputGroup>
             </div>
-            <Table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>
-                            <>
-                                <div className={cx('title_table')}>
-                                    <div>Staff Code</div>
-                                    <button className={cx('triagle')} onClick={handleIsStaffCode}>
-                                        {isStaffCode ? <GoTriangleUp /> : <GoTriangleDown />}
-                                    </button>
-                                </div>
-                            </>
-                        </th>
-                        <th>
-                            <>
-                                <div className={cx('title_table')}>
-                                    <div>Full Name</div>
-                                    <button className={cx('triagle')} onClick={handleIsFullName}>
-                                        {isFullName ? <GoTriangleUp /> : <GoTriangleDown />}
-                                    </button>
-                                </div>
-                            </>
-                        </th>
-                        <th>
-                            <>
-                                <div className={cx('title_table')}>
-                                    <div>Type</div>
-                                    <button className={cx('triagle')} onClick={handleIsType}>
-                                        {isType ? <GoTriangleUp /> : <GoTriangleDown />}
-                                    </button>
-                                </div>
-                            </>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {dataUser?.map((item) => (
-                        <tr key={item.staffCode}>
-                            <td>
-                                <Form.Check onChange={onChangeUser} type="radio" id={item.staffCode} name="userRadio" />
-                            </td>
-                            <td>{item.staffCode}</td>
-                            <td>{item.fullName}</td>
-                            <td>{item.type}</td>
+            {dataUser ? (
+                <Table>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>
+                                <>
+                                    <div className={cx('title_table')}>
+                                        <div>Staff Code</div>
+                                        <button className={cx('triagle')} onClick={handleIsStaffCode}>
+                                            {isStaffCode ? <GoTriangleUp /> : <GoTriangleDown />}
+                                        </button>
+                                    </div>
+                                </>
+                            </th>
+                            <th>
+                                <>
+                                    <div className={cx('title_table')}>
+                                        <div>Full Name</div>
+                                        <button className={cx('triagle')} onClick={handleIsFullName}>
+                                            {isFullName ? <GoTriangleUp /> : <GoTriangleDown />}
+                                        </button>
+                                    </div>
+                                </>
+                            </th>
+                            <th>
+                                <>
+                                    <div className={cx('title_table')}>
+                                        <div>Type</div>
+                                        <button className={cx('triagle')} onClick={handleIsType}>
+                                            {isType ? <GoTriangleUp /> : <GoTriangleDown />}
+                                        </button>
+                                    </div>
+                                </>
+                            </th>
                         </tr>
-                    ))}
-                </tbody>
-            </Table>
+                    </thead>
+                    <tbody>
+                        {dataUser?.map((item) => (
+                            <tr key={item.staffCode}>
+                                <td>
+                                    <Form.Check onChange={onChangeUser} type="radio" id={item.staffCode} name="userRadio" />
+                                </td>
+                                <td>{item.staffCode}</td>
+                                <td>{item.fullName}</td>
+                                <td>{item.type}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            ) : (
+                <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>Không tìm thấy rì rồi Lượm ơi!!</div>
+            )}
 
             <Modal.Footer>
                 <Button variant="danger" onClick={() => checkNameByStaffCode(dataSelected)}>

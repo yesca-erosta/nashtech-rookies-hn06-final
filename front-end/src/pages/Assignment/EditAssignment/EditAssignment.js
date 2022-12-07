@@ -16,6 +16,9 @@ import { GoTriangleDown } from 'react-icons/go';
 const cx = classNames.bind(styles);
 
 function EditAssignment() {
+    const location = useLocation();
+    const { assignment } = location?.state;
+
     const navigate = useNavigate();
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
@@ -29,31 +32,29 @@ function EditAssignment() {
         fullName: '',
     });
 
-    const location = useLocation();
-    const { assignment } = location?.state;
-
-    console.log('assignment', assignment);
 
     const [dataAdd, setDataAdd] = useState({
-        assetId: assignment.fullName,
-        assignedToId: assignment.assignedTo,
+        assignedToId: assignment.userId,
+        assetId: assignment.assetId,
         assignedDate: assignment.assignedDate,
         note: assignment.note,
+        fullName: assignment.fullName,
+        assetName: assignment.assetName,
     });
 
     useEffect(() => {
-        if (user?.fullName && user?.id) setDataAdd({ ...dataAdd, assignedToId: user?.id });
-
-        // I dont want re-render page when dataAdd change
+        if (user.id !== '' && user.fullName !== '') {
+            setDataAdd({ ...dataAdd, assignedToId: user.id, fullName: user.fullName });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.fullName, user?.id]);
+    }, [user.fullName, user.id]);
 
     useEffect(() => {
-        if (asset?.id && asset?.assetName) setDataAdd({ ...dataAdd, assetId: asset?.id });
-
-        // I dont want re-render page when dataAdd change
+        if (asset.id !== '' && asset.assetName !== '') {
+            setDataAdd({ ...dataAdd, assetName: asset.assetName, assetId: asset.id });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [asset?.assetName, asset?.id]);
+    }, [asset.assetName, asset.id]);
 
     const onChange = (e) => {
         setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
@@ -66,7 +67,9 @@ function EditAssignment() {
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const res = await updateData(ASSIGNMENT, dataAdd);
+        const { fullName, assetName, ...otherData } = dataAdd;
+
+        const res = await updateData(`${ASSIGNMENT}/${assignment.id}`, otherData);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
@@ -90,7 +93,7 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd.fullName} />
+                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd?.fullName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
                             <GoTriangleDown />
                         </InputGroup.Text>
@@ -111,20 +114,20 @@ function EditAssignment() {
                     <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
 
                     <Form.Control
-                        isInvalid={arrMsg.AssignedDate}
+                        isInvalid={arrMsg?.AssignedDate}
                         type="date"
                         name="assignedDate"
                         onChange={onChange}
-                        value={dateStrToDate(dataAdd.assignedDate)}
+                        value={dateStrToDate(dataAdd?.assignedDate)}
                     />
                 </Form.Group>
-                {arrMsg.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg.AssignedDate[0]}</p>}
+                {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Note</Form.Label>
                     <Form.Group className="w-100">
                         <Form.Control
-                            isInvalid={arrMsg.Note}
+                            isInvalid={arrMsg?.Note}
                             type="text"
                             as="textarea"
                             rows={5}
@@ -132,14 +135,14 @@ function EditAssignment() {
                             placeholder="Enter note"
                             name="note"
                             onChange={onChange}
-                            value={dataAdd.note}
+                            value={dataAdd?.note}
                         />
                     </Form.Group>
                 </Form.Group>
-                {arrMsg.Note && <p className={cx('msgErrorBg')}>{arrMsg.Note[0]}</p>}
+                {arrMsg?.Note && <p className={cx('msgErrorBg')}>{arrMsg?.Note[0]}</p>}
 
                 <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleUpdate} disabled={isInputComplete}>
+                    <Button variant="danger" onClick={handleUpdate} disabled={!isInputComplete}>
                         Save
                     </Button>
 
