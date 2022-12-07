@@ -114,6 +114,7 @@ function CreateAssignment() {
                     />
                 </Form.Group>
                 {arrMsg.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg.AssignedDate[0]}</p>}
+
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Note</Form.Label>
                     <Form.Group className="w-100">
@@ -131,6 +132,7 @@ function CreateAssignment() {
                     </Form.Group>
                 </Form.Group>
                 {arrMsg.Note && <p className={cx('msgErrorBg')}>{arrMsg.Note[0]}</p>}
+
                 <div className={cx('button')}>
                     <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>
                         Save

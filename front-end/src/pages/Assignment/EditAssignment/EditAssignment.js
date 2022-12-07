@@ -4,10 +4,10 @@ import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { BsSearch } from 'react-icons/bs';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
-import styles from './editAssignment.module.scss';
+import styles from '../CreateAssignment/createAssignment.module.scss';
 
 const cx = classNames.bind(styles);
 
@@ -17,10 +17,6 @@ function EditAssignment() {
     const [isShowListAsset, setIsShowListAsset] = useState(false);
     const [nameAsset, setNameAsset] = useState();
     const [nameUser, setNameUser] = useState();
-
-    const location = useLocation();
-    const { assignment } = location?.state;
-    console.log(assignment);
 
     return (
         <div className={cx('container')}>
