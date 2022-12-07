@@ -143,11 +143,19 @@ namespace AssetManagementTeam6.API.Controllers
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
         {
             var userId = _userProvider.GetUserId();
+            var location = _userProvider.GetLocation();
+
+            if (userId == null && location == null) return StatusCode(500, "Sorry the request failed");
+
+            var assignedTo = await _userService.GetUserById(requestModel.AssignedToId);
+
+            if (assignedTo == null && assignedTo?.Location != location) return BadRequest("Assignee not same location");
 
             if (id < 0)
             {
                 return BadRequest("Invalid Id");
             }
+
             var assignment = await _assignmentService.GetAssignmentById(id);
             if (assignment == null)
                 return NotFound();
@@ -167,9 +175,9 @@ namespace AssetManagementTeam6.API.Controllers
         {
             var assignment = await _assignmentService.GetAssignmentById(id);
 
-            if (assignment == null) return NotFound("Assignment Not Found");
+            if (assignment == null) return NotFound("This assignment has been removed");
 
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("This assignment is not waiting for acceptance");
 
             if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
 
@@ -184,9 +192,9 @@ namespace AssetManagementTeam6.API.Controllers
         {
             var assignment = await _assignmentService.GetAssignmentById(id);
 
-            if (assignment == null) return NotFound("Assignment not found");
+            if (assignment == null) return NotFound("This assignment has been removed");
 
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("Assignment already Accepted or Declined");
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("This assignment is not waiting for acceptance");
 
             if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
 
@@ -202,12 +210,14 @@ namespace AssetManagementTeam6.API.Controllers
             var assignment = await _assignmentService.GetAssignmentById(id);
 
             if (assignment == null)
-                return StatusCode(500, "Can't found asset in the system");
+                return NotFound("This assignment has been removed");
 
             if (assignment.State != AssignmentStateEnum.WaitingForAcceptance && assignment.State != AssignmentStateEnum.Declined)
-                return BadRequest("Invalid Assignment");
+                return BadRequest("This assignment is not waiting for acceptance or Declined");
 
-            await _assignmentService.Delete(id);
+            var isDeleted = await _assignmentService.Delete(id);
+
+            if (!isDeleted) return StatusCode(500, "Sorry the Request failed");
 
             return Ok(assignment);
         }
