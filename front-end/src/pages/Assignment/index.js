@@ -17,6 +17,7 @@ const cx = classNames.bind(styles);
 
 function Assignment() {
     let navigate = useNavigate();
+    const [date, setDate] = useState('');
 
     // search
     const [search, setSearch] = useState();
@@ -295,11 +296,8 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" />
+                            <Form.Control type="date" value={date} onChange={(e) => setDate(e.target.value)} />
                         </Form.Group>
-                        <button>
-                            <BsSearch />
-                        </button>
                     </InputGroup>
                 </div>
 
