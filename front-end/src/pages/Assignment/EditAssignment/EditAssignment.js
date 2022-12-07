@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { BsSearch } from 'react-icons/bs';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { createData } from '../../../apiServices';
+import { updateData } from '../../../apiServices';
 import { ASSIGNMENT } from '../../../constants';
 import { dateStrToDate } from '../../../lib/helper';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
@@ -29,18 +29,19 @@ function EditAssignment() {
         fullName: '',
     });
 
-    const [dataAdd, setDataAdd] = useState({
-        assignedToId: '',
-        assetId: '',
-        assignedDate: '',
-        note: '',
-    });
-
     const location = useLocation();
     const { assignment } = location?.state;
 
-    console.log(assignment);
+    console.log('assignment', assignment);
 
+    const [dataAdd, setDataAdd] = useState({
+        assetId: assignment.fullName,
+        assignedToId: assignment.assignedTo,
+        assignedDate: assignment.assignedDate,
+        note: assignment.note,
+    });
+
+    console.log('dataAdd', dataAdd);
     useEffect(() => {
         if (user?.fullName && user?.id) setDataAdd({ ...dataAdd, assignedToId: user?.id });
 
@@ -61,12 +62,12 @@ function EditAssignment() {
 
     const [arrMsg, setArrMsg] = useState([]);
 
-    const handleCreate = async () => {
+    const handleUpdate = async () => {
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const res = await createData(ASSIGNMENT, dataAdd);
+        const res = await updateData(ASSIGNMENT, dataAdd);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
@@ -90,12 +91,7 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User</Form.Label>
                     <InputGroup>
-                        <Form.Control
-                            placeholder={'Enter user'}
-                            style={{ width: 600 }}
-                            readOnly
-                            value={user?.fullName ? user?.fullName : assignment.assignedTo}
-                        />
+                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd.fullName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
                             <BsSearch />
                         </InputGroup.Text>
@@ -105,11 +101,7 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Asset</Form.Label>
                     <InputGroup>
-                        <Form.Control
-                            placeholder={'Enter asset'}
-                            readOnly
-                            value={asset?.assetName ? asset?.assetName : assignment.assetName}
-                        />
+                        <Form.Control placeholder={'Enter asset'} readOnly value={dataAdd.assetName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
                             <BsSearch />
                         </InputGroup.Text>
@@ -124,11 +116,7 @@ function EditAssignment() {
                         type="date"
                         name="assignedDate"
                         onChange={onChange}
-                        value={
-                            dateStrToDate(dataAdd.assignedDate)
-                                ? dateStrToDate(dataAdd.assignedDate)
-                                : dateStrToDate(assignment.assignedDate)
-                        }
+                        value={dateStrToDate(dataAdd.assignedDate)}
                     />
                 </Form.Group>
                 {arrMsg.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg.AssignedDate[0]}</p>}
@@ -152,7 +140,7 @@ function EditAssignment() {
                 {arrMsg.Note && <p className={cx('msgErrorBg')}>{arrMsg.Note[0]}</p>}
 
                 <div className={cx('button')}>
-                    <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>
+                    <Button variant="danger" onClick={handleUpdate} disabled={isInputComplete}>
                         Save
                     </Button>
 
