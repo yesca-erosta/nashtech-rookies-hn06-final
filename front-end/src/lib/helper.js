@@ -46,3 +46,21 @@ export const queryToStringForAsset = (query) => {
     `sort=${query.sort ?? 'AssetCodeAcsending'}`
   );
 };
+
+
+export const queryToStringForAssignments = (query) => {
+  const checkQuery = (queryParams, queryName) => {
+    return queryParams === 0 ? `${queryName}=0&` : queryParams ? `${queryName}=${queryParams}&` : `${queryName}=&`;
+  };
+
+
+  //TODO: change backend
+  return (
+    '?' +
+    `page=${query.page ?? 1}&` +
+    `pageSize=${query.pageSize ?? 10}&` +
+    `${checkQuery(query.valueSearch, 'valueSearch')}` +
+    `${checkQuery(query.types, 'types')}` +
+    `sort=${query.sort ?? 'AssetCodeAcsending'}`
+  );
+};

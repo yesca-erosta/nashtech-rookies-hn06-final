@@ -1,10 +1,6 @@
 .container {
     min-width: 1200px;
 
-    .main_table {
-        margin-top: 102px;
-    }
-
     .title_asset {
         color: red;
     }
@@ -15,7 +11,7 @@
         flex-direction: row;
         justify-content: space-between;
         width: 1190px;
-        position: absolute;
+        position: relative;
 
         .input {
             border: none;
@@ -29,8 +25,9 @@
         border-radius: 6px;
         width: 186px;
         background-color: #fff;
-        margin: 60px 0 0 62px;
-
+        z-index: 9;
+        right: 0;
+        margin-top: 4px;
         .dropdown_container {
             margin: 16px;
 
