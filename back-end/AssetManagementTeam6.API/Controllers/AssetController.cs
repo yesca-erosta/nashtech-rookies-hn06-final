@@ -163,7 +163,7 @@ namespace AssetManagementTeam6.API.Controllers
 
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? sort,string? states,string? category)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? sort, string? states, string? category)
         {
             //var userId = this.GetCurrentLoginUserId();
             var userId = _userProvider.GetUserId();

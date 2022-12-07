@@ -108,15 +108,36 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
+        [AuthorizeRoles(StaffRoles.Admin)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
+        {
+            var userId = _userProvider.GetUserId();
+
+            if (id < 0)
+            {
+                return BadRequest("Invalid Id");
+            }
+            var assignment = await _assignmentService.GetAssignmentById(id);
+            if (assignment == null)
+                return NotFound();
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                return BadRequest("Invalid State");
+
+            requestModel.AssignedById = userId;
+
+            var result = await _assignmentService.Update(id, requestModel);
+            return Ok(result);
+        }
+
         [HttpGet("getlistbyuserid")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetListByUserId()
         {
             var userId = _userProvider.GetUserId();
-
             if (userId == null)
                 return NotFound();
-
             var user = await _userService.GetUserById(userId.Value);
 
             if (user == null) return StatusCode(500, "Sorry the request failed");

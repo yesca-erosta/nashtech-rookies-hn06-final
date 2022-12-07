@@ -231,7 +231,9 @@ function Header() {
                     )}
 
                     {isComplexityPasswordError && (
-                        <div className={cx('oldPassword_false')}>The password should match the complexity!</div>
+                        <div className={cx('oldPassword_false')}>
+                            The password must more than 8 character long and has at least 1 uppercase letter and 1 number
+                        </div>
                     )}
                 </Modal.Body>
                 <Modal.Footer>

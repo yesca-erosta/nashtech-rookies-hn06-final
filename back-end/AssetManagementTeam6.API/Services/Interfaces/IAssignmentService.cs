@@ -14,6 +14,11 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<Assignment?> GetAssignmentById(int id);
         Task<IEnumerable<GetAssignmentResponse>> GetAllAsync();
         Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel);
+        Task<GetAssignmentResponse> Update(int id,AssignmentRequest updateRequest);
+        Task<Assignment?> GetAssignmentById(int id);
+        Task<bool> Delete(int id);
+        Task<IEnumerable<GetAssetResponse>> GetAllAssignedAsset();
+        Task<IEnumerable<GetUserResponse>> GetAllAssignedUser();
         Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset();
         Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id);
         Task<GetAssignmentResponse> AcceptedAssignment(int id);

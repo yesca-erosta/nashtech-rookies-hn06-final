@@ -44,19 +44,13 @@ namespace AssetManagementTeam6.API.Services.Implements
                 Location = requestModel.Location
             };
 
-            var createdAsset = await _assetRepository.Create(newAsset);
-
-            if (createdAsset == null)
-            {
-                return null;
-            }
-
-            return createdAsset;
+            return await _assetRepository.Create(newAsset);
         }
 
         public async Task<IEnumerable<GetAssetResponse>> GetAllAsync(LocationEnum location)
         {
             var assets = await _assetRepository.GetListAsync();
+            if(assets == null)return null;
 
             var assetByLocation = assets.Where(x => x.Location == location);
 
@@ -77,9 +71,8 @@ namespace AssetManagementTeam6.API.Services.Implements
                 return false;
             }
 
-            await _assetRepository.Delete(deleteasset);
+            return await _assetRepository.Delete(deleteasset);
 
-            return true;
         }
 
         public async Task<Pagination<GetAssetResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
