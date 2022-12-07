@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { InputGroup } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { BsSearch } from 'react-icons/bs';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { ASSIGNMENT } from '../../../constants';
@@ -12,6 +11,7 @@ import { dateStrToDate } from '../../../lib/helper';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from '../CreateAssignment/createAssignment.module.scss';
+import { GoTriangleDown } from 'react-icons/go';
 
 const cx = classNames.bind(styles);
 
@@ -93,7 +93,7 @@ function EditAssignment() {
                     <InputGroup>
                         <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd.fullName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
-                            <BsSearch />
+                            <GoTriangleDown />
                         </InputGroup.Text>
                     </InputGroup>
                 </Form.Group>
@@ -103,7 +103,7 @@ function EditAssignment() {
                     <InputGroup>
                         <Form.Control placeholder={'Enter asset'} readOnly value={dataAdd.assetName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
-                            <BsSearch />
+                            <GoTriangleDown />
                         </InputGroup.Text>
                     </InputGroup>
                 </Form.Group>
