@@ -17,7 +17,7 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.Note)
                 .Cascade(CascadeMode.StopOnFirstFailure)
                 .Matches(StringPattern.Note)
-                .WithMessage("Invalid Note. Please try again");
+                .WithMessage("The note should not be longer than 255 characters");
         }
 
         protected bool IsAssignedDate(DateTime date)
