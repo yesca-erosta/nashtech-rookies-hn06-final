@@ -23,7 +23,6 @@ function Assignment() {
 
     const onChangeDate = async (e) => {
         setDate(e.target.value);
-        console.log('e', e.target.value);
         setLoading(true);
         setTimeout(async () => {
             if (e.target.value !== '') {
@@ -35,7 +34,6 @@ function Assignment() {
                 setDataAssignments(data.source);
                 setTotalPage(data.totalRecord);
             } else {
-                console.log('abc');
                 setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: '' });
                 const data = await getAllDataWithFilterBox(
                     `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: '' }),
@@ -113,8 +111,10 @@ function Assignment() {
     const columns = [
         {
             name: 'No.',
-            selector: (row, index) => row.id,
+            selector: (row) => row.id,
             sortable: true,
+            maxWidth: '20px',
+
         },
         {
             name: 'Asset Code',
@@ -157,7 +157,7 @@ function Assignment() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    to={`./editassignment`}
+                    to={row.state === 0 ? `.` : `./editassignment`}
                     key={row.id}
                     state={{ assignment: row }}
                     className={styles.customPen}
