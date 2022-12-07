@@ -74,7 +74,7 @@ namespace AssetManagementTeam6.API.Controllers
 
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states,DateTime? date, string? sort)
         {
             var listStates = new List<AssignmentStateEnum>();
 
@@ -95,7 +95,8 @@ namespace AssetManagementTeam6.API.Controllers
                 PageSize = pageSize,
                 ValueSearch = valueSearch,
                 AssignmentStates = listStates.Count != 0 ? listStates : null,
-                Sort = sort
+                Sort = sort,
+                FilterByAssignedDates = date
             };
 
             var result = await _assignmentService.GetPagination(queryModel);
