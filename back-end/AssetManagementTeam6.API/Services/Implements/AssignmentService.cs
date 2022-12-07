@@ -121,6 +121,11 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         }
 
+        public async Task<Assignment?> GetAssignmentByAssetId(int AssetId)
+        {
+            return await _assignmentRepository.GetOneAsync(a => a.AssetId == AssetId);
+        }
+
         public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
         {
             // get all list
