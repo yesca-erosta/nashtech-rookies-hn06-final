@@ -16,27 +16,27 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
         setLoading(true);
 
         let data = await getAllDataWithFilterBox(
-            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
         );
 
         if (checkedState.accepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0' });
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, types: '0' }),
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0' }),
             );
             setPlaceholderState('Accepted');
         }
         if (checkedState.waitingForAccepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '1' });
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, types: '1' }),
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '1' }),
             );
             setPlaceholderState('Waiting for acceptance');
         }
         if (checkedState.accepted && checkedState.waitingForAccepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
             );
             setPlaceholderState('All');
         }
@@ -53,9 +53,9 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
 
     const handleCancelState = async () => {
         setLoading(true);
-        setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+        setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
         const data = await getAllDataWithFilterBox(
-            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
         );
         setPlaceholderState('State');
         setTotalPage(data.totalRecord);

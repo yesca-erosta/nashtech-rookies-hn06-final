@@ -180,10 +180,13 @@ function Assignment() {
 
     const handlePageClick = async (event) => {
         setLoading(true);
+        console.log('event.selected', event.selected);
         setSelectedPage(event.selected + 1);
         setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
-        const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        const data = await getAllDataWithFilterBox(
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: event.selected + 1, pageSize: 10 }),
+        );
 
         setTotalPage(data.totalRecord);
         setDataAssignments(data.source);

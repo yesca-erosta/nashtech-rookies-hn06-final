@@ -60,7 +60,7 @@ export const queryToStringForAssignments = (query) => {
     `page=${query.page ?? 1}&` +
     `pageSize=${query.pageSize ?? 10}&` +
     `${checkQuery(query.valueSearch, 'valueSearch')}` +
-    `${checkQuery(query.types, 'types')}` +
+    `${checkQuery(query.states, 'states')}` +
     `sort=${query.sort ?? 'AssetCodeAcsending'}`
   );
 };
