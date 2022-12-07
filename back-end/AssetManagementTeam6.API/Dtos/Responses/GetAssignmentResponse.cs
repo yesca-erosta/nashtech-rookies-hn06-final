@@ -27,7 +27,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             AssignedDate = assignment.AssignedDate;
             State = assignment.State;
             Note = assignment.Note!;
-            FullName = assignment.AssignedTo!.FullName!;
+            FullName = assignment.AssignedTo.FullName!;
         }
     }
 }
