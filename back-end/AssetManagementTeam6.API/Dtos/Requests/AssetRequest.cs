@@ -14,7 +14,7 @@ namespace AssetManagementTeam6.API.Dtos.Requests
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
         public DateTime InstalledDate { get; set; }
-        public StateEnum State { get; set; }    
+        public AssetStateEnum State { get; set; }    
         public LocationEnum Location { get; set; }
     }
 }

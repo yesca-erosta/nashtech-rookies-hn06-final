@@ -28,7 +28,7 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         // filter 
         public List<StaffEnum>? Types { get; set; }
         public List<string>? Categories { get; set; }
-        public List<StateEnum>? AssetStates { get; set; }
+        public List<AssetStateEnum>? AssetStates { get; set; }
         public List<AssignmentStateEnum>? AssignmentStates { get; set; }
         //TODO
         public List<DateTime> FilterDates { get; set; }

@@ -13,7 +13,7 @@ namespace AssetManagementTeam6.Data.Entities
         public string? Specification { get; set; }
         public DateTime? InstalledDate { get; set; }
 
-        public StateEnum State { get; set; }
+        public AssetStateEnum State { get; set; }
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public string? AssetCode { get; set; }
         public LocationEnum Location { get; set; }

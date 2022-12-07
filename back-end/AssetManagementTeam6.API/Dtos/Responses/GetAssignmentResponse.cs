@@ -21,7 +21,8 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             AssignedTo = assignment.AssignedTo.UserName;
             AssignedBy = assignment.AssignedBy?.UserName ?? "";
             AssignedDate = assignment.AssignedDate;
-            State = assignment.State == AssignmentStateEnum.WaitingForAcceptance ? "Waiting For Acceptance" : "Accepted";
+            State = assignment.State == AssignmentStateEnum.WaitingForAcceptance ? "Waiting For Acceptance" : 
+                                        assignment.State == AssignmentStateEnum.Accepted ? "Accepted" : "Declined" ;
         }
     }
 }

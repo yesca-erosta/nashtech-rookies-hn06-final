@@ -13,7 +13,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
         public Category Category { get; set; }
         public string Specification { get; set; }
         public DateTime? InstalledDate { get; set; }
-        public StateEnum State { get; set; }
+        public AssetStateEnum State { get; set; }
         public string AssetCode { get; set; }
 
         public GetAssetResponse(Asset asset)

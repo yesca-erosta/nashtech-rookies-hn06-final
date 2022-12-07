@@ -102,7 +102,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G301",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                 new Asset
                 {
@@ -112,7 +112,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G302",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                 new Asset
                 {
@@ -122,7 +122,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G303",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                 new Asset
                 {
@@ -132,7 +132,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G304",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                 new Asset
                 {
@@ -142,7 +142,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G305",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }, new Asset
                 {
                     Id = 6,
@@ -151,7 +151,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G306",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }, new Asset
                 {
                     Id = 7,
@@ -160,7 +160,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G307",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }, new Asset
                 {
                     Id = 8,
@@ -169,7 +169,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G308",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }, new Asset
                 {
                     Id = 9,
@@ -178,7 +178,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Laptop G309",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }, new Asset
                 {
                     Id = 10,
@@ -187,7 +187,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Monitor M300",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                 new Asset
                 {
@@ -197,7 +197,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Monitor M301",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 },
                  new Asset
                  {
@@ -207,7 +207,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M302",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  }
                 , new Asset
                 {
@@ -217,7 +217,7 @@ namespace AssetManagementTeam6.Data
                     InstalledDate = DateTime.UtcNow,
                     Specification = "Monitor M303",
                     Location = LocationEnum.HN,
-                    State = StateEnum.Assigned
+                    State = AssetStateEnum.Assigned
                 }
                 ,
                  new Asset
@@ -228,7 +228,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M304",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -238,7 +238,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M305",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -248,7 +248,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M306",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -258,7 +258,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M307",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -268,7 +268,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M308",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -278,7 +278,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M309",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -288,7 +288,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M310",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -298,7 +298,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M311",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  },
                  new Asset
                  {
@@ -308,7 +308,7 @@ namespace AssetManagementTeam6.Data
                      InstalledDate = DateTime.UtcNow,
                      Specification = "Monitor M312",
                      Location = LocationEnum.HN,
-                     State = StateEnum.Assigned
+                     State = AssetStateEnum.Assigned
                  }
 
 
