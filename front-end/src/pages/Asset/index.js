@@ -14,6 +14,7 @@ import { deleteData, getAllData, getAllDataWithFilterBox, getOneData } from '../
 import { ASSET } from '../../constants';
 import { queryToStringForAsset } from '../../lib/helper';
 import { DetailAsset } from './DetailAsset/DetailAsset';
+import { ShowModalDelete } from './showDelete/showDelete';
 
 const cx = classNames.bind(styles);
 
@@ -414,7 +415,11 @@ function Asset() {
                     key={row.assetCode}
                     state={{ asset: row }}
                     className={styles.customPen}
-                    style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={
+                        row.state === 4
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' }
+                            : { color: 'rgb(102, 101, 101)' }
+                    }
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
@@ -741,28 +746,7 @@ function Asset() {
                 msgNoData()
             )}
             <DetailAsset showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} />
-
-            {/* TODO: handle modal delete */}
-            {/* <ModalDelete showDetail={showDetail} assetDetail={assetDetail} handleCloseDetail={handleCloseDetail} /> */}
-
-            <Modal show={showDelete} onHide={() => setShowDelete(false)}>
-                <Modal.Header>
-                    <Modal.Title>Are you sure?</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Form>
-                        <Form.Label>Do you want to delete this asset?</Form.Label>
-                    </Form>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="danger" onClick={handleDelete}>
-                        Delete
-                    </Button>
-                    <Button variant="outline-secondary" onClick={() => setShowDelete(false)}>
-                        Cancel
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <ShowModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
 
             <Modal
                 show={isShowModalCantDelete}
