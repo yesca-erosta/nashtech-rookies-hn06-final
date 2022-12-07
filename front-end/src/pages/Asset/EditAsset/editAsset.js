@@ -10,7 +10,7 @@ import styles from '../CreateAsset/createAsset.module.scss';
 
 const cx = classNames.bind(styles);
 
-function CreateAsset() {
+function EditAsset() {
     const location = useLocation();
 
     const { asset } = location?.state;
@@ -171,4 +171,4 @@ function CreateAsset() {
     );
 }
 
-export default CreateAsset;
+export default EditAsset;

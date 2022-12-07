@@ -4,3 +4,4 @@ export const USER_INFORMATION = 'userInformation';
 export const USER = 'User';
 export const ASSET = 'Asset';
 export const CATEGORY = 'Category';
+export const ASSIGNMENT = 'Assignment';
