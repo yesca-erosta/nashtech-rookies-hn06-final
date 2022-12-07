@@ -12,6 +12,8 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId);
         Task<Assignment> GetAssignmentByAssignedAsset(int assetId);
         Task<Assignment?> GetAssignmentById(int id);
+        Task<Assignment?> GetAssignmentByAssetId(int assetId);
+
         Task<IEnumerable<GetAssignmentResponse>> GetAllAsync();
         Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel);
         Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset();
