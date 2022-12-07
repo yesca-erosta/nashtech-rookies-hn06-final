@@ -36,6 +36,7 @@ function CreateAssignment() {
         note: '',
     });
 
+
     useEffect(() => {
         if (user?.fullName && user?.id) setDataAdd({ ...dataAdd, assignedToId: user?.id });
 
@@ -106,20 +107,20 @@ function CreateAssignment() {
                     <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
 
                     <Form.Control
-                        isInvalid={arrMsg.AssignedDate}
+                        isInvalid={arrMsg?.AssignedDate}
                         type="date"
                         name="assignedDate"
                         onChange={onChange}
-                        value={dateStrToDate(dataAdd.assignedDate)}
+                        value={dateStrToDate(dataAdd?.assignedDate)}
                     />
                 </Form.Group>
-                {arrMsg.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg.AssignedDate[0]}</p>}
+                {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Note</Form.Label>
                     <Form.Group className="w-100">
                         <Form.Control
-                            isInvalid={arrMsg.Note}
+                            isInvalid={arrMsg?.Note}
                             type="text"
                             as="textarea"
                             rows={5}
@@ -127,11 +128,11 @@ function CreateAssignment() {
                             placeholder="Enter note"
                             name="note"
                             onChange={onChange}
-                            value={dataAdd.note}
+                            value={dataAdd?.note}
                         />
                     </Form.Group>
                 </Form.Group>
-                {arrMsg.Note && <p className={cx('msgErrorBg')}>{arrMsg.Note[0]}</p>}
+                {arrMsg?.Note && <p className={cx('msgErrorBg')}>{arrMsg?.Note[0]}</p>}
 
                 <div className={cx('button')}>
                     <Button variant="danger" onClick={handleCreate} disabled={!isInputComplete}>

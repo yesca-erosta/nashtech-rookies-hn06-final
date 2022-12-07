@@ -121,7 +121,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("getlistbyuserid")]
-        [AuthorizeRoles(StaffRoles.Admin)]
+        [AuthorizeRoles(StaffRoles.Admin, StaffRoles.Staff)]
         public async Task<IActionResult> GetListByUserId()
         {
             var userId = _userProvider.GetUserId();
