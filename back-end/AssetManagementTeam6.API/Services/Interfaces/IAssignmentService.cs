@@ -11,6 +11,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<Assignment?> Create(AssignmentRequest createRequest);
         Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId);
         Task<Assignment> GetAssignmentByAssignedAsset(int assetId);
+        Task<Assignment?> GetAssignmentById(int id);
         Task<IEnumerable<GetAssignmentResponse>> GetAllAsync();
         Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel);
         Task<GetAssignmentResponse> Update(int id,AssignmentRequest updateRequest);
@@ -19,8 +20,10 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<IEnumerable<GetAssetResponse>> GetAllAssignedAsset();
         Task<IEnumerable<GetUserResponse>> GetAllAssignedUser();
         Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset();
-        Task<IEnumerable<GetAssignmentResponse>> GetListByUserLoggedIn(int id);
-        Task<GetAssignmentResponse> ChangeStateAssignment(int id,AssignmentStateEnum updateRequest);
-
+        Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id);
+        Task<GetAssignmentResponse> AcceptedAssignment(int id);
+        Task<GetAssignmentResponse> DeclinedAssignment(int id);
+        Task<GetAssignmentResponse?> Update(int id, AssignmentRequest? updatedRequest);
+        Task<bool> Delete(int id);
     }
 }

@@ -66,6 +66,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("query")]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
             var listTypes = new List<AssignmentStateEnum>();
@@ -96,6 +97,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("available-asset")]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAvailableAsset()
         {
             var result = await _assignmentService.CheckAvailableAsset();
@@ -130,6 +132,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("getlistbyuserid")]
+        [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetListByUserId()
         {
             var userId = _userProvider.GetUserId();
@@ -139,7 +142,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (user == null) return StatusCode(500, "Sorry the request failed");
 
-            var result = await _assignmentService.GetListByUserLoggedIn(userId.Value);
+            var result = await _assignmentService.GetListAssignmentByUserLoggedIn(userId.Value);
 
             if (result == null)
                 return StatusCode(500, "Sorry the Request failed");
@@ -147,12 +150,44 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("user/{id}")]
-        public async Task<IActionResult> ChangeStateAssignment(int id, [FromBody] ChangeStateAssignment state)
+       
+        [HttpPut("{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
         {
-            //Enum.TryParse(state.ToString(), out AssignmentStateEnum enumValue);
+            var userId = _userProvider.GetUserId();
 
-            var result = _assignmentService.ChangeStateAssignment(id, state.State);
+            if (id < 0)
+            {
+                return BadRequest("Invalid Id");
+            }
+            var assignment = await _assignmentService.GetAssignmentById(id);
+            if (assignment == null)
+                return NotFound();
+
+            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                return BadRequest("Invalid State");
+
+            requestModel.AssignedById = userId;
+
+            var result = await _assignmentService.Update(id, requestModel);
+            return Ok(result);
+        }
+
+        [HttpPut("accepted/{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> AcceptedAssignment(int id)
+        {
+            var result = await _assignmentService.AcceptedAssignment(id);
+
+            return Ok(result);
+        }
+
+        [HttpPut("declined/{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> DeclinedAssignment(int id)
+        {
+            var result = await _assignmentService.DeclinedAssignment(id);
 
             return Ok(result);
         }

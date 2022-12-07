@@ -175,14 +175,14 @@ namespace AssetManagementTeam6.API.Controllers
 
             var location = user!.Location;
 
-            var listStates = new List<StateEnum>();
+            var listStates = new List<AssetStateEnum>();
 
             if (!string.IsNullOrWhiteSpace(states))
             {
                 var typeArr = states.Split(",");
                 foreach (string typeValue in typeArr)
                 {
-                    var tryParseOk = (Enum.TryParse(typeValue, out StateEnum enumValue));
+                    var tryParseOk = (Enum.TryParse(typeValue, out AssetStateEnum enumValue));
                     if (tryParseOk)
                         listStates.Add(enumValue);
                 }

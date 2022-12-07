@@ -108,12 +108,18 @@ namespace AssetManagementTeam6.API.Services.Implements
             return result;
         }
 
-        public async Task<IEnumerable<GetAssignmentResponse>> GetListByUserLoggedIn(int id)
+        public async Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id)
         {
             var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.State == AssignmentStateEnum.WaitingForAcceptance 
             && ass.State == AssignmentStateEnum.Accepted);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
+        }
+
+        public async Task<Assignment?> GetAssignmentById(int id)
+        {
+            return await _assignmentRepository.GetOneAsync(a => a.Id == id);
+
         }
 
         public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
@@ -211,31 +217,86 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return output!;
         }
+
+        public async Task<GetAssignmentResponse> AcceptedAssignment(int id)
+        {
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+
+            if (updatedAssignment == null) 
+            {
+                return null!;
+            } 
+
+            var asset = updatedAssignment.Asset;
+
+            if (asset.State != AssetStateEnum.Assigned)
+            {
+                asset.State = AssetStateEnum.Assigned;
+            }
+            else
+            {
+                return null!;
+            }
+
+            updatedAssignment.State = AssignmentStateEnum.Accepted;
+
+            var result = await _assignmentRepository.Update(updatedAssignment);
+
+            if (result == null)
+            {
+                return null!;
+            }
+
+            await _assetRepository.Update(asset);
+
+            return new GetAssignmentResponse(result!);
+        }
+
+        public async Task<GetAssignmentResponse> DeclinedAssignment(int id)
+        {
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+
+            if (updatedAssignment == null)
+            {
+                return null!;
+            }
+
+            updatedAssignment.State = AssignmentStateEnum.Declined;
+
+            var result = await _assignmentRepository.Update(updatedAssignment);
+
+            if (result == null)
+            {
+                return null!;
+            }
+
+            return new GetAssignmentResponse(result!);
+        }
+
+        //TODO
         public async Task<GetAssignmentResponse?> Update(int id, AssignmentRequest? updatedRequest)
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
-            var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest.AssignedToId);
-            var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest.AssignedById);
-            var updateAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest.AssetId);
+            var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedToId);
+            var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedById);
+            var updateAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId && x.State == AssetStateEnum.Available);
 
-            if (updatedAssignment == null) return null;
-            if (assignedTo == null) return null;
-            if (assignedBy == null) return null;
-            if (updateAsset == null) return null;
-
+            if(updatedAssignment == null || assignedTo == null || updateAsset == null)
             {
-                updatedAssignment.Note = updatedRequest.Note;
-                updatedAssignment.AssignedDate = updatedRequest.AssignedDate;
-                updatedAssignment.AssetId = updatedRequest.AssetId;
-                updatedAssignment.Asset = updateAsset;
-                updatedAssignment.AssignedToId = updatedRequest.AssignedToId;
-                updatedAssignment.AssignedTo = assignedTo;
-                updatedAssignment.AssignedById = updatedRequest.AssignedById;
-                updatedAssignment.AssignedBy = assignedBy;
+                return null;
             }
-
-            await _assignmentRepository.Update(updatedAssignment);
             
+            updatedAssignment.Note = updatedRequest?.Note ?? "";
+            updatedAssignment.AssignedDate = updatedRequest!.AssignedDate;
+            updatedAssignment.AssetId = updatedRequest.AssetId;
+            updatedAssignment.Asset = updateAsset;
+            updatedAssignment.AssignedToId = updatedRequest.AssignedToId;
+            updatedAssignment.AssignedTo = assignedTo;
+            updatedAssignment.AssignedById = updatedRequest.AssignedById;
+            updatedAssignment.AssignedBy = assignedBy;
+            
+            await _assignmentRepository.Update(updatedAssignment);
+
             var result = new GetAssignmentResponse(updatedAssignment);
 
             return result;
@@ -253,6 +314,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             return await _assignmentRepository.Delete(deletedAssignment);
         }
 
+<<<<<<< HEAD
         public async Task<Assignment?> GetAssignmentById(int id)
         {
             return await _assignmentRepository.GetOneAsync(a => a.Id == id);
@@ -285,5 +347,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return new GetAssignmentResponse(result);       
         }
+=======
+>>>>>>> c37fcb4ecc801c25a825d35cdedbf7eed4113d3b
     }
 }

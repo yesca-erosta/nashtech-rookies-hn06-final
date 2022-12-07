@@ -30,7 +30,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if (dateCompare < 0)
             {
-                requestModel.State = StateEnum.NotAvailable;
+                requestModel.State = AssetStateEnum.NotAvailable;
             }
 
             var newAsset = new Asset
@@ -78,7 +78,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<Pagination<GetAssetResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
         {
             // TODO: get list assets not set with location
-            var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != StateEnum.Recycled && x.State != StateEnum.WaitingForRecycling);
+            var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != AssetStateEnum.Recycled && x.State != AssetStateEnum.WaitingForRecycling);
 
             // filter by type
             if (queryModel.AssetStates != null)
