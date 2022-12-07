@@ -19,7 +19,7 @@
         #endregion
 
         #region Assignment
-        public const string Note = @"^[a-zA-Z](.{0,49})$";
+        public const string Note = @"^[a-zA-Z](.{0,255})$";
         #endregion
     }
 }
