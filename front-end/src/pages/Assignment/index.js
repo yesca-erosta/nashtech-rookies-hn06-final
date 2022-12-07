@@ -9,9 +9,11 @@ import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { StateFilter } from './StateFilter/StateFilter';
+import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
+import { ASSIGNMENT } from '../../constants';
 
 const cx = classNames.bind(styles);
 
@@ -45,6 +47,29 @@ function Assignment() {
         if (e.key === 'Enter') {
             handleSearch(search);
         }
+    };
+
+    const [showDelete, setShowDelete] = useState(false);
+
+    const [assignmentId, setAssignmentId] = useState('');
+
+    const handleShowDelete = (e, assignment) => {
+        if (assignment.state === 0) {
+            e.preventDefault();
+        } else {
+            setAssignmentId(assignment.id);
+            setShowDelete(true);
+        }
+    };
+
+    const handleDelete = async () => {
+        setLoading(true);
+        await deleteData(ASSIGNMENT, assignmentId);
+
+        getData();
+        setAssignmentId('');
+        setShowDelete(false);
+        setLoading(false);
     };
 
     const columns = [
@@ -95,7 +120,7 @@ function Assignment() {
                     key={row.id}
                     state={{ assignment: row }}
                     className={styles.customPen}
-                    style={row.state === 4 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
@@ -103,18 +128,18 @@ function Assignment() {
                     key={`keyDelete_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 4
+                        row.state === 0
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRemove} />
+                    <FontAwesomeIcon icon={faRemove} onClick={(e) => handleShowDelete(e, row)} />
                 </Link>,
                 <Link
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 4
+                        row.state === 0
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
@@ -138,13 +163,14 @@ function Assignment() {
         sort: 'AssignmentIdAcsending',
         states: '0,1',
     });
+    const [totalPage, setTotalPage] = useState();
 
     // Get Data
     const getData = async () => {
         setLoading(true);
         const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
         setDataAssignments(data.source);
-
+        setTotalPage(data.totalRecord);
         setLoading(false);
     };
 
@@ -154,8 +180,6 @@ function Assignment() {
         // I want call a function when first render
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const [totalPage, setTotalPage] = useState();
 
     const fetchAssignments = async (page) => {
         setLoading(true);
@@ -180,7 +204,6 @@ function Assignment() {
 
     const handlePageClick = async (event) => {
         setLoading(true);
-        console.log('event.selected', event.selected);
         setSelectedPage(event.selected + 1);
         setQueryParams({ ...queryParams, page: event.selected + 1, pageSize: 10 });
 
@@ -347,6 +370,8 @@ function Assignment() {
                     onSort={handleSort}
                 />
             </div>
+
+            <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
         </div>
     );
 }
