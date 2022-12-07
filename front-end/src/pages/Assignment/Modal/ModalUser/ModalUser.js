@@ -7,7 +7,7 @@ import { getAllDataWithFilterBox } from '../../../../apiServices';
 import { queryToStringForAsset } from '../../../../lib/helper';
 import styles from '../../CreateAssignment/createAssignment.module.scss';
 
-export const ModalUser = ({ setIsShowListUser, setNameUser }) => {
+export const ModalUser = ({ setIsShowListUser, setUser }) => {
     const cx = classNames.bind(styles);
 
     const [dataUser, setDataUser] = useState([]);
@@ -146,7 +146,7 @@ export const ModalUser = ({ setIsShowListUser, setNameUser }) => {
 
     const checkNameByStaffCode = (staffCode) => {
         setIsShowListUser(false);
-        setNameUser(dataUser?.find((data) => data.staffCode === staffCode).fullName);
+        setUser(dataUser?.find((data) => data.staffCode === staffCode).fullName);
     };
     const [search, setSearch] = useState();
 

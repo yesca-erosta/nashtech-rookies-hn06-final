@@ -16,7 +16,16 @@ function CreateAssignment() {
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
     const [nameAsset, setNameAsset] = useState();
-    const [nameUser, setNameUser] = useState();
+    const [user, setUser] = useState();
+
+    const [dataAdd, setDataAdd] = useState({
+        AssignedToId: '',
+        AssetId: '',
+        AssignedDate: '',
+        Note: '',
+    });
+
+    console.log(user);
 
     return (
         <div className={cx('container')}>
@@ -26,7 +35,7 @@ function CreateAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={nameUser} />
+                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={user} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
                             <BsSearch />
                         </InputGroup.Text>
@@ -68,7 +77,7 @@ function CreateAssignment() {
                 </div>
             </Form>
 
-            {isShowListUser && <ModalUser setIsShowListUser={setIsShowListUser} setNameUser={setNameUser} />}
+            {isShowListUser && <ModalUser setIsShowListUser={setIsShowListUser} setNameUser={setUser} />}
 
             {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setNameAsset={setNameAsset} />}
         </div>

@@ -90,7 +90,7 @@ function Assignment() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    to={`./editasset`}
+                    to={`./editassignment`}
                     key={row.id}
                     state={{ asset: row }}
                     className={styles.customPen}
@@ -174,8 +174,6 @@ function Assignment() {
         // fetch page 1 of Assets
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    console.log('dataAssignments', dataAssignments);
 
     const [selectedPage, setSelectedPage] = useState(1);
 
