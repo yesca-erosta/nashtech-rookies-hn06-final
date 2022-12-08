@@ -250,9 +250,41 @@ namespace AssetManagementTeam6.API.Services.Implements
             return new GetRequestForReturningResponse(result);
         }
 
-        public Task<GetRequestForReturningResponse> CancelReturningRequest(int id)
+        public async Task<GetRequestForReturningResponse> CancelReturningRequest(RequestForReturning request)
         {
-            throw new NotImplementedException();
+            if(request.State != RequestForReturningStateEnum.WaitingForReturning)
+            {
+                throw new Exception("Request state is wrong");
+            }
+
+            if (request.Assignment == null)
+            {
+                throw new Exception("Assignment is not exist");
+            }
+
+            if (request.Assignment.State != AssignmentStateEnum.Accepted)
+            {
+                throw new Exception("Assignment state is not accepted");
+            }
+
+            if (request.Assignment.Asset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
+            {
+                throw new Exception("Asset is not assigned");
+            }
+
+            if (request.RequestedBy == null)
+            {
+                throw new Exception("Requester is not found");
+            }
+
+            var result = await _requestForReturningRepository.Delete(request);
+
+            return new GetRequestForReturningResponse(request);
         }
 
         public async Task<RequestForReturning> GetRequestForReturningById(int id)
