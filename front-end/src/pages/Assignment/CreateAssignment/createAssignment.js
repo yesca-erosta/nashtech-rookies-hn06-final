@@ -36,7 +36,6 @@ function CreateAssignment() {
         note: '',
     });
 
-
     useEffect(() => {
         if (user?.fullName && user?.id) setDataAdd({ ...dataAdd, assignedToId: user?.id });
 
@@ -86,7 +85,13 @@ function CreateAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={user?.fullName} />
+                        <Form.Control
+                            placeholder={'Enter user'}
+                            style={{ width: 600, position: 'relative' }}
+                            readOnly
+                            value={user?.fullName}
+                            onClick={() => setIsShowListUser(true)}
+                        />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
                             <BsSearch />
                         </InputGroup.Text>
@@ -96,7 +101,12 @@ function CreateAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Asset</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter asset'} readOnly value={asset?.assetName} />
+                        <Form.Control
+                            placeholder={'Enter asset'}
+                            readOnly
+                            value={asset?.assetName}
+                            onClick={() => setIsShowListAsset(true)}
+                        />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
                             <BsSearch />
                         </InputGroup.Text>

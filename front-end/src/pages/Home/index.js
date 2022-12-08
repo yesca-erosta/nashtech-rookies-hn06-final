@@ -6,24 +6,18 @@ import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import { getAllDataWithFilterBox } from '../../apiServices';
-import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
+import { dateStrToStr } from '../../lib/helper';
 import './home.scss';
 
 import { ModalFirstChangePassword } from './Modal/ModalFirstChangePassword';
 
 function Home() {
     const [dataAssignment, setDataAssignment] = useState([]);
-    const [queryParams] = useState({
-        page: 1,
-        pageSize: 10,
-        sort: 'AssignmentIdAcsending',
-        states: '0,1',
-    });
 
     // Get Data
     const getData = async () => {
-        const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
-        setDataAssignment(data.source);
+        const data = await getAllDataWithFilterBox(`Assignment/getlistbyuserid`);
+        setDataAssignment(data);
     };
 
     useEffect(() => {
@@ -53,8 +47,8 @@ function Home() {
         },
         {
             name: 'Asset Name',
-            sortable: true,
             selector: (row) => row.assetName,
+            sortable: true,
         },
 
         {
@@ -161,7 +155,6 @@ function Home() {
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
-                    sortServer
                 />
             </div>
         </>
