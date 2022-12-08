@@ -174,8 +174,23 @@ export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
         }
     };
 
+    //  const ref = useRef();
+
+    //  useEffect(() => {
+    //      const checkIfClickedOutside = (e) => {
+    //          if ( && ref.current && !ref.current.contains(e.target)) {
+    //              setShowCategory(false);
+    //          }
+    //      };
+    //      document.addEventListener('mousedown', checkIfClickedOutside);
+
+    //      return () => {
+    //          document.removeEventListener('mousedown', checkIfClickedOutside);
+    //      };
+    //  }, [showCategory]);
+
     return (
-        <div className={cx('table_container')}>
+        <div className={cx('table_container-asset')}>
             <div className={cx('header_search')}>
                 <h4 className={cx('title_search')}>Select Asset</h4>
                 <InputGroup style={{ width: 200 }}>

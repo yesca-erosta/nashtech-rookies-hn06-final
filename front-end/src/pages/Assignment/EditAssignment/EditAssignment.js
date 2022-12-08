@@ -32,7 +32,6 @@ function EditAssignment() {
         fullName: '',
     });
 
-
     const [dataAdd, setDataAdd] = useState({
         assignedToId: assignment.userId,
         assetId: assignment.assetId,

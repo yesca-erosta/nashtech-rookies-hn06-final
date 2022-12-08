@@ -85,7 +85,7 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
     return (
         <div style={{ position: 'relative' }}>
             <InputGroup>
-                <Form.Control placeholder={placeholderState} readOnly />
+                <Form.Control placeholder={placeholderState} readOnly onClick={handleState} />
 
                 <InputGroup.Text>
                     <button className={cx('input')} onClick={handleState}>
