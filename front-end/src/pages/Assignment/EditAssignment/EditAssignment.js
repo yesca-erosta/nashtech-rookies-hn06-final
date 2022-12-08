@@ -81,7 +81,8 @@ function EditAssignment() {
     };
 
     const isInputComplete = useMemo(() => {
-        return Object.values(dataAdd).every((x) => x !== null && x !== '');
+        const { note, ...otherData } = dataAdd;
+        return Object.values(otherData).every((x) => x !== null && x !== '');
     }, [dataAdd]);
 
     return (
