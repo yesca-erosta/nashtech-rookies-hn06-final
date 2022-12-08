@@ -17,6 +17,10 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public string FullName { get; set; }
 
+        public int userId { get; set; }
+
+        public int assetId { get; set; }
+
         public GetAssignmentResponse(Assignment assignment)
         {
             Id = assignment.Id;
@@ -28,6 +32,9 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             State = assignment.State;
             Note = assignment.Note!;
             FullName = assignment.AssignedTo.FullName!;
+            userId = assignment.AssignedToId;
+            assetId = assignment.AssetId;
+
         }
     }
 }

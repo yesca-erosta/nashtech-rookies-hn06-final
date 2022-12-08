@@ -48,6 +48,10 @@ namespace AssetManagementTeam6.API.Controllers
             if (asset.State != AssetStateEnum.Available)
                 return BadRequest("Asset Not Available");
 
+            var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(requestModel.AssetId);
+
+            if (assignedAsset != null) return BadRequest("Asset Already assigned");
+
             var result = await _assignmentService.Create(requestModel);
 
             if (result == null)
@@ -117,7 +121,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpGet("getlistbyuserid")]
-        [AuthorizeRoles(StaffRoles.Admin)]
+        [AuthorizeRoles(StaffRoles.Admin, StaffRoles.Staff)]
         public async Task<IActionResult> GetListByUserId()
         {
             var userId = _userProvider.GetUserId();
@@ -155,6 +159,9 @@ namespace AssetManagementTeam6.API.Controllers
             {
                 return BadRequest("Invalid Id");
             }
+
+            var asset = await _assetService.GetAssetById(requestModel.AssetId);
+            if (asset == null && asset.State != AssetStateEnum.Available) return BadRequest("Asset not available");
 
             var assignment = await _assignmentService.GetAssignmentById(id);
             if (assignment == null)

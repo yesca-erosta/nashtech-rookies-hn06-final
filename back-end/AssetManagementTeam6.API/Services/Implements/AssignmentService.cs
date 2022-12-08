@@ -48,9 +48,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
 
-            var assetAssigned = await _assignmentRepository.GetOneAsync(ass => ass.AssetId == createRequest.AssetId);
-
-            if (asset == null || assignedTo == null || assetAssigned != null || assignedBy == null)
+            if (asset == null || assignedTo == null || assignedBy == null)
             {
                 return null;
             }
@@ -121,6 +119,11 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         }
 
+        public async Task<Assignment?> GetAssignmentByAssetId(int AssetId)
+        {
+            return await _assignmentRepository.GetOneAsync(a => a.AssetId == AssetId);
+        }
+
         public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
         {
             // get all list
@@ -144,7 +147,9 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
             if(queryModel.FilterByAssignedDates != null)
             {
-                assignments = assignments?.Where(u => u.AssignedDate.Equals(queryModel.FilterByAssignedDates)).ToList();
+                assignments = assignments?.Where(u => u.AssignedDate.Day.Equals(queryModel.FilterByAssignedDates.Value.Day)
+                                                    && u.AssignedDate.Month.Equals(queryModel.FilterByAssignedDates.Value.Month)
+                                                    && u.AssignedDate.Year.Equals(queryModel.FilterByAssignedDates.Value.Year));
             }
 
             // sorting
@@ -270,9 +275,9 @@ namespace AssetManagementTeam6.API.Services.Implements
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
             var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedToId);
             var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedById);
-            var updateAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId && x.State == AssetStateEnum.Available);
+            var updateAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId );
 
-            if(updatedAssignment == null || assignedTo == null || updateAsset == null)
+            if(updatedAssignment == null || assignedTo == null || updateAsset == null || updateAsset == null)
             {
                 return null;
             }
