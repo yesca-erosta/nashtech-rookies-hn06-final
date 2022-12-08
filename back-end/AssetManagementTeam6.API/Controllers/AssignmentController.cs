@@ -173,6 +173,7 @@ namespace AssetManagementTeam6.API.Controllers
             requestModel.AssignedById = userId;
 
             var result = await _assignmentService.Update(id, requestModel);
+
             return Ok(result);
         }
 
