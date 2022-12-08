@@ -10,5 +10,8 @@ namespace AssetManagementTeam6.API.Services.Interfaces
         Task<RequestForReturning?> Create(RequestForReturningRequest createRequest);
         Task<IEnumerable<GetRequestForReturningResponse>> GetAllAsync();
         Task<Pagination<GetRequestForReturningResponse?>> GetPagination(PaginationQueryModel queryModel);
+        Task<GetRequestForReturningResponse> CompleteReturningRequest(RequestForReturning request);
+        Task<GetRequestForReturningResponse> CancelReturningRequest(int id);
+        Task<RequestForReturning> GetRequestForReturningById(int id);
     }
 }
