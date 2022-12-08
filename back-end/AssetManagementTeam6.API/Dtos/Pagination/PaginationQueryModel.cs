@@ -30,8 +30,11 @@ namespace AssetManagementTeam6.API.Dtos.Pagination
         public List<string>? Categories { get; set; }
         public List<AssetStateEnum>? AssetStates { get; set; }
         public List<AssignmentStateEnum>? AssignmentStates { get; set; }
+
+        public List<RequestForReturningStateEnum>? RequestForReturningState { get; set; }
         //TODO
         public DateTime? FilterByAssignedDates { get; set; }
+        public DateTime? FilterByReturnedDates { get; set; }
 
         //sorting
         public string? Sort { get; set; }

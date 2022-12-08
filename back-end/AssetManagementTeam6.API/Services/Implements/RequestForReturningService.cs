@@ -1,7 +1,10 @@
-﻿using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
+using Common.Constants;
 using Common.Enums;
 
 namespace AssetManagementTeam6.API.Services.Implements
@@ -28,9 +31,14 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var acceptedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AcceptedById);
 
-            if (assignment == null || requestBy == null)
+           if (assignment == null)
             {
-                return null;
+                throw new Exception("Assignment is not exist or not accepted state");
+            }
+            
+            if (requestBy == null)
+            {
+                throw new Exception("Requester is not found");
             }
 
             var request = new RequestForReturning
@@ -53,6 +61,138 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return createdRequest;
 
+        }
+
+        public async Task<IEnumerable<GetRequestForReturningResponse>> GetAllAsync()
+        {
+            var requests = await _requestForReturningRepository.GetListAsync();
+
+            if(requests == null)
+            {
+                return null!;
+            }
+
+            return requests.Select(r => new GetRequestForReturningResponse(r)).ToList();
+        }
+        private bool GetFilterByReturnedDate(RequestForReturning r, PaginationQueryModel queryModel)
+        {
+            if (r.ReturnedDate.HasValue)
+            {
+                var resultDay = r.ReturnedDate.Value.Day;
+                var resultMonth = r.ReturnedDate.Value.Month;
+                var resultYear = r.ReturnedDate.Value.Year;
+
+                return resultDay.Equals(queryModel.FilterByReturnedDates.Value.Day) 
+                    && resultMonth.Equals(queryModel.FilterByReturnedDates.Value.Month)
+                    && resultYear.Equals(queryModel.FilterByReturnedDates.Value.Year);
+            }
+            return false;
+        }
+
+        public async Task<Pagination<GetRequestForReturningResponse?>> GetPagination(PaginationQueryModel queryModel)
+        {
+            // get all list
+            var requests = await _requestForReturningRepository.GetListAsync();
+
+            // search request for returning by assetcode or assetname or requester
+            var nameToQuery = "";
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
+            {
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
+
+                requests = requests?.Where(u => u!.Assignment.Asset.AssetCode!.ToLower().Contains(nameToQuery) ||
+                                        u!.Assignment.Asset.AssetName!.ToLower().Contains(nameToQuery) ||
+                                        u!.RequestedBy.UserName!.ToLower().Contains(nameToQuery)).ToList();
+            }
+
+            //TODO: filter request for returning by state or returned date
+            if (queryModel.RequestForReturningState != null)
+            {
+                requests = requests?.Where(r => queryModel.RequestForReturningState.Contains(r.State))?.ToList();
+            }
+            if (queryModel.FilterByReturnedDates != null)
+            {
+                requests = requests?.Where(r => GetFilterByReturnedDate(r,queryModel)).ToList();
+            }
+
+            // sorting
+            var sortOption = queryModel.Sort ??= Constants.RequestForReturningIdAcsending;
+
+            switch (sortOption)
+            {
+                case Constants.RequestForReturningIdAcsending:
+                    requests = requests?.OrderBy(r => r.Id)?.ToList();
+                    break;
+                case Constants.RequestForReturningIdDescending:
+                    requests = requests?.OrderByDescending(r => r.Id)?.ToList();
+                    break;
+                case Constants.RequestForReturningCodeAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.Asset.AssetCode)?.ToList();
+                    break;
+                case Constants.RequestForReturningCodeDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.Asset.AssetCode)?.ToList();
+                    break;
+                case Constants.RequestForReturningNameAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.Asset.AssetName)?.ToList();
+                    break;
+                case Constants.RequestForReturningNameDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.Asset.AssetName)?.ToList();
+                    break;
+                case Constants.RequestForReturningRequestedByAcsending:
+                    requests = requests?.OrderBy(r => r.RequestedBy.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningRequestedByDescending:
+                    requests = requests?.OrderByDescending(r => r.RequestedBy.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAcceptedByAcsending:
+                    requests = requests?.OrderBy(r => r.AcceptedBy!.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAcceptedByDescending:
+                    requests = requests?.OrderByDescending(r => r.AcceptedBy!.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAssignedDateAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.AssignedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningAssignedDateDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.AssignedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningStateAcsending:
+                    requests = requests?.OrderBy(r => r.State)?.ToList();
+                    break;
+                case Constants.RequestForReturningStateDescending:
+                    requests = requests?.OrderByDescending(r => r.State)?.ToList();
+                    break;
+                case Constants.RequestForReturningReturnedDateAcsending:
+                    requests = requests?.OrderBy(r => r.ReturnedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningReturnedDateDescending:
+                    requests = requests?.OrderByDescending(r => r.ReturnedDate)?.ToList();
+                    break;
+                default:
+                    requests = requests?.OrderBy(r => r.Id)?.ToList();
+                    break;
+            }
+
+            //paging
+            var output = new Pagination<GetRequestForReturningResponse>();
+
+            output.TotalRecord = requests.Count();
+
+            var listRequests = requests.Select(ass => new GetRequestForReturningResponse(ass));
+
+            output.Source = listRequests.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                   .Take(queryModel.PageSize)
+                                   .ToList();
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output!;
         }
     }
 }
