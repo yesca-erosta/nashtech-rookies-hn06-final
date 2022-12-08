@@ -581,7 +581,7 @@ function Asset() {
                 <div className={cx('filterbox')}>
                     <div>
                         <InputGroup>
-                            <Form.Control placeholder={placeholderState} readOnly />
+                            <Form.Control placeholder={placeholderState} readOnly onClick={handleState} />
 
                             <InputGroup.Text>
                                 <button className={cx('input-state')} onClick={handleState}>
@@ -601,6 +601,7 @@ function Asset() {
                                         : placehoderCategory
                                 }
                                 readOnly
+                                onClick={handleCategory}
                             />
 
                             <InputGroup.Text>
