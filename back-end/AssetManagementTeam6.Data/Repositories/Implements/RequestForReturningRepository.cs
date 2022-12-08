@@ -18,6 +18,7 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
 
             return await dbSet
                 .Include(request => request.Assignment)
+                .Include(request => request.Assignment.Asset)
                 .Include(request => request.AcceptedBy)
                 .Include(request => request.RequestedBy)
                 .ToListAsync();
@@ -29,6 +30,7 @@ namespace AssetManagementTeam6.Data.Repositories.Implements
 
             return await dbSet
                 .Include(request => request.Assignment)
+                .Include(request => request.Assignment.Asset)
                 .Include(request => request.AcceptedBy)
                 .Include(request => request.RequestedBy)
                 .FirstOrDefaultAsync();

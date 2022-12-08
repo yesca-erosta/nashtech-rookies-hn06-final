@@ -108,7 +108,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id)
         {
-            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id);
+            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.AssignedDate <= DateTime.UtcNow);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
