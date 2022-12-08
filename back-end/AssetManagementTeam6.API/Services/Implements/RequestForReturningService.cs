@@ -15,7 +15,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         private readonly IAssignmentRepository _assignmentRepository;
         private readonly IUserRepository _userRepository;
 
-        public RequestForReturningService(IRequestForReturningRepository requestForReturningRepository, IAssignmentRepository assignmentRepository,IUserRepository userRepository)
+        public RequestForReturningService(IRequestForReturningRepository requestForReturningRepository, IAssignmentRepository assignmentRepository, IUserRepository userRepository)
         {
             _requestForReturningRepository = requestForReturningRepository;
             _assignmentRepository = assignmentRepository;
@@ -24,18 +24,28 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<RequestForReturning?> Create(RequestForReturningRequest createRequest)
         {
-            var assignment = await _assignmentRepository.GetOneAsync(assignment => assignment.Id == createRequest.AssignmentId 
+            var assignment = await _assignmentRepository.GetOneAsync(assignment => assignment.Id == createRequest.AssignmentId
                                                                     && assignment.State == AssignmentStateEnum.Accepted);
 
             var requestBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.RequestedById);
 
             var acceptedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AcceptedById);
 
-           if (assignment == null)
+            if (assignment == null)
             {
                 throw new Exception("Assignment is not exist or not accepted state");
             }
-            
+
+            if (assignment.Asset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if (assignment.Asset.State != AssetStateEnum.Assigned)
+            {
+                throw new Exception("Asset is not assigned");
+            }
+
             if (requestBy == null)
             {
                 throw new Exception("Requester is not found");
@@ -67,7 +77,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var requests = await _requestForReturningRepository.GetListAsync();
 
-            if(requests == null)
+            if (requests == null)
             {
                 return null!;
             }
@@ -82,7 +92,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 var resultMonth = r.ReturnedDate.Value.Month;
                 var resultYear = r.ReturnedDate.Value.Year;
 
-                return resultDay.Equals(queryModel.FilterByReturnedDates.Value.Day) 
+                return resultDay.Equals(queryModel.FilterByReturnedDates.Value.Day)
                     && resultMonth.Equals(queryModel.FilterByReturnedDates.Value.Month)
                     && resultYear.Equals(queryModel.FilterByReturnedDates.Value.Year);
             }
@@ -112,7 +122,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
             if (queryModel.FilterByReturnedDates != null)
             {
-                requests = requests?.Where(r => GetFilterByReturnedDate(r,queryModel)).ToList();
+                requests = requests?.Where(r => GetFilterByReturnedDate(r, queryModel)).ToList();
             }
 
             // sorting
@@ -193,6 +203,68 @@ namespace AssetManagementTeam6.API.Services.Implements
             output.QueryModel = queryModel;
 
             return output!;
+        }
+
+        public async Task<GetRequestForReturningResponse> CompleteReturningRequest(RequestForReturning request)
+        {
+            
+            if(request.State != RequestForReturningStateEnum.WaitingForReturning)
+            {
+                throw new Exception("Request state is wrong");
+            }
+
+            if (request.Assignment == null)
+            {
+                throw new Exception("Assignment is not exist");
+            }
+            
+            if(request.Assignment.State != AssignmentStateEnum.Accepted)
+            {
+                throw new Exception("Assignment state is not accepted");
+            }
+
+            if (request.Assignment.Asset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
+            {
+                throw new Exception("Asset is not assigned");
+            }
+
+            if (request.RequestedBy == null)
+            {
+                throw new Exception("Requester is not found");
+            }
+
+            request.State = RequestForReturningStateEnum.Completed;
+            request.ReturnedDate = DateTime.UtcNow;
+            request.Assignment.Asset.State = AssetStateEnum.Available;
+            request.Assignment.State = AssignmentStateEnum.Deleted;
+
+            await _assignmentRepository.Update(request.Assignment);
+
+            var result = await _requestForReturningRepository.Update(request);
+
+            return new GetRequestForReturningResponse(result);
+        }
+
+        public Task<GetRequestForReturningResponse> CancelReturningRequest(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<RequestForReturning> GetRequestForReturningById(int id)
+        {
+            var result = await _requestForReturningRepository.GetOneAsync(r => r.Id == id);
+
+            if (result == null)
+            {
+                return null!;
+            }
+
+            return result;
         }
     }
 }
