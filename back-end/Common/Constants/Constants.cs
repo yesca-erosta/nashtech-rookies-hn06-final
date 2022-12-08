@@ -44,5 +44,22 @@
         public const string AssignmentStateAcsending = "AssignmentStateAcsending";
         public const string AssignmentStateDescending = "AssignmentStateDescending";
 
+        //Request for returning
+        public const string RequestForReturningIdAcsending = "RequestForReturningIdAcsending";
+        public const string RequestForReturningIdDescending = "RequestForReturningIdDescending";
+        public const string RequestForReturningCodeAcsending = "RequestForReturningCodeAcsending";
+        public const string RequestForReturningCodeDescending = "RequestForReturningCodeDescending";
+        public const string RequestForReturningNameAcsending = "RequestForReturningNameAcsending";
+        public const string RequestForReturningNameDescending = "RequestForReturningNameDescending";
+        public const string RequestForReturningRequestedByAcsending = "RequestForReturningRequestedByAcsending";
+        public const string RequestForReturningRequestedByDescending = "RequestForReturningRequestedByDescending";      
+        public const string RequestForReturningAssignedDateAcsending = "RequestForReturningAssignedDateAcsending";
+        public const string RequestForReturningAssignedDateDescending = "RequestForReturningAssignedDateDescending";
+        public const string RequestForReturningAcceptedByAcsending = "RequestForReturningAcceptedByAcsending";
+        public const string RequestForReturningAcceptedByDescending = "RequestForReturningAcceptedByDescending";
+        public const string RequestForReturningReturnedDateAcsending = "RequestForReturningReturnedDateAcsending";
+        public const string RequestForReturningReturnedDateDescending = "RequestForReturningReturnedDateDescending";
+        public const string RequestForReturningStateAcsending = "RequestForReturningStateAcsending";
+        public const string RequestForReturningStateDescending = "RequestForReturningStateDescending";
     }
 }
