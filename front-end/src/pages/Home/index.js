@@ -1,9 +1,7 @@
 import { faCheck, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { Col, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import { getAllDataWithFilterBox, updateData } from '../../apiServices';
 import { ASSIGNMENT } from '../../constants';

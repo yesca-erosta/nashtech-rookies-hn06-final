@@ -178,7 +178,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPut("accepted/{id}")]
-        [AuthorizeRoles(StaffRoles.Staff)]
+        [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> AcceptedAssignment(int id)
         {
             var assignment = await _assignmentService.GetAssignmentById(id);
@@ -195,7 +195,7 @@ namespace AssetManagementTeam6.API.Controllers
         }
 
         [HttpPut("declined/{id}")]
-        [AuthorizeRoles(StaffRoles.Staff)]
+        [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
             var assignment = await _assignmentService.GetAssignmentById(id);
