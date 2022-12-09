@@ -26,7 +26,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var assetIds = new List<int>();
 
-            var assignments = await _assignmentRepository.GetListAsync();
+            var assignments = await _assignmentRepository.GetListAsync(x => x.State != AssignmentStateEnum.Deleted);
 
             var assignedAssets = assignments.Select(assignment => assignment.Asset.Id);
 
@@ -78,21 +78,21 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetAllAsync()
         {
-            var assignments = await _assignmentRepository.GetListAsync();
+            var assignments = await _assignmentRepository.GetListAsync(x => x.State != AssignmentStateEnum.Deleted);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
 
-        public async Task<Assignment> GetAssignmentByAssignedAsset(int assetId)
+        public async Task<bool> GetAssignmentByAssignedAsset(int assetId)
         {
-            var result = await _assignmentRepository.GetOneAsync(a => a.AssetId == assetId);
+            var result = await _assignmentRepository.GetListAsync(x => x.AssetId == assetId && x.State != AssignmentStateEnum.Deleted);
 
-            if (result == null)
+            if (result.Count() == 0 || result == null)
             {
-                return null!;
+                return false!;
             }
 
-            return result;
+            return true;
         }
 
         public async Task<bool> GetAssignmentByAssignedUser(int assignedUserId)
@@ -112,26 +112,26 @@ namespace AssetManagementTeam6.API.Services.Implements
             // TODO: DateTime
             // var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.AssignedDate <= DateTime.UtcNow);
 
-            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id);
+            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.State != AssignmentStateEnum.Deleted && ass.State != AssignmentStateEnum.Declined);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
 
         public async Task<Assignment?> GetAssignmentById(int id)
         {
-            return await _assignmentRepository.GetOneAsync(a => a.Id == id);
+            return await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
 
         }
 
         public async Task<Assignment?> GetAssignmentByAssetId(int AssetId)
         {
-            return await _assignmentRepository.GetOneAsync(a => a.AssetId == AssetId);
+            return await _assignmentRepository.GetOneAsync(a => a.AssetId == AssetId );
         }
 
         public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
         {
             // get all list
-            var assignments = await _assignmentRepository.GetListAsync();
+            var assignments = await _assignmentRepository.GetListAsync(x => x.State != AssignmentStateEnum.Deleted);
            
             // search assignment by assetcode or assetname or assignee
             var nameToQuery = "";
@@ -232,7 +232,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<GetAssignmentResponse> AcceptedAssignment(int id)
         {
-            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
 
             if(updatedAssignment == null)
             {
@@ -250,7 +250,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<GetAssignmentResponse> DeclinedAssignment(int id)
         {
-            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
 
             if (updatedAssignment == null)
             {
@@ -304,7 +304,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<bool> Delete(int id)
         {
-            var deletedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+            var deletedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
 
             if (deletedAssignment == null)
             {
