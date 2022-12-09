@@ -1,13 +1,13 @@
 import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
-import { convertStatetoStrAsset } from '..';
+import { convertStatetoStrAsm } from '..';
 import { dateStrToStr } from '../../../lib/helper';
-import styles from '../asset.module.scss';
+import styles from '../../Asset/asset.module.scss';
 
-export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
+export const DetailAssignment = ({ showDetail, assignmentDetail, handleCloseDetail }) => {
     return (
         <Modal show={showDetail} onHide={handleCloseDetail}>
             <Modal.Header>
-                <Modal.Title className={styles.modalTitle}>Asset Information</Modal.Title>
+                <Modal.Title className={styles.modalTitle}>Assignment Information</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <Row>
@@ -15,7 +15,7 @@ export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
                         Asset Code
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assetDetail.assetCode} readOnly disabled />
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.assetCode} readOnly disabled />
                     </Col>
                 </Row>
                 <Row className="mt-3">
@@ -23,29 +23,7 @@ export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
                         Asset Name
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assetDetail.assetName} readOnly disabled />
-                    </Col>
-                </Row>
-                <Row className="mt-3">
-                    <Form.Label column="sm" lg={3}>
-                        Category
-                    </Form.Label>
-                    <Col>
-                        <Form.Control size="sm" type="text" placeholder={assetDetail.category?.name} readOnly disabled />
-                    </Col>
-                </Row>
-                <Row className="mt-3">
-                    <Form.Label column="sm" lg={3}>
-                        Installed Date
-                    </Form.Label>
-                    <Col>
-                        <Form.Control
-                            size="sm"
-                            type="text"
-                            placeholder={dateStrToStr(assetDetail.installedDate)}
-                            readOnly
-                            disabled
-                        />
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.assetName} readOnly disabled />
                     </Col>
                 </Row>
                 <Row className="mt-3">
@@ -53,7 +31,38 @@ export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
                         Specification
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assetDetail.specification} readOnly disabled />
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.specification} readOnly disabled />
+                    </Col>
+                </Row>
+                <Row className="mt-3">
+                    <Form.Label column="sm" lg={3}>
+                        Assigned to
+                    </Form.Label>
+                    <Col>
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.assignedTo} readOnly disabled />
+                    </Col>
+                </Row>
+                <Row className="mt-3">
+                    <Form.Label column="sm" lg={3}>
+                        Assigned by
+                    </Form.Label>
+                    <Col>
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.assignedBy} readOnly disabled />
+                    </Col>
+                </Row>
+
+                <Row className="mt-3">
+                    <Form.Label column="sm" lg={3}>
+                        Assigned Date
+                    </Form.Label>
+                    <Col>
+                        <Form.Control
+                            size="sm"
+                            type="text"
+                            placeholder={dateStrToStr(assignmentDetail.assignedDate)}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
 
@@ -65,10 +74,19 @@ export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
                         <Form.Control
                             size="sm"
                             type="text"
-                            placeholder={convertStatetoStrAsset(assetDetail.state)}
+                            placeholder={convertStatetoStrAsm(assignmentDetail.state)}
                             readOnly
                             disabled
                         />
+                    </Col>
+                </Row>
+
+                <Row className="mt-3">
+                    <Form.Label column="sm" lg={3}>
+                        Note
+                    </Form.Label>
+                    <Col>
+                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.note} readOnly disabled />
                     </Col>
                 </Row>
             </Modal.Body>

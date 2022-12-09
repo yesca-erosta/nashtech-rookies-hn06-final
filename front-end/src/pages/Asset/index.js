@@ -18,7 +18,7 @@ import { ShowModalDelete } from './showDelete/showDelete';
 
 const cx = classNames.bind(styles);
 
-export const convertStatetoStr = (state) => {
+export const convertStatetoStrAsset = (state) => {
     switch (state) {
         case 0:
             return 'Not Available';
@@ -402,7 +402,7 @@ function Asset() {
             selector: (row) => row.state,
             sortable: true,
             cell: (row) => {
-                return <div>{convertStatetoStr(row.state)}</div>;
+                return <div>{convertStatetoStrAsset(row.state)}</div>;
             },
         },
         {

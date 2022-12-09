@@ -6,11 +6,25 @@ import { Link } from 'react-router-dom';
 import { getAllDataWithFilterBox, updateData } from '../../apiServices';
 import { ASSIGNMENT } from '../../constants';
 import { dateStrToStr } from '../../lib/helper';
+import { DetailAssignmentForUser } from './DetailAssignmentForUser/DetailAssignmentForUser';
 import './home.scss';
 
 import { ModalFirstChangePassword } from './Modal/ModalFirstChangePassword';
 import { ShowModalAccepted } from './Modal/ShowModalAccepted';
 import { ShowModalDecline } from './Modal/ShowModalDecline';
+
+export const convertStatetoStr = (state) => {
+    switch (state) {
+        case 0:
+            return 'Accepted';
+        case 1:
+            return 'Waiting for acceptance';
+        case 2:
+            return 'Declined';
+        default:
+            break;
+    }
+};
 
 function Home() {
     const [dataAssignment, setDataAssignment] = useState([]);
@@ -28,18 +42,6 @@ function Home() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const convertStatetoStr = (state) => {
-        switch (state) {
-            case 0:
-                return 'Accepted';
-            case 1:
-                return 'Waiting for acceptance';
-            case 2:
-                return 'Declined';
-            default:
-                break;
-        }
-    };
     const [loading, setLoading] = useState(false);
 
     const [dataId, setDataId] = useState('');
@@ -84,6 +86,18 @@ function Home() {
         setLoading(false);
     };
 
+    const [showDetail, setShowDetail] = useState(false);
+    const [assignmentDetail, setAssignmentDetail] = useState('');
+
+    const handleShowDetail = (assetCode) => {
+        setShowDetail(true);
+        setAssignmentDetail(dataAssignment.find((c) => c.assetCode === assetCode));
+    };
+
+    const handleCloseDetail = () => {
+        setShowDetail(false);
+    };
+
     const columns = [
         {
             name: 'Asset Code',
@@ -94,6 +108,9 @@ function Home() {
             name: 'Asset Name',
             selector: (row) => row.assetName,
             sortable: true,
+            cell: (row) => {
+                return <Link onClick={() => handleShowDetail(row.assetCode)}>{row.assetName}</Link>;
+            },
         },
 
         {
@@ -187,6 +204,11 @@ function Home() {
                     customStyles={customStyles}
                 />
             </div>
+            <DetailAssignmentForUser
+                showDetail={showDetail}
+                assignmentDetail={assignmentDetail}
+                handleCloseDetail={handleCloseDetail}
+            />
 
             <ShowModalAccepted
                 isShowAccepted={isShowAccepted}
