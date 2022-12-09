@@ -95,15 +95,16 @@ namespace AssetManagementTeam6.API.Services.Implements
             return result;
         }
 
-        public async Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId)
+        public async Task<bool> GetAssignmentByAssignedUser(int assignedUserId)
         {
-            var result = await _assignmentRepository.GetOneAsync(a => a.AssignedToId == assignedUserId);
-            if (result == null)
-            {
-                return null!;
-            }
+            var result = await _assignmentRepository.GetListAsync(a => a.AssignedToId == assignedUserId && a.State != AssignmentStateEnum.Deleted);
 
-            return result;
+            if (result.Count() == 0 || result == null)
+            {
+                return false;
+            }           
+
+            return true;
         }
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id)
