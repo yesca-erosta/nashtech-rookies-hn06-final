@@ -14,8 +14,21 @@ import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { StateFilter } from './StateFilter/StateFilter';
 import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { ASSIGNMENT } from '../../constants';
+import { DetailAssignment } from './DetailAssignment/DetailAssignment';
 
 const cx = classNames.bind(styles);
+
+export const convertStatetoStrAsm = (state) => {
+    switch (state) {
+        case 0:
+            return 'Accepted';
+        case 1:
+            return 'Waiting for acceptance';
+
+        default:
+            break;
+    }
+};
 
 function Assignment() {
     let navigate = useNavigate();
@@ -96,16 +109,16 @@ function Assignment() {
         setLoading(false);
     };
 
-    const convertStatetoStr = (state) => {
-        switch (state) {
-            case 0:
-                return 'Accepted';
-            case 1:
-                return 'Waiting for acceptance';
+    const [showDetail, setShowDetail] = useState(false);
+    const [assignmentDetail, setAssignmentDetail] = useState('');
 
-            default:
-                break;
-        }
+    const handleShowDetail = (assetCode) => {
+        setShowDetail(true);
+        setAssignmentDetail(dataAssignments.find((c) => c.assetCode === assetCode));
+    };
+
+    const handleCloseDetail = () => {
+        setShowDetail(false);
     };
 
     const columns = [
@@ -114,7 +127,6 @@ function Assignment() {
             selector: (row) => row.id,
             sortable: true,
             maxWidth: '20px',
-
         },
         {
             name: 'Asset Code',
@@ -125,6 +137,9 @@ function Assignment() {
             name: 'Asset Name',
             sortable: true,
             selector: (row) => row.assetName,
+            cell: (row) => {
+                return <Link onClick={() => handleShowDetail(row.assetCode)}>{row.assetName}</Link>;
+            },
         },
         {
             name: 'Assigned to',
@@ -149,7 +164,7 @@ function Assignment() {
             selector: (row) => row.state,
             sortable: true,
             cell: (row) => {
-                return <div style={{ minWidth: 140 }}>{convertStatetoStr(row.state)}</div>;
+                return <div style={{ minWidth: 140 }}>{convertStatetoStrAsm(row.state)}</div>;
             },
         },
         {
@@ -411,6 +426,12 @@ function Assignment() {
                     onSort={handleSort}
                 />
             </div>
+
+            <DetailAssignment
+                showDetail={showDetail}
+                assignmentDetail={assignmentDetail}
+                handleCloseDetail={handleCloseDetail}
+            />
 
             <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
         </div>

@@ -248,7 +248,7 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
                     </tbody>
                 </Table>
             ) : (
-                <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>Không tìm thấy rì rồi Lượm ơi!!</div>
+                <div style={{ marginTop: '30px', textAlign: '-webkit-center' }}>There are no result to display</div>
             )}
 
             <Modal.Footer>
