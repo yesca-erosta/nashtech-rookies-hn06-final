@@ -25,9 +25,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<IEnumerable<GetAssetResponse>> CheckAvailableAsset()
         {
             var assetIds = new List<int>();
-
             var assignments = await _assignmentRepository.GetListAsync(x => x.State != AssignmentStateEnum.Deleted);
-
             var assignedAssets = assignments.Select(assignment => assignment.Asset.Id);
 
             foreach (var assetCode in assignedAssets)
@@ -48,9 +46,29 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
 
-            if (asset == null || assignedTo == null || assignedBy == null)
+            if(asset == null)
             {
-                return null;
+                throw new Exception("Asset is not exist");
+            }
+
+            if (asset.State == AssetStateEnum.Assigned)
+            {
+                throw new Exception("Asset is assigned for someone else");
+            }
+
+            if (asset.State != AssetStateEnum.Available)
+            {
+                throw new Exception("Asset is not available");
+            }
+
+            if(assignedTo == null)
+            {
+                throw new Exception("Assignee is not exist");
+            }
+
+            if(assignedBy == null)
+            {
+                throw new Exception("Assigner is not exist");
             }
 
             var newAssignment = new Assignment
@@ -89,7 +107,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if (result.Count() == 0 || result == null)
             {
-                return false!;
+                return false;
             }
 
             return true;
@@ -109,10 +127,10 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id)
         {
-            // TODO: DateTime
-            // var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.AssignedDate <= DateTime.UtcNow);
-
-            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id && ass.State != AssignmentStateEnum.Deleted && ass.State != AssignmentStateEnum.Declined);
+            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id 
+                                                                    && ass.State != AssignmentStateEnum.Deleted
+                                                                    && ass.State != AssignmentStateEnum.Declined
+                                                                    && ass.AssignedDate <= DateTime.UtcNow);
 
             return assignments.Select(ass => new GetAssignmentResponse(ass)).ToList();
         }
@@ -121,11 +139,6 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             return await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
 
-        }
-
-        public async Task<Assignment?> GetAssignmentByAssetId(int AssetId)
-        {
-            return await _assignmentRepository.GetOneAsync(a => a.AssetId == AssetId );
         }
 
         public async Task<Pagination<GetAssignmentResponse?>> GetPagination(PaginationQueryModel queryModel)
@@ -236,7 +249,22 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if(updatedAssignment == null)
             {
-                return null!;
+                throw new Exception("Assignment is not exist");
+            }
+
+            if(updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            {
+                throw new Exception("Assignment state is not waiting for acceptance");
+            }
+
+            if(updatedAssignment.Asset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if(updatedAssignment.Asset.State != AssetStateEnum.Available)
+            {
+                throw new Exception("Asset state not available");
             }
 
             updatedAssignment.Asset.State = AssetStateEnum.Assigned;
@@ -254,7 +282,22 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if (updatedAssignment == null)
             {
-                return null!;
+                throw new Exception("Assignment is not exist");
+            }
+
+            if (updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            {
+                throw new Exception("Assignment state is not waiting for acceptance");
+            }
+
+            if (updatedAssignment.Asset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if (updatedAssignment.Asset.State != AssetStateEnum.Available)
+            {
+                throw new Exception("Asset state not available");
             }
 
             var assetState = updatedAssignment.Asset.State;
@@ -273,23 +316,42 @@ namespace AssetManagementTeam6.API.Services.Implements
             return new GetAssignmentResponse(result!);
         }
 
-        //TODO
         public async Task<GetAssignmentResponse?> Update(int id, AssignmentRequest? updatedRequest)
         {
-            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id);
+            var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
             var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedToId);
             var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedById);
-            var updateAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId );
+            var updatedAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId );
 
-            if(updatedAssignment == null || assignedTo == null || updateAsset == null || updateAsset == null)
+            if(updatedAssignment == null)
             {
-                return null;
+                throw new Exception("Assignment is not exist");
+            }
+
+            if(updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            {
+                throw new Exception("Invalid state");
+            }
+
+            if(updatedAsset == null)
+            {
+                throw new Exception("Asset is not exist");
+            }
+
+            if(updatedAsset.State != AssetStateEnum.Available)
+            {
+                throw new Exception("Asset not available");
+            }
+
+            if(assignedTo == null)
+            {
+                throw new Exception("Asignee is not exist");
             }
             
             updatedAssignment.Note = updatedRequest?.Note ?? "";
             updatedAssignment.AssignedDate = updatedRequest!.AssignedDate;
             updatedAssignment.AssetId = updatedRequest.AssetId;
-            updatedAssignment.Asset = updateAsset;
+            updatedAssignment.Asset = updatedAsset;
             updatedAssignment.AssignedToId = updatedRequest.AssignedToId;
             updatedAssignment.AssignedTo = assignedTo;
             updatedAssignment.AssignedById = updatedRequest.AssignedById;
@@ -308,7 +370,12 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if (deletedAssignment == null)
             {
-                return false;
+                throw new Exception("Assignment is not exist");
+            }
+
+            if(deletedAssignment.State != AssignmentStateEnum.WaitingForAcceptance || deletedAssignment.State != AssignmentStateEnum.Declined)
+            {
+                throw new Exception("Invalid state");
             }
 
             return await _assignmentRepository.Delete(deletedAssignment);
