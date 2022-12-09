@@ -17,24 +17,28 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public string FullName { get; set; }
 
-        public int userId { get; set; }
+        public int UserId { get; set; }
 
-        public int assetId { get; set; }
+        public int AssetId { get; set; }
+        public string Specification { get; set; }
+
+        public string StaffCode { get; set; }
 
         public GetAssignmentResponse(Assignment assignment)
         {
             Id = assignment.Id;
             AssetCode = assignment.Asset.AssetCode!;
             AssetName = assignment.Asset.AssetName!;
-            AssignedTo = assignment.AssignedTo.UserName;
             AssignedBy = assignment.AssignedBy?.UserName ?? "";
             AssignedDate = assignment.AssignedDate;
             State = assignment.State;
             Note = assignment.Note!;
+            AssignedTo = assignment.AssignedTo.UserName;
             FullName = assignment.AssignedTo.FullName!;
-            userId = assignment.AssignedToId;
-            assetId = assignment.AssetId;
-
+            UserId = assignment.AssignedToId;
+            AssetId = assignment.AssetId;
+            Specification = assignment.Asset.Specification!;
+            StaffCode = assignment.AssignedTo.StaffCode!;
         }
     }
 }
