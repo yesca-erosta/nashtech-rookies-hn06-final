@@ -91,7 +91,7 @@ namespace AssetManagementTeam6.API.Controllers
             var result = await _userService.Update(id, requestModel);
            
             if (result == null)
-                return StatusCode(500, "Sorry the Request failed");
+                return StatusCode(400, "Sorry the Request failed");
 
             result.Password = null!;
 
@@ -105,13 +105,13 @@ namespace AssetManagementTeam6.API.Controllers
             var user = await _userService.GetUserById(id);
 
             if (user == null)
-                return StatusCode(500, "Can't found user in the system");
+                return StatusCode(400, "Can't found user in the system");
 
             var assignedUser = await _assignmentService.GetAssignmentByAssignedUser(id);
 
-            if (assignedUser != null)
+            if (assignedUser == true)
             {
-                return StatusCode(500, "There are valid assignments belonging to this user.\n " +
+                return StatusCode(409, "There are valid assignments belonging to this user.\n " +
                                         "Please close all assignments before disable user.");
             }
 
