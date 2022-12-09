@@ -103,7 +103,7 @@ function Assignment() {
         setLoading(true);
         await deleteData(ASSIGNMENT, assignmentId);
 
-        getData();
+        await getData();
         setAssignmentId('');
         setShowDelete(false);
         setLoading(false);
@@ -224,9 +224,13 @@ function Assignment() {
     // Get Data
     const getData = async () => {
         setLoading(true);
-        const data = await getAllDataWithFilterBox(`Assignment/query` + queryToStringForAssignments(queryParams));
+        setQueryParams({ ...queryParams, page: 1 });
+        const data = await getAllDataWithFilterBox(
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1 }),
+        );
         setDataAssignments(data.source);
         setTotalPage(data.totalRecord);
+        setSelectedPage(1);
         setLoading(false);
     };
 

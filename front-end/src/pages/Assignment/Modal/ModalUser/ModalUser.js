@@ -1,5 +1,5 @@
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Form, InputGroup, Modal, Table } from 'react-bootstrap';
 import { BsSearch } from 'react-icons/bs';
 import { GoTriangleDown, GoTriangleUp } from 'react-icons/go';
@@ -7,7 +7,7 @@ import { getAllDataWithFilterBox } from '../../../../apiServices';
 import { queryToStringForAsset } from '../../../../lib/helper';
 import styles from '../../CreateAssignment/createAssignment.module.scss';
 
-export const ModalUser = ({ setIsShowListUser, setUser }) => {
+export const ModalUser = ({ isShowListUser, setIsShowListUser, setUser, data }) => {
     const cx = classNames.bind(styles);
 
     const [dataUser, setDataUser] = useState([]);
@@ -15,7 +15,7 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
-        sort: 'StaffCodeAcsending',
+        sort: 'NameAcsending',
         states: '0,1',
     });
 
@@ -173,9 +173,23 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
             handleSearch(search);
         }
     };
+    const ref = useRef();
+
+    useEffect(() => {
+        const checkIfClickedOutside = (e) => {
+            if (isShowListUser && ref.current && !ref.current.contains(e.target)) {
+                setIsShowListUser(false);
+            }
+        };
+        document.addEventListener('mousedown', checkIfClickedOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+        };
+    }, [isShowListUser, setIsShowListUser]);
 
     return (
-        <div className={cx('table_container')}>
+        <div className={cx('table_container')} ref={ref}>
             <div className={cx('header_search')}>
                 <h4 className={cx('title_search')}>Select User</h4>
                 <InputGroup style={{ width: 200 }}>
@@ -238,7 +252,13 @@ export const ModalUser = ({ setIsShowListUser, setUser }) => {
                         {dataUser?.map((item) => (
                             <tr key={item.staffCode}>
                                 <td>
-                                    <Form.Check onChange={onChangeUser} type="radio" id={item.staffCode} name="userRadio" />
+                                    <Form.Check
+                                        onChange={onChangeUser}
+                                        type="radio"
+                                        id={item.staffCode}
+                                        defaultChecked={data?.staffCode === item.staffCode}
+                                        name="userRadio"
+                                    />
                                 </td>
                                 <td>{item.staffCode}</td>
                                 <td>{item.fullName}</td>

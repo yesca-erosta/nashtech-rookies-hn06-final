@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useRef } from 'react';
 import { useEffect, useState } from 'react';
 import { Button, Form, InputGroup, Modal, Table } from 'react-bootstrap';
 import { BsSearch } from 'react-icons/bs';
@@ -7,7 +8,7 @@ import { getAllDataWithFilterBox } from '../../../../apiServices';
 import { queryToStringForAsset } from '../../../../lib/helper';
 import styles from '../../CreateAssignment/createAssignment.module.scss';
 
-export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
+export const ModalAsset = ({ isShowListAsset, setIsShowListAsset, setAsset, data }) => {
     const cx = classNames.bind(styles);
 
     const [dataAsset, setDataAsset] = useState([]);
@@ -15,7 +16,7 @@ export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
-        sort: 'AssetCodeAcsending',
+        sort: 'AssetNameAcsending',
         states: '1',
     });
 
@@ -174,23 +175,23 @@ export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
         }
     };
 
-    //  const ref = useRef();
+    const ref = useRef();
 
-    //  useEffect(() => {
-    //      const checkIfClickedOutside = (e) => {
-    //          if ( && ref.current && !ref.current.contains(e.target)) {
-    //              setShowCategory(false);
-    //          }
-    //      };
-    //      document.addEventListener('mousedown', checkIfClickedOutside);
+    useEffect(() => {
+        const checkIfClickedOutside = (e) => {
+            if (isShowListAsset && ref.current && !ref.current.contains(e.target)) {
+                setIsShowListAsset(false);
+            }
+        };
+        document.addEventListener('mousedown', checkIfClickedOutside);
 
-    //      return () => {
-    //          document.removeEventListener('mousedown', checkIfClickedOutside);
-    //      };
-    //  }, [showCategory]);
+        return () => {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+        };
+    }, [isShowListAsset, setIsShowListAsset]);
 
     return (
-        <div className={cx('table_container-asset')}>
+        <div className={cx('table_container-asset')} ref={ref}>
             <div className={cx('header_search')}>
                 <h4 className={cx('title_search')}>Select Asset</h4>
                 <InputGroup style={{ width: 200 }}>
@@ -252,7 +253,13 @@ export const ModalAsset = ({ setIsShowListAsset, setAsset }) => {
                     {dataAsset?.map((item) => (
                         <tr key={item.assetCode}>
                             <td>
-                                <Form.Check onChange={onChangeAsset} type="radio" id={item.assetCode} name="assetRadio" />
+                                <Form.Check
+                                    onChange={onChangeAsset}
+                                    type="radio"
+                                    id={item.assetCode}
+                                    defaultChecked={data?.assetCode === item.assetCode}
+                                    name="assetRadio"
+                                />
                             </td>
                             <td>{item.assetCode}</td>
                             <td>{item.assetName}</td>

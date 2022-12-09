@@ -54,7 +54,8 @@ function User() {
     const handleDisable = async (id) => {
         setLoading(true);
         await deleteData(USER, id);
-        getData();
+
+        await getData();
         setUserId('');
         setShowRemove(false);
         setLoading(false);
@@ -129,9 +130,11 @@ function User() {
 
     // Get Data
     const getData = async () => {
-        const data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+        setQueryParams({ ...queryParams, page: 1 });
+        const data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, page: 1 }));
         setUsers(data.source);
         setTotalRows(data.totalRecord);
+        setSelectedPage(1);
     };
 
     useEffect(() => {
@@ -145,7 +148,7 @@ function User() {
 
         setSearchValue(value);
 
-        let data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+        let data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, page: 1 }));
         if (value) {
             setQueryParams({ ...queryParams, page: 1, pageSize: 10, valueSearch: value });
             data = await getAllDataWithFilterBox(
@@ -153,8 +156,8 @@ function User() {
             );
         } else {
             delete queryParams.valueSearch;
-            setQueryParams(queryParams);
-            data = await getAllDataWithFilterBox(`User/query` + queryToString(queryParams));
+            setQueryParams({ ...queryParams, page: 1 });
+            data = await getAllDataWithFilterBox(`User/query` + queryToString({ ...queryParams, page: 1 }));
         }
         setTotalRows(data.totalRecord);
         setUsers(data.source);
