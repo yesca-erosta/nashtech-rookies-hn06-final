@@ -9,7 +9,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
     public interface IAssignmentService
     {
         Task<Assignment?> Create(AssignmentRequest createRequest);
-        Task<Assignment> GetAssignmentByAssignedUser(int assignedUserId);
+        Task<bool> GetAssignmentByAssignedUser(int assignedUserId);
         Task<Assignment> GetAssignmentByAssignedAsset(int assetId);
         Task<Assignment?> GetAssignmentById(int id);
         Task<Assignment?> GetAssignmentByAssetId(int assetId);
