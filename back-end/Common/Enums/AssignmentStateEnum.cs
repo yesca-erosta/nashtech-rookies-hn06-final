@@ -4,6 +4,7 @@
     {
         Accepted,
         WaitingForAcceptance,
-        Declined
+        Declined,
+        Deleted
     }
 }
