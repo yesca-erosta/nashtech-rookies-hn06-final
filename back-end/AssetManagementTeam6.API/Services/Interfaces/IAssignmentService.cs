@@ -10,7 +10,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
     {
         Task<Assignment?> Create(AssignmentRequest createRequest);
         Task<bool> GetAssignmentByAssignedUser(int assignedUserId);
-        Task<Assignment> GetAssignmentByAssignedAsset(int assetId);
+        Task<bool> GetAssignmentByAssignedAsset(int assetId);
         Task<Assignment?> GetAssignmentById(int id);
         Task<Assignment?> GetAssignmentByAssetId(int assetId);
         Task<IEnumerable<GetAssignmentResponse>> GetAllAsync();
