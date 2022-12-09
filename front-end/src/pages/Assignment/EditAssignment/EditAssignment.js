@@ -22,14 +22,17 @@ function EditAssignment() {
     const navigate = useNavigate();
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
+
     const [asset, setAsset] = useState({
         id: '',
         assetName: '',
+        assetCode: '',
     });
 
     const [user, setUser] = useState({
         id: '',
         fullName: '',
+        staffCode: '',
     });
 
     const [dataAdd, setDataAdd] = useState({
@@ -39,21 +42,23 @@ function EditAssignment() {
         note: assignment.note,
         fullName: assignment.fullName,
         assetName: assignment.assetName,
+        assetCode: assignment.assetCode,
+        staffCode: assignment.staffCode,
     });
 
     useEffect(() => {
-        if (user.id !== '' && user.fullName !== '') {
-            setDataAdd({ ...dataAdd, assignedToId: user.id, fullName: user.fullName });
+        if (user?.id !== '' && user?.fullName !== '') {
+            setDataAdd({ ...dataAdd, assignedToId: user?.id, fullName: user?.fullName, staffCode: user?.staffCode });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user.fullName, user.id]);
+    }, [user?.fullName, user?.id]);
 
     useEffect(() => {
-        if (asset.id !== '' && asset.assetName !== '') {
-            setDataAdd({ ...dataAdd, assetName: asset.assetName, assetId: asset.id });
+        if (asset?.id !== '' && asset?.assetName !== '') {
+            setDataAdd({ ...dataAdd, assetName: asset?.assetName, assetId: asset?.id, assetCode: asset?.assetCode });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [asset.assetName, asset.id]);
+    }, [asset?.assetName, asset?.id]);
 
     const onChange = (e) => {
         setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
@@ -66,7 +71,7 @@ function EditAssignment() {
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const { fullName, assetName, ...otherData } = dataAdd;
+        const { fullName, assetName, assetCode, staffCode, ...otherData } = dataAdd;
 
         const res = await updateData(`${ASSIGNMENT}/${assignment.id}`, otherData);
 
@@ -88,7 +93,6 @@ function EditAssignment() {
     return (
         <div className={cx('container')}>
             <h3 className={cx('title')}>Edit Assignment</h3>
-
             <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User</Form.Label>
@@ -155,10 +159,23 @@ function EditAssignment() {
                     </Button>
                 </div>
             </Form>
+            {isShowListUser && (
+                <ModalUser
+                    isShowListUser={isShowListUser}
+                    setIsShowListUser={setIsShowListUser}
+                    setUser={setUser}
+                    data={dataAdd}
+                />
+            )}
 
-            {isShowListUser && <ModalUser setIsShowListUser={setIsShowListUser} setUser={setUser} />}
-
-            {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setAsset={setAsset} />}
+            {isShowListAsset && (
+                <ModalAsset
+                    isShowListAsset={isShowListAsset}
+                    setIsShowListAsset={setIsShowListAsset}
+                    setAsset={setAsset}
+                    data={dataAdd}
+                />
+            )}
         </div>
     );
 }

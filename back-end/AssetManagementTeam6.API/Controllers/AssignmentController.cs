@@ -50,7 +50,8 @@ namespace AssetManagementTeam6.API.Controllers
 
             var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(requestModel.AssetId);
 
-            if (assignedAsset != null) return BadRequest("Asset Already assigned");
+            if (assignedAsset != null)
+                return StatusCode(409, "Asset Already assigned");
 
             var result = await _assignmentService.Create(requestModel);
 
