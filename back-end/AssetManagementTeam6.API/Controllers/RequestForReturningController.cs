@@ -135,5 +135,35 @@ namespace AssetManagementTeam6.API.Controllers
             }
         }
 
+        [HttpPut("cancel/{id}")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> CancelRequestForReturn(int id)
+        {
+            try
+            {
+                var userId = _userProvider.GetUserId();
+
+                if (userId == null)
+                {
+                    return StatusCode(500, "Sorry the request failed");
+                }
+
+                var request = await _requestForReturningService.GetRequestForReturningById(id);
+
+                if (request == null)
+                {
+                    return StatusCode(500, "Request for returning is not exist");
+                }
+
+                var result = await _requestForReturningService.CancelReturningRequest(request);
+
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, e.Message);
+            }
+        }
+
     }
 }

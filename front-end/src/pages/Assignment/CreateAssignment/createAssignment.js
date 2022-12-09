@@ -17,22 +17,38 @@ const cx = classNames.bind(styles);
 
 function CreateAssignment() {
     const navigate = useNavigate();
+    // Date time now
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    if (month.toString().length === 1) {
+        month = `0${month}`;
+    }
+    var day = dateObj.getUTCDate();
+    if (day.toString().length === 1) {
+        day = `0${day}`;
+    }
+    var year = dateObj.getUTCFullYear();
+
+    const newdate = year + '-' + month + '-' + day;
+
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
     const [asset, setAsset] = useState({
         id: '',
         assetName: '',
+        assetCode: '',
     });
 
     const [user, setUser] = useState({
         id: '',
         fullName: '',
+        staffCode: '',
     });
 
     const [dataAdd, setDataAdd] = useState({
         assignedToId: '',
         assetId: '',
-        assignedDate: '',
+        assignedDate: newdate,
         note: '',
     });
 
@@ -65,6 +81,9 @@ function CreateAssignment() {
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
+            if (res?.response?.status === 409) {
+                setArrMsg({ Asset: [res?.response?.data] });
+            }
             if (res?.response?.data?.errors?.requestModel) {
                 alert('Please input all fields');
             }
@@ -103,6 +122,7 @@ function CreateAssignment() {
                     <Form.Label className={cx('title_input')}>Asset</Form.Label>
                     <InputGroup>
                         <Form.Control
+                            isInvalid={arrMsg?.Asset}
                             placeholder={'Enter asset'}
                             readOnly
                             value={asset?.assetName}
@@ -113,16 +133,17 @@ function CreateAssignment() {
                         </InputGroup.Text>
                     </InputGroup>
                 </Form.Group>
-
+                {arrMsg?.Asset && <p className={cx('msgErrorBg')}>{arrMsg?.Asset[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
 
                     <Form.Control
                         isInvalid={arrMsg?.AssignedDate}
+                        id="dob"
                         type="date"
                         name="assignedDate"
                         onChange={onChange}
-                        value={dateStrToDate(dataAdd?.assignedDate)}
+                        value={dateStrToDate(dataAdd?.assignedDate) !== '' ? dateStrToDate(dataAdd?.assignedDate) : newdate}
                     />
                 </Form.Group>
                 {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
@@ -160,9 +181,23 @@ function CreateAssignment() {
                 </div>
             </Form>
 
-            {isShowListUser && <ModalUser setIsShowListUser={setIsShowListUser} setUser={setUser} />}
+            {isShowListUser && (
+                <ModalUser
+                    isShowListUser={isShowListUser}
+                    setIsShowListUser={setIsShowListUser}
+                    setUser={setUser}
+                    data={user}
+                />
+            )}
 
-            {isShowListAsset && <ModalAsset setIsShowListAsset={setIsShowListAsset} setAsset={setAsset} />}
+            {isShowListAsset && (
+                <ModalAsset
+                    isShowListAsset={isShowListAsset}
+                    setIsShowListAsset={setIsShowListAsset}
+                    setAsset={setAsset}
+                    data={asset}
+                />
+            )}
         </div>
     );
 }
