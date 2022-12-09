@@ -17,6 +17,20 @@ const cx = classNames.bind(styles);
 
 function CreateAssignment() {
     const navigate = useNavigate();
+    // Date time now
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    if (month.toString().length === 1) {
+        month = `0${month}`;
+    }
+    var day = dateObj.getUTCDate();
+    if (day.toString().length === 1) {
+        day = `0${day}`;
+    }
+    var year = dateObj.getUTCFullYear();
+
+    const newdate = year + '-' + month + '-' + day;
+
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
     const [asset, setAsset] = useState({
@@ -34,7 +48,7 @@ function CreateAssignment() {
     const [dataAdd, setDataAdd] = useState({
         assignedToId: '',
         assetId: '',
-        assignedDate: '',
+        assignedDate: newdate,
         note: '',
     });
 
@@ -125,10 +139,11 @@ function CreateAssignment() {
 
                     <Form.Control
                         isInvalid={arrMsg?.AssignedDate}
+                        id="dob"
                         type="date"
                         name="assignedDate"
                         onChange={onChange}
-                        value={dateStrToDate(dataAdd?.assignedDate)}
+                        value={dateStrToDate(dataAdd?.assignedDate) !== '' ? dateStrToDate(dataAdd?.assignedDate) : newdate}
                     />
                 </Form.Group>
                 {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
