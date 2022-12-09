@@ -16,49 +16,44 @@ namespace AssetManagementTeam6.API.Controllers
     [ExcludeFromCodeCoverage]
     public class AssignmentController : ControllerBase
     {
-        private readonly IAssetService _assetService;
         private readonly IAssignmentService _assignmentService;
         private readonly IUserService _userService;
         private readonly IUserProvider _userProvider;
-        public AssignmentController(IAssetService assetService,IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
+        public AssignmentController(IAssignmentService assignmentService, IUserService userService, IUserProvider userProvider)
         {
             _assignmentService = assignmentService;
             _userService = userService;
             _userProvider = userProvider;
-            _assetService = assetService;
         }
 
         [HttpPost]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssignmentRequest requestModel)
         {
-            var userId = _userProvider.GetUserId();
+            try
+            {
+                var userId = _userProvider.GetUserId();
 
-            if (userId == null)
-                return NotFound();
+                if (userId == null)
+                    return NotFound();
 
-            var user = await _userService.GetUserById(userId.Value);
+                var user = await _userService.GetUserById(userId.Value);
 
-            if (user == null) return StatusCode(500, "Sorry the request failed");
+                if (user == null) return StatusCode(500, "Sorry the request failed");
 
-            requestModel.AssignedById = user.Id;
+                requestModel.AssignedById = user.Id;
 
-            var asset =await _assetService.GetAssetById(requestModel.AssetId);
+                var result = await _assignmentService.Create(requestModel);
 
-            if (asset.State != AssetStateEnum.Available)
-                return BadRequest("Asset Not Available");
+                if (result == null)
+                    return StatusCode(500, "Sorry the Request failed");
 
-            var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(requestModel.AssetId);
-
-            if (assignedAsset != null)
-                return StatusCode(409, "Asset is already assigned and in waiting for acceptance");
-
-            var result = await _assignmentService.Create(requestModel);
-
-            if (result == null)
-                return StatusCode(500, "Sorry the Request failed");
-
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpGet]
@@ -116,7 +111,7 @@ namespace AssetManagementTeam6.API.Controllers
             var result = await _assignmentService.CheckAvailableAsset();
 
             if (result == null)
-                return Ok("Empty asset");
+                return BadRequest("Empty asset");
 
             return Ok(result);
         }
@@ -147,90 +142,77 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
         {
-            var userId = _userProvider.GetUserId();
-            var location = _userProvider.GetLocation();
-
-            if (userId == null && location == null) return StatusCode(500, "Sorry the request failed");
-
-            var assignedTo = await _userService.GetUserById(requestModel.AssignedToId);
-
-            if (assignedTo == null && assignedTo?.Location != location) return BadRequest("Assignee not same location");
-
-            if (id < 0)
+            try
             {
-                return BadRequest("Invalid Id");
+                var userId = _userProvider.GetUserId();
+                var location = _userProvider.GetLocation();
+
+                if (userId == null && location == null) return BadRequest("Sorry the request failed");
+
+                var assignedTo = await _userService.GetUserById(requestModel.AssignedToId);
+
+                if (assignedTo == null && assignedTo?.Location != location) return BadRequest("Assignee not same location");
+
+                requestModel.AssignedById = userId;
+
+                var result = await _assignmentService.Update(id, requestModel);
+
+                return Ok(result);
             }
-
-            var asset = await _assetService.GetAssetById(requestModel.AssetId);
-
-            if (asset == null && asset.State != AssetStateEnum.Available) return BadRequest("Asset not available");
-
-            var assignment = await _assignmentService.GetAssignmentById(id);
-
-            if (assignment == null)
-                return NotFound();
-
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance)
-                return BadRequest("Invalid State");
-
-            requestModel.AssignedById = userId;
-
-            var result = await _assignmentService.Update(id, requestModel);
-
-            return Ok(result);
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut("accepted/{id}")]
         [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> AcceptedAssignment(int id)
         {
-            var assignment = await _assignmentService.GetAssignmentById(id);
+            try
+            {
+                var result = await _assignmentService.AcceptedAssignment(id);
 
-            if (assignment == null) return NotFound("This assignment has been removed");
-
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("This assignment is not waiting for acceptance");
-
-            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
-
-            var result = await _assignmentService.AcceptedAssignment(id);
-
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut("declined/{id}")]
         [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
-            var assignment = await _assignmentService.GetAssignmentById(id);
+            try
+            {
+                var result = await _assignmentService.DeclinedAssignment(id);
 
-            if (assignment == null) return NotFound("This assignment has been removed");
-
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance) return BadRequest("This assignment is not waiting for acceptance");
-
-            if (assignment.Asset.State != AssetStateEnum.Available) return BadRequest("Asset Not Available");
-
-            var result = await _assignmentService.DeclinedAssignment(id);
-
-            return Ok(result);
+                return Ok(result);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            var assignment = await _assignmentService.GetAssignmentById(id);
+            try
+            {
+                var isDeleted = await _assignmentService.Delete(id);
 
-            if (assignment == null)
-                return NotFound("This assignment has been removed");
+                if (!isDeleted) return StatusCode(500, "Sorry the Request failed");
 
-            if (assignment.State != AssignmentStateEnum.WaitingForAcceptance && assignment.State != AssignmentStateEnum.Declined)
-                return BadRequest("This assignment is not waiting for acceptance or Declined");
-
-            var isDeleted = await _assignmentService.Delete(id);
-
-            if (!isDeleted) return StatusCode(500, "Sorry the Request failed");
-
-            return Ok(assignment);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
