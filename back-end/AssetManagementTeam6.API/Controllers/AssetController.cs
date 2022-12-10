@@ -32,12 +32,6 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetOneAsync(int id)
         {
-            //var userId = this.GetCurrentLoginUserId();
-            var userId = _userProvider.GetUserId();
-
-            if (userId == null)
-                return NotFound();
-
             var data = await _assetService.GetAssetById(id);
 
             if (data == null)
@@ -50,22 +44,18 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> GetAllAsync()
         {
-            //var userId = this.GetCurrentLoginUserId();
-            var userId = _userProvider.GetUserId();
-
-            if (userId == null)
-                return NotFound();
-
-            var user = await _userService.GetUserById(userId.Value);
-
-            if (user == null) return NotFound();
-            var location = user.Location;
-
             try
             {
-                var entities = await _assetService.GetAllAsync(location);
+                var location = _userProvider.GetLocation();
+                
+                if(location == null)
+                {
+                    return NotFound("Cannot found location");
+                }
 
-                return new JsonResult(entities);
+                var result = await _assetService.GetAllAsync(location.Value);
+
+                return Ok(result);
             }
             catch
             {
@@ -77,7 +67,6 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssetRequest requestModel)
         {
-            //var userId = this.GetCurrentLoginUserId();
             var userId = _userProvider.GetUserId();
 
             if (userId == null)
@@ -103,7 +92,6 @@ namespace AssetManagementTeam6.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssetRequest requestModel)
         {
-            //var userId = this.GetCurrentLoginUserId();
             var userId = _userProvider.GetUserId();
 
             if (userId == null)
@@ -115,18 +103,19 @@ namespace AssetManagementTeam6.API.Controllers
             }
 
             var asset = await _assetService.GetAssetById(id);
+
             if (asset == null)
                 return NotFound();
 
-            if ((int)asset.State == 4)
-                return BadRequest("Cannot edit because state is Assigned");
+            if (asset.State == AssetStateEnum.Assigned)
+                return BadRequest("Cannot edit because state is assigned");
 
             var user = await _userService.GetUserById(userId.Value);
 
             requestModel.Location = user!.Location;
 
-            if ((int)requestModel.State == 4)
-                    return BadRequest("State Invalid");
+            if (requestModel.State == AssetStateEnum.Assigned)
+                    return BadRequest("State invalid");
             
             var result = await _assetService.Update(id, requestModel);
 
@@ -150,9 +139,9 @@ namespace AssetManagementTeam6.API.Controllers
 
             var assignedAsset = await _assignmentService.GetAssignmentByAssignedAsset(id);
 
-            if (assignedAsset != null)
+            if (assignedAsset == true)
             {
-                return StatusCode(500, "Cannot delete asset because it belongs to one or more historical assignments.\n" +
+                return StatusCode(400, "Cannot delete asset because it belongs to one or more historical assignments.\n" +
                                         "If the asset is not able to used anymore, please update its state in Edit Asset page");
             }
                 

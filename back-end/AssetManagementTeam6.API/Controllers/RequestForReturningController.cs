@@ -46,7 +46,7 @@ namespace AssetManagementTeam6.API.Controllers
                 var result = await _requestForReturningService.Create(requestModel);
 
                 if (result == null)
-                    return StatusCode(500, "Sorry the Request failed");
+                    return StatusCode(500, "Sorry the request failed");
 
                 return Ok(result);
             }
@@ -64,7 +64,7 @@ namespace AssetManagementTeam6.API.Controllers
 
             if (result == null)
             {
-                return StatusCode(500, "Sorry the Request failed");
+                return StatusCode(500, "Sorry the request failed");
             }
 
             return Ok(result);
