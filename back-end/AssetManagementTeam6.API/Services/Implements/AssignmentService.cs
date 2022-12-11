@@ -386,7 +386,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new Exception("Assignment is not exist");
             }
 
-            if(deletedAssignment.State != AssignmentStateEnum.WaitingForAcceptance || deletedAssignment.State != AssignmentStateEnum.Declined)
+            if(deletedAssignment.State != AssignmentStateEnum.WaitingForAcceptance && deletedAssignment.State != AssignmentStateEnum.Declined)
             {
                 throw new Exception("Invalid state");
             }
