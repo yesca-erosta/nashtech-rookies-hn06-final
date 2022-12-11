@@ -15,7 +15,7 @@ import { StateFilter } from './StateFilter/StateFilter';
 import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { ASSIGNMENT } from '../../constants';
 import { DetailAssignment } from './DetailAssignment/DetailAssignment';
-
+import DatePicker from 'react-datepicker';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -24,7 +24,8 @@ export const convertStatetoStrAsm = (state) => {
             return 'Accepted';
         case 1:
             return 'Waiting for acceptance';
-
+        case 2:
+            return 'Declined';
         default:
             break;
     }
@@ -32,17 +33,18 @@ export const convertStatetoStrAsm = (state) => {
 
 function Assignment() {
     let navigate = useNavigate();
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState();
 
-    const onChangeDate = async (e) => {
-        setDate(e.target.value);
+    const onChangeDate = async (date) => {
+        const d = new Date(date).toLocaleDateString('fr-CA');
+
+        setDate(date);
         setLoading(true);
         setTimeout(async () => {
-            if (e.target.value !== '') {
-                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: e.target.value });
+            if (date) {
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: d });
                 const data = await getAllDataWithFilterBox(
-                    `Assignment/query` +
-                        queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: e.target.value }),
+                    `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: d }),
                 );
                 setDataAssignments(data.source);
                 setTotalPage(data.totalRecord);
@@ -55,7 +57,7 @@ function Assignment() {
                 setTotalPage(data.totalRecord);
             }
             setLoading(false);
-        }, 3000);
+        }, 1500);
     };
     // search
     const [search, setSearch] = useState();
@@ -172,11 +174,13 @@ function Assignment() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    to={row.state === 0 ? `.` : `./editassignment`}
+                    to={row.state === 0 || row.state === 2 ? `.` : `./editassignment`}
                     key={row.id}
                     state={{ assignment: row }}
                     className={styles.customPen}
-                    style={row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={
+                        row.state === 0 || row.state === 2 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}
+                    }
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
@@ -195,7 +199,7 @@ function Assignment() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0
+                        row.state === 0 || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
@@ -217,7 +221,7 @@ function Assignment() {
         page: 1,
         pageSize: 10,
         sort: 'AssignmentIdAcsending',
-        states: '0,1',
+        states: '0,1,2',
     });
     const [totalPage, setTotalPage] = useState();
 
@@ -382,7 +386,15 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" value={date} onChange={onChangeDate} />
+                            <DatePicker
+                                selected={date}
+                                className="form-control w-full"
+                                onChange={(date) => onChangeDate(date)}
+                                placeholderText="Click to select a date"
+                                disabledKeyboardNavigation
+                                dateFormat="dd/MM/yyyy"
+                                isClearable
+                            />
                         </Form.Group>
                     </InputGroup>
                 </div>
