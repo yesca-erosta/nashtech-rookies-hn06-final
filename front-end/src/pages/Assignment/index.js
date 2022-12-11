@@ -15,7 +15,7 @@ import { StateFilter } from './StateFilter/StateFilter';
 import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { ASSIGNMENT } from '../../constants';
 import { DetailAssignment } from './DetailAssignment/DetailAssignment';
-
+import DatePicker from 'react-datepicker';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -32,17 +32,18 @@ export const convertStatetoStrAsm = (state) => {
 
 function Assignment() {
     let navigate = useNavigate();
-    const [date, setDate] = useState('');
+    const [date, setDate] = useState();
 
-    const onChangeDate = async (e) => {
-        setDate(e.target.value);
+    const onChangeDate = async (date) => {
+        const d = new Date(date).toLocaleDateString('fr-CA');
+
+        setDate(date);
         setLoading(true);
         setTimeout(async () => {
-            if (e.target.value !== '') {
-                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: e.target.value });
+            if (date) {
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: d });
                 const data = await getAllDataWithFilterBox(
-                    `Assignment/query` +
-                        queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: e.target.value }),
+                    `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, date: d }),
                 );
                 setDataAssignments(data.source);
                 setTotalPage(data.totalRecord);
@@ -55,7 +56,7 @@ function Assignment() {
                 setTotalPage(data.totalRecord);
             }
             setLoading(false);
-        }, 3000);
+        }, 1500);
     };
     // search
     const [search, setSearch] = useState();
@@ -382,7 +383,15 @@ function Assignment() {
                 <div>
                     <InputGroup>
                         <Form.Group className={cx('common-form')}>
-                            <Form.Control type="date" value={date} onChange={onChangeDate} />
+                            <DatePicker
+                                selected={date}
+                                className="form-control w-full"
+                                onChange={(date) => onChangeDate(date)}
+                                placeholderText="Click to select a date"
+                                disabledKeyboardNavigation
+                                dateFormat="dd/MM/yyyy"
+                                isClearable
+                            />
                         </Form.Group>
                     </InputGroup>
                 </div>
