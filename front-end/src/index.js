@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import Global from './assets/styles/globalStyles/global';
 import reportWebVitals from './reportWebVitals';
+import "react-datepicker/dist/react-datepicker.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

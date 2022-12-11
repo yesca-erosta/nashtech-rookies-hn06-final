@@ -9,14 +9,14 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
     const cx = classNames.bind(styles);
     const [placeholderState, setPlaceholderState] = useState('State');
     const [showState, setShowState] = useState(false);
-    const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false });
+    const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false, declined: false });
     const ref = useRef();
 
     const handleOkState = async () => {
         setLoading(true);
 
         let data = await getAllDataWithFilterBox(
-            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
+            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' }),
         );
 
         if (checkedState.accepted) {
@@ -37,6 +37,27 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
             setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
             data = await getAllDataWithFilterBox(
                 `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
+            );
+            setPlaceholderState('Accepted, Waiting for acceptance');
+        }
+        if (checkedState.accepted && checkedState.declined) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,2' });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,2' }),
+            );
+            setPlaceholderState('Accepted, Declined');
+        }
+        if (checkedState.waitingForAccepted && checkedState.declined) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1,2' });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '1,2' }),
+            );
+            setPlaceholderState('Waiting for acceptance, Declined');
+        }
+        if (checkedState.waitingForAccepted && checkedState.declined && checkedState.accepted) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' }),
             );
             setPlaceholderState('All');
         }
@@ -116,6 +137,15 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
                                 name="waitingForAccepted"
                                 onChange={handleChangeCheckboxState}
                                 checked={checkedState.waitingForAccepted}
+                            />
+                            <Form.Check
+                                type={'checkbox'}
+                                label={`Declined`}
+                                id={`declined`}
+                                value={2}
+                                name="declined"
+                                onChange={handleChangeCheckboxState}
+                                checked={checkedState.declined}
                             />
                         </div>
 
