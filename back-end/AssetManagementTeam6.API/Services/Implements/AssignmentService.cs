@@ -46,6 +46,8 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assignedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AssignedById);
 
+            var assetInAssignment = await _assignmentRepository.GetListAsync(a => a.State != AssignmentStateEnum.Deleted && a.AssetId == createRequest.AssetId);
+
             if(asset == null)
             {
                 throw new Exception("Asset is not exist");
@@ -69,6 +71,11 @@ namespace AssetManagementTeam6.API.Services.Implements
             if(assignedBy == null)
             {
                 throw new Exception("Assigner is not exist");
+            }
+
+            if(assetInAssignment != null)
+            {
+                throw new Exception("Asset is existed in assignment");
             }
 
             var newAssignment = new Assignment
@@ -322,8 +329,9 @@ namespace AssetManagementTeam6.API.Services.Implements
             var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedToId);
             var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedById);
             var updatedAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId );
+            var assetInAssignment = await _assignmentRepository.GetListAsync(a => a.State != AssignmentStateEnum.Deleted && a.AssetId == updatedRequest.AssetId);
 
-            if(updatedAssignment == null)
+            if (updatedAssignment == null)
             {
                 throw new Exception("Assignment is not exist");
             }
@@ -346,6 +354,11 @@ namespace AssetManagementTeam6.API.Services.Implements
             if(assignedTo == null)
             {
                 throw new Exception("Asignee is not exist");
+            }
+
+            if(assetInAssignment != null)
+            {
+                throw new Exception("Asset is existed in assignment");
             }
             
             updatedAssignment.Note = updatedRequest?.Note ?? "";
