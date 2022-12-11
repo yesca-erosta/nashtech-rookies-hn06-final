@@ -391,7 +391,6 @@ function Assignment() {
                                 className="form-control w-full"
                                 onChange={(date) => onChangeDate(date)}
                                 placeholderText="Click to select a date"
-                                disabledKeyboardNavigation
                                 dateFormat="dd/MM/yyyy"
                                 isClearable
                             />

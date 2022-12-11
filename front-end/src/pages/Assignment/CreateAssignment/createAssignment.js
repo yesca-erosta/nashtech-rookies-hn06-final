@@ -8,10 +8,10 @@ import { BsSearch } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { ASSIGNMENT } from '../../../constants';
-import { dateStrToDate } from '../../../lib/helper';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from './createAssignment.module.scss';
+import DatePicker from 'react-datepicker';
 
 const cx = classNames.bind(styles);
 
@@ -48,7 +48,7 @@ function CreateAssignment() {
     const [dataAdd, setDataAdd] = useState({
         assignedToId: '',
         assetId: '',
-        assignedDate: newdate,
+        assignedDate: new Date(),
         note: '',
     });
 
@@ -70,6 +70,10 @@ function CreateAssignment() {
         setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
     };
 
+    const onChangeDate = (date) => {
+        setDataAdd({ ...dataAdd, assignedDate: date });
+    };
+
     const [arrMsg, setArrMsg] = useState([]);
 
     const handleCreate = async () => {
@@ -77,7 +81,13 @@ function CreateAssignment() {
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const res = await createData(ASSIGNMENT, dataAdd);
+        const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
+
+        const { assignedDate, ...otherData } = dataAdd;
+
+        otherData.assignedDate = d;
+
+        const res = await createData(ASSIGNMENT, otherData);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
@@ -136,14 +146,14 @@ function CreateAssignment() {
                 {arrMsg?.Asset && <p className={cx('msgErrorBg')}>{arrMsg?.Asset[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
-
-                    <Form.Control
-                        isInvalid={arrMsg?.AssignedDate}
-                        id="dob"
-                        type="date"
+                    <DatePicker
                         name="assignedDate"
-                        onChange={onChange}
-                        value={dateStrToDate(dataAdd?.assignedDate) !== '' ? dateStrToDate(dataAdd?.assignedDate) : newdate}
+                        selected={dataAdd.assignedDate}
+                        className={`${arrMsg?.AssignedDate ? 'border-danger' : ''} form-control w-full `}
+                        onChange={(date) => onChangeDate(date)}
+                        placeholderText="Click to select a date"
+                        dateFormat="dd/MM/yyyy"
+                        dropdownMode="select"
                     />
                 </Form.Group>
                 {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
