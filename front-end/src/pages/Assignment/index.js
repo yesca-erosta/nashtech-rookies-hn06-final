@@ -24,7 +24,8 @@ export const convertStatetoStrAsm = (state) => {
             return 'Accepted';
         case 1:
             return 'Waiting for acceptance';
-
+        case 2:
+            return 'Declined';
         default:
             break;
     }
@@ -173,11 +174,13 @@ function Assignment() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    to={row.state === 0 ? `.` : `./editassignment`}
+                    to={row.state === 0 || row.state === 2 ? `.` : `./editassignment`}
                     key={row.id}
                     state={{ assignment: row }}
                     className={styles.customPen}
-                    style={row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={
+                        row.state === 0 || row.state === 2 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}
+                    }
                 >
                     <FontAwesomeIcon icon={faPen} />
                 </Link>,
@@ -196,7 +199,7 @@ function Assignment() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0
+                        row.state === 0 || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
@@ -218,7 +221,7 @@ function Assignment() {
         page: 1,
         pageSize: 10,
         sort: 'AssignmentIdAcsending',
-        states: '0,1',
+        states: '0,1,2',
     });
     const [totalPage, setTotalPage] = useState();
 
