@@ -120,6 +120,7 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok();
         }
 
+        [AuthorizeRoles(StaffRoles.Admin)]
         [HttpGet("query")]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? types, string? sort)
         {
