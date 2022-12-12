@@ -1,8 +1,14 @@
-﻿using AssetManagementTeam6.Data.Entities;
+﻿using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.ErrorHandling;
+using AssetManagementTeam6.API.Heplers;
+using AssetManagementTeam6.API.Services.Implements;
+using AssetManagementTeam6.API.Services.Interfaces;
+using AssetManagementTeam6.Data.Entities;
 using Common.Constants;
 using Common.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace AssetManagementTeam6.API.Controllers
 {
@@ -10,6 +16,17 @@ namespace AssetManagementTeam6.API.Controllers
     [ApiController]
     public class ToRemoveController : ControllerBase
     {
+        private readonly IRemoveService _removeService;
+        private readonly IUserProvider _userProvider;
+        private readonly IUserService _userService;
+
+        public ToRemoveController(IRemoveService removeService, IUserProvider userProvider, IUserService userService)
+        {
+            _removeService = removeService;
+            _userProvider = userProvider;
+            _userService = userService;
+        }
+
         [HttpGet("user")]
         public IActionResult FakeUser()
         {
@@ -32,6 +49,44 @@ namespace AssetManagementTeam6.API.Controllers
                 });
             };
             return Ok(output);
+        }
+
+        [HttpPost("assigment")]
+        public async Task<IActionResult> CreateNewAssigment([FromBody] AssignmentRequest requestModel)
+        {
+            var userId = _userProvider.GetUserId();
+
+            if (userId == null)
+                throw new MyCustomException(HttpStatusCode.Forbidden, "User not found");
+
+            var user = await _userService.GetUserById(userId.Value);
+
+            if (user == null)
+                throw new MyCustomException(HttpStatusCode.Forbidden, "User not found");
+            
+            requestModel.AssignedById = user.Id;
+
+            var result = await _removeService.Create(requestModel);
+
+            return Ok(result);
+        }
+
+        [HttpPut("assigment")]
+        public async Task<IActionResult> UpdateAssigment([FromBody] AssignmentRequest requestModel)
+        {
+            var userId = _userProvider.GetUserId();
+            if (userId == null)
+                throw new MyCustomException(HttpStatusCode.Forbidden, "User not found");
+
+            var user = await _userService.GetUserById(userId.Value);
+            if (user == null)
+                throw new MyCustomException(HttpStatusCode.Forbidden, "User not found");
+
+            requestModel.AssignedById = user.Id;
+
+            var result = await _removeService.Update(requestModel);
+
+            return Ok(result);
         }
     }
 }

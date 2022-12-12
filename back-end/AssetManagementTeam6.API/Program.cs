@@ -1,4 +1,5 @@
 using AssetManagementTeam6.API.Dtos.Requests;
+using AssetManagementTeam6.API.Extensions;
 using AssetManagementTeam6.API.Heplers;
 using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.API.Services.Interfaces;
@@ -54,6 +55,7 @@ builder.Services.AddTransient<IRequestForReturningService, RequestForReturningSe
 builder.Services.AddTransient<IReportRepository, ReportRepository>();
 builder.Services.AddTransient<IReportService, ReportService>();
 builder.Services.AddTransient<IUserProvider, UserProvider>();
+builder.Services.AddTransient<IRemoveService, RemoveService>();
 
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -105,5 +107,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.AddGlobalErrorHandler(); 
 
 app.Run();
