@@ -17,6 +17,7 @@ const cx = classNames.bind(styles);
 
 function CreateAssignment() {
     const navigate = useNavigate();
+
     // Date time now
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
@@ -153,7 +154,6 @@ function CreateAssignment() {
                         onChange={(date) => onChangeDate(date)}
                         placeholderText="Click to select a date"
                         dateFormat="dd/MM/yyyy"
-                        dropdownMode="select"
                     />
                 </Form.Group>
                 {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
