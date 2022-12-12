@@ -73,7 +73,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new Exception("Assigner is not exist");
             }
 
-            if(assetInAssignment != null)
+            if(assetInAssignment.Count() != 0)
             {
                 throw new Exception("Asset is existed in assignment");
             }
@@ -356,7 +356,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new Exception("Asignee is not exist");
             }
 
-            if(assetInAssignment != null)
+            if (assetInAssignment.Count() != 0)
             {
                 throw new Exception("Asset is existed in assignment");
             }

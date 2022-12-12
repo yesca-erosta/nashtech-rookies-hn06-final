@@ -75,7 +75,8 @@ namespace AssetManagementTeam6.Data
                     Password = "0E7517141FB53F21EE439B355B5A1D0A",
                     UserName = "admindn"
                 }
-               );
+            );
+
             builder.Entity<Category>().HasData(
                 new Category
                 {
@@ -93,268 +94,67 @@ namespace AssetManagementTeam6.Data
                     Name = "Personal computer"
                 }
             );
-            builder.Entity<Asset>().HasData(
-                new Asset
-                {
-                    Id = 1,
-                    AssetName = "Laptop1",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G301",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                new Asset
-                {
-                    Id = 2,
-                    AssetName = "Laptop2",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G302",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                new Asset
-                {
-                    Id = 3,
-                    AssetName = "Laptop3",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G303",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                new Asset
-                {
-                    Id = 4,
-                    AssetName = "Laptop4",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G304",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                new Asset
-                {
-                    Id = 5,
-                    AssetName = "Laptop5",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G305",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }, new Asset
-                {
-                    Id = 6,
-                    AssetName = "Laptop6",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G306",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }, new Asset
-                {
-                    Id = 7,
-                    AssetName = "Laptop7",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G307",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }, new Asset
-                {
-                    Id = 8,
-                    AssetName = "Laptop8",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G308",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }, new Asset
-                {
-                    Id = 9,
-                    AssetName = "Laptop9",
-                    CategoryId = "LA",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Laptop G309",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }, new Asset
-                {
-                    Id = 10,
-                    AssetName = "Monitor",
-                    CategoryId = "MO",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Monitor M300",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                new Asset
-                {
-                    Id = 11,
-                    AssetName = "Monitor1",
-                    CategoryId = "MO",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Monitor M301",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                },
-                 new Asset
-                 {
-                     Id = 12,
-                     AssetName = "Monitor2",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M302",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 }
-                , new Asset
-                {
-                    Id = 13,
-                    AssetName = "Monitor3",
-                    CategoryId = "MO",
-                    InstalledDate = DateTime.UtcNow,
-                    Specification = "Monitor M303",
-                    Location = LocationEnum.HN,
-                    State = AssetStateEnum.Assigned
-                }
-                ,
-                 new Asset
-                 {
-                     Id = 14,
-                     AssetName = "Monitor4",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M304",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 15,
-                     AssetName = "Monitor5",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M305",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 16,
-                     AssetName = "Monitor6",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M306",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 17,
-                     AssetName = "Monitor7",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M307",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 18,
-                     AssetName = "Monitor8",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M308",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 19,
-                     AssetName = "Monitor9",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M309",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 20,
-                     AssetName = "Monitor10",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M310",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 21,
-                     AssetName = "Monitor11",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M311",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 },
-                 new Asset
-                 {
-                     Id = 22,
-                     AssetName = "Monitor12",
-                     CategoryId = "MO",
-                     InstalledDate = DateTime.UtcNow,
-                     Specification = "Monitor M312",
-                     Location = LocationEnum.HN,
-                     State = AssetStateEnum.Assigned
-                 }
-
-
+            for (int i = 1; i <= 25; i = i + 3)
+            {
+                builder.Entity<Asset>().HasData(
+                    new Asset
+                    {
+                        Id = i,
+                        AssetName = $"Asset{i}",
+                        CategoryId = "LA",
+                        InstalledDate = DateTime.UtcNow,
+                        Specification = $"Laptop {i.ToString("D3")}",
+                        Location = (LocationEnum)(i % 3),
+                        State = (i % 2 == 0 ? AssetStateEnum.Available : AssetStateEnum.Assigned)
+                    }
                 );
-            builder.Entity<Assignment>().HasData(
-                 new Assignment
-                 {
-                     Id = 1,
-                     AssetId = 1,
-                     AssignedById = 1,
-                     AssignedDate = DateTime.UtcNow,
-                     AssignedToId = 2,
-                     Note = "Assignment 1",
-                     State = AssignmentStateEnum.Accepted
-                 },
-                new Assignment
-                {
-                    Id = 2,
-                    AssetId = 2,
-                    AssignedById = 1,
-                    AssignedDate = DateTime.UtcNow,
-                    AssignedToId = 3,
-                    Note = "Assignment 2",
-                    State = AssignmentStateEnum.WaitingForAcceptance
-                },
-                new Assignment
-                {
-                    Id = 3,
-                    AssetId = 3,
-                    AssignedById = 1,
-                    AssignedDate = DateTime.UtcNow,
-                    AssignedToId = 3,
-                    Note = "Assignment 3",
-                    State = AssignmentStateEnum.Accepted
-                },
-                new Assignment
-                {
-                    Id = 4,
-                    AssetId = 2,
-                    AssignedById = 1,
-                    AssignedDate = DateTime.UtcNow,
-                    AssignedToId = 2,
-                    Note = "Assignment 4",
-                    State = AssignmentStateEnum.WaitingForAcceptance
-                }
-            );
+            }
+            for (int i = 2; i <= 25; i = i + 3)
+            {
+                builder.Entity<Asset>().HasData(
+                    new Asset
+                    {
+                        Id = i,
+                        AssetName = $"Asset{i}",
+                        CategoryId = "MO",
+                        InstalledDate = DateTime.UtcNow,
+                        Specification = $"Monitor {i.ToString("D3")}",
+                        Location = (LocationEnum)(i % 2),
+                        State = (i % 2 == 0 ? AssetStateEnum.Available : AssetStateEnum.Assigned)
+                    }
+                );
+            }
+            for (int i = 3; i <= 25; i = i + 3)
+            {
+                builder.Entity<Asset>().HasData(
+                    new Asset
+                    {
+                        Id = i,
+                        AssetName = $"Asset{i}",
+                        CategoryId = "PC",
+                        InstalledDate = DateTime.UtcNow,
+                        Specification = $"Personal Computer {i.ToString("D3")}",
+                        Location = (LocationEnum)(i % 3),
+                        State = (i % 2 == 0 ? AssetStateEnum.Available : AssetStateEnum.Assigned)
+                    }
+                );
+            }
+
+            for (int i = 1; i <= 4; i++)
+            {
+                builder.Entity<Assignment>().HasData(
+                     new Assignment
+                     {
+                         Id = i,
+                         AssetId = i,
+                         AssignedById = 1,
+                         AssignedDate = DateTime.UtcNow,
+                         AssignedToId = 1,
+                         Note = $"Assignment {i}",
+                         State = (AssignmentStateEnum)(i % 2)
+                     }
+                 );
+            }
         }
 
         public DbSet<User> Users { get; set; }
