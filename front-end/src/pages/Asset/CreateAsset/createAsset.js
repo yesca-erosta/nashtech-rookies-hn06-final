@@ -47,7 +47,7 @@ function CreateAsset() {
         AssetName: '',
         CategoryId: '',
         Specification: '',
-        InstalledDate: new Date(),
+        InstalledDate: '',
         State: '',
     });
 
@@ -254,7 +254,7 @@ function CreateAsset() {
                         <DatePicker
                             name="installedDate"
                             selected={dataAdd.installedDate}
-                            className={`${arrMsg?.InstalledDate ? 'border-danger' : ''} form-control w-full `}
+                            className={`${arrMsg.InstalledDate ? 'border-danger' : ''} form-control w-full `}
                             onChange={(date) => onChangeDate(date)}
                             placeholderText="dd/MM/yyyy"
                             dateFormat="dd/MM/yyyy"
