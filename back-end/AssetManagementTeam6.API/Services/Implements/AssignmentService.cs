@@ -75,7 +75,7 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             if(assetInAssignment.Count() != 0)
             {
-                throw new Exception("Asset is existed in assignment");
+                throw new Exception("This asset is assigned to someone else and in waiting for acceptance. Please choose another asset");
             }
 
             var newAssignment = new Assignment
@@ -356,9 +356,9 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new Exception("Asignee is not exist");
             }
 
-            if (assetInAssignment.Count() != 0)
+            if (assetInAssignment.Count() > 1)
             {
-                throw new Exception("Asset is existed in assignment");
+                throw new Exception("This asset is assigned to someone else and in waiting for acceptance. Please choose another asset");
             }
             
             updatedAssignment.Note = updatedRequest?.Note ?? "";

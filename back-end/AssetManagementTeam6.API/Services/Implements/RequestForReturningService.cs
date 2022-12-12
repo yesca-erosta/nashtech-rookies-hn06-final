@@ -51,6 +51,8 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new Exception("Requester is not found");
             }
 
+            assignment.IsReturning = true;
+
             var request = new RequestForReturning
             {
                 AssignmentId = createRequest.AssignmentId,

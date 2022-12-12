@@ -8,7 +8,6 @@ namespace AssetManagementTeam6.API.Services.Interfaces
 {
     public interface IAssetService
     {
-        Task<IEnumerable<GetAssetResponse>> GetAllAsync(LocationEnum location);
         Task<Asset?> GetAssetByName(string model);
         Task<Asset>GetAssetById(int id);
         Task<Asset?> Create(AssetRequest createRequest);

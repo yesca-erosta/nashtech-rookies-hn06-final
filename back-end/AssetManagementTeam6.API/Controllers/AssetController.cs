@@ -40,29 +40,6 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(data);
         }
 
-        [HttpGet()]
-        [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> GetAllAsync()
-        {
-            try
-            {
-                var location = _userProvider.GetLocation();
-                
-                if(location == null)
-                {
-                    return NotFound("Cannot found location");
-                }
-
-                var result = await _assetService.GetAllAsync(location.Value);
-
-                return Ok(result);
-            }
-            catch
-            {
-                return BadRequest("Bad request");
-            }
-        }
-
         [HttpPost]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssetRequest requestModel)

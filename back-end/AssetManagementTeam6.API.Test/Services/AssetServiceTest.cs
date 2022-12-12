@@ -1,8 +1,10 @@
-﻿using AssetManagementTeam6.API.Dtos.Requests;
+﻿using AssetManagementTeam6.API.Dtos.Pagination;
+using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
 using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
+using Common.Constants;
 using Common.Enums;
 using Moq;
 using System.Linq.Expressions;
@@ -74,7 +76,6 @@ namespace AssetManagementTeam6.API.Test.Services
 
             };
         }
-
         public List<Asset> GetSampleAssetLists()
         {
             return new List<Asset>
@@ -124,8 +125,162 @@ namespace AssetManagementTeam6.API.Test.Services
                     Name = "Personal Computer"
                 }
             }
+
         };
         }
+
+        public static readonly object[][] CorrectGetPagination =
+       {
+            //LocationEnum location, List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>(), "", "", 1, 10 },
+            new object[] { LocationEnum.HCM, new List<AssetStateEnum>(), "", "", 1, 10 },
+            new object[] { LocationEnum.DN, new List<AssetStateEnum>(), "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Assigned}, "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Available}, "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.NotAvailable, AssetStateEnum.Available}, "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.WaitingForRecycling, AssetStateEnum.Available}, "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Recycled, AssetStateEnum.Available}, "", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "laptop", "", 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameAcsending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameDescending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeAcsending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeDescending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameAcsending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameDescending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateAcsending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 2 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 2, 2 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 100, 10 },
+    };
+
+        [Theory, MemberData(nameof(CorrectGetPagination))]
+        public async Task GetPaginationUser_ShouldReturnNotNull(LocationEnum location, List<AssetStateEnum> assetStates, string nameToQuery
+                                                              , string sort, int page, int pageSize)
+        {
+            //Arrange
+            var assets = GetSampleAssetLists();
+            var userLocations = assets.Where(x => x.Location == location)?.ToList() ?? new List<Asset>();
+
+            var queryModel = new PaginationQueryModel
+            {
+                Page = page,
+                PageSize = pageSize,
+                Sort = sort,
+                ValueSearch = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
+                AssetStates = assetStates,
+                
+            };
+
+            var expectedOutput = GetExpectedPaginationAssetOutput(userLocations, queryModel);
+            var expectedCount = expectedOutput.Source?.Count() ?? 0;
+            var expectedType = expectedOutput?.Source?.GetType();
+
+            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(userLocations);
+
+            var userService = new AssetService(_mockAssetRepository.Object,_mockCategoryRepository.Object);
+
+            //Act
+            var testResult = await userService.GetPagination(queryModel, location);
+            var count = testResult?.Source?.Count() ?? 0;
+            var type = testResult?.Source?.GetType();
+
+            Assert.NotNull(testResult);
+            Assert.Equal(expectedCount, count);
+            Assert.Equal(expectedType, type);
+        }
+
+        private Pagination<GetAssetResponse?> GetExpectedPaginationAssetOutput(List<Asset>? assets, PaginationQueryModel queryModel)
+        {
+            // filter by type
+            if (queryModel.AssetStates != null)
+            {
+                assets = assets?.Where(u => queryModel.AssetStates.Contains(u.State))?.ToList();
+            }
+
+            if (queryModel.Categories != null)
+            {
+                assets = assets.Where(u => queryModel.Categories.Contains(u.CategoryId))?.ToList();
+            }
+
+            // search asset by assetcode or name
+            var nameToQuery = "";
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
+            {
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
+
+                assets = assets?.Where(u => u!.AssetName!.ToLower().Contains(nameToQuery) ||
+                                        u!.AssetCode!.ToLower().Contains(nameToQuery))?.ToList();
+            }
+
+            //sorting
+            var sortOption = queryModel.Sort ??= Constants.AssetCodeAcsending;
+
+            switch (sortOption)
+            {
+                case Constants.AssetNameAcsending:
+                    assets = assets?.OrderBy(u => u.AssetName)?.ToList();
+                    break;
+                case Constants.AssetNameDescending:
+                    assets = assets?.OrderByDescending(u => u.AssetName)?.ToList();
+                    break;
+                case Constants.AssetCodeAcsending:
+                    assets = assets?.OrderBy(u => u.AssetCode)?.ToList();
+                    break;
+                case Constants.AssetCodeDescending:
+                    assets = assets?.OrderByDescending(u => u.AssetCode)?.ToList();
+                    break;
+                case Constants.AssetCategoryNameAcsending:
+                    assets = assets?.OrderBy(u => u.Category.Name)?.ToList();
+                    break;
+                case Constants.AssetCategoryNameDescending:
+                    assets = assets?.OrderByDescending(u => u.Category.Name)?.ToList();
+                    break;
+                case Constants.AssetStateAcsending:
+                    assets = assets?.OrderBy(u => u.State)?.ToList();
+                    break;
+                case Constants.AssetStateDescending:
+                    assets = assets?.OrderByDescending(u => u.State)?.ToList();
+                    break;
+                default:
+                    assets = assets?.OrderBy(u => u.AssetCode)?.ToList();
+                    break;
+            }
+
+            //paging
+            if (assets == null || assets.Count() == 0)
+            {
+                return new Pagination<GetAssetResponse?>
+                {
+                    Source = null,
+                    TotalPage = 1,
+                    TotalRecord = 0,
+                    QueryModel = queryModel
+                };
+            }
+
+            var output = new Pagination<GetAssetResponse>();
+
+            output.TotalRecord = assets.Count();
+
+            var listassets = assets.Select(asset => new GetAssetResponse(asset));
+
+            output.Source = listassets.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                    .Take(queryModel.PageSize)
+                                    .ToList();
+
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output;
+        }
+
 
         [Fact]
         public async Task getAssetById_ShouldReturnNull()
@@ -284,91 +439,6 @@ namespace AssetManagementTeam6.API.Test.Services
             Assert.Equal(expectedResult.Category.Name, result.Category.Name);
         }
 
-        //TODO : State
-        [Theory]
-        [InlineData(LocationEnum.HN)]
-        [InlineData(LocationEnum.HCM)]
-        [InlineData(LocationEnum.DN)]
-        public async Task GetAll_ShouldReturnNull(LocationEnum location)
-        {
-            List<Asset> asset = null;
-
-            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
-
-            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
-
-            //Act
-            var result = await assetService.GetAllAsync(location);
-
-            //Arrange
-            Assert.Null(result);
-        }
-
-        [Theory]
-        [InlineData(LocationEnum.HN)]
-        [InlineData(LocationEnum.HCM)]
-        [InlineData(LocationEnum.DN)]
-        public async Task GetAll_ShouldReturnNotNull(LocationEnum location)
-        {
-            var assetList = GetSampleAssetLists();
-
-            var expectedResult = new List<Asset>
-            {
-                new Asset
-            {
-                Id = 1,
-                AssetName = "Laptop Sample",
-                InstalledDate = new DateTime(2000, 01, 13),
-                State = AssetStateEnum.NotAvailable,
-                Location = LocationEnum.HN,
-                Specification = "null",
-                CategoryId = "LA",
-                AssetCode ="LA00001",
-                Category = GetCategorySample()
-
-            },
-                new Asset
-            {
-                Id = 2,
-                AssetName = "Monitor Sample",
-                InstalledDate = new DateTime(2000, 01, 13),
-                State = AssetStateEnum.NotAvailable,
-                Location = LocationEnum.HN,
-                Specification = "null",
-                CategoryId = "MO",
-                AssetCode ="MO00002",
-                Category = GetCategorySample()
-            },
-               new Asset
-            {
-                Id = 3,
-                AssetName = "PC Sample",
-                InstalledDate = new DateTime(2000, 01, 13),
-                State = AssetStateEnum.NotAvailable,
-                Location = LocationEnum.DN,
-                Specification = "null",
-                CategoryId = "PC",
-                AssetCode ="PC00003",
-                Category = new Category()
-                {
-                    Id = "PC",
-                    Name = "Personal Computer"
-                }
-            }
-            };
-
-            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetList);
-
-            var assetService = new AssetService(_mockAssetRepository.Object, _mockCategoryRepository.Object);
-
-            //Act
-            var result = await assetService.GetAllAsync(location);
-
-            //Arrange
-            Assert.NotNull(result);
-            Assert.Equal(result.Count(), 1);
-        }
-
         [Fact]
         public async Task GetAssetByName_ShouldReturnNull()
         {
@@ -411,7 +481,6 @@ namespace AssetManagementTeam6.API.Test.Services
         public async Task Delete_ShouldNotFoundAsset()
         {
             Asset asset = null;
-
 
             _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(asset);
 
