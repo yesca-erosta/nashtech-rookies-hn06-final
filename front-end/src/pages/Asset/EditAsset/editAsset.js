@@ -5,8 +5,8 @@ import Form from 'react-bootstrap/Form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { ASSET } from '../../../constants';
-import { dateStrToDate } from '../../../lib/helper';
 import styles from '../CreateAsset/createAsset.module.scss';
+import DatePicker from 'react-datepicker';
 
 const cx = classNames.bind(styles);
 
@@ -19,7 +19,7 @@ function EditAsset() {
         assetName: asset.assetName,
         categoryId: asset.categoryId,
         specification: asset.specification,
-        installedDate: asset.installedDate,
+        installedDate: new Date(asset.installedDate),
         state: asset.state,
     };
 
@@ -36,12 +36,22 @@ function EditAsset() {
         }
     };
 
+    const onChangeDate = (date) => {
+        setData({ ...data, installedDate: date });
+    };
+
     const [arrMsg, setArrMsg] = useState('');
 
     const handleUpdate = async () => {
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object data
         Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
+
+        const d = new Date(data.assignedDate).toLocaleDateString('fr-CA');
+
+        const { assignedDate, ...otherData } = data;
+
+        otherData.assignedDate = d;
 
         const res = await updateData(`${ASSET}/${asset.id}`, data);
 
@@ -103,13 +113,13 @@ function EditAsset() {
                 {arrMsg?.Specification && <p className={cx('msgErrorEdit')}>{arrMsg?.Specification[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
-                    <Form.Control
-                        isInvalid={arrMsg?.InstalledDate}
-                        type="date"
+                    <DatePicker
                         name="installedDate"
-                        value={dateStrToDate(data.installedDate)}
-                        onChange={onChange}
-                        className={cx('input')}
+                        selected={data.installedDate}
+                        className={`${arrMsg?.InstalledDate ? 'border-danger' : ''} form-control w-full `}
+                        onChange={(date) => onChangeDate(date)}
+                        placeholderText="dd/MM/yyyy"
+                        dateFormat="dd/MM/yyyy"
                     />
                 </Form.Group>
                 {arrMsg?.InstalledDate && <p className={cx('msgErrorEdit')}>{arrMsg?.InstalledDate[0]}</p>}

@@ -28,9 +28,6 @@ function CreateAssignment() {
     if (day.toString().length === 1) {
         day = `0${day}`;
     }
-    var year = dateObj.getUTCFullYear();
-
-    const newdate = year + '-' + month + '-' + day;
 
     const [isShowListUser, setIsShowListUser] = useState(false);
     const [isShowListAsset, setIsShowListAsset] = useState(false);
@@ -152,7 +149,7 @@ function CreateAssignment() {
                         selected={dataAdd.assignedDate}
                         className={`${arrMsg?.AssignedDate ? 'border-danger' : ''} form-control w-full `}
                         onChange={(date) => onChangeDate(date)}
-                        placeholderText="Click to select a date"
+                        placeholderText="dd/MM/yyyy"
                         dateFormat="dd/MM/yyyy"
                     />
                 </Form.Group>

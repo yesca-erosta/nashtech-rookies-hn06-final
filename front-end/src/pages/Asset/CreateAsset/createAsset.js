@@ -10,7 +10,7 @@ import styles from './createAsset.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
 import { ASSET, CATEGORY } from '../../../constants';
-import { dateStrToDate } from '../../../lib/helper';
+import DatePicker from 'react-datepicker';
 
 const cx = classNames.bind(styles);
 
@@ -30,7 +30,7 @@ function CreateAsset() {
         assetName: '',
         categoryId: '',
         specification: '',
-        installedDate: '',
+        installedDate: new Date(),
         state: '',
     });
 
@@ -47,7 +47,7 @@ function CreateAsset() {
         AssetName: '',
         CategoryId: '',
         Specification: '',
-        InstalledDate: '',
+        InstalledDate: new Date(),
         State: '',
     });
 
@@ -57,6 +57,11 @@ function CreateAsset() {
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
+        const d = new Date(dataAdd.installedDate).toLocaleDateString('fr-CA');
+
+        const { installedDate, ...otherData } = dataAdd;
+
+        otherData.installedDate = d;
 
         const res = await createData(ASSET, dataAdd);
 
@@ -117,6 +122,10 @@ function CreateAsset() {
 
     const onChangeCategory = (e) => {
         setCreateCategoryHoan({ ...createCategoryHoan, [e.target.name]: e.target.value.trim() });
+    };
+
+    const onChangeDate = (date) => {
+        setDataAdd({ ...dataAdd, installedDate: date });
     };
 
     const handleChangeAdd = (e) => {
@@ -241,13 +250,14 @@ function CreateAsset() {
 
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
-                        <Form.Control
-                            isInvalid={arrMsg.InstalledDate}
-                            type="date"
-                            className={cx('input')}
+
+                        <DatePicker
                             name="installedDate"
-                            onChange={handleChangeAdd}
-                            value={dateStrToDate(dataAdd.installedDate)}
+                            selected={dataAdd.installedDate}
+                            className={`${arrMsg?.InstalledDate ? 'border-danger' : ''} form-control w-full `}
+                            onChange={(date) => onChangeDate(date)}
+                            placeholderText="dd/MM/yyyy"
+                            dateFormat="dd/MM/yyyy"
                         />
                     </Form.Group>
                     {arrMsg.InstalledDate && <p className={cx('msgErrorBg')}>{arrMsg.InstalledDate[0]}</p>}
