@@ -1,7 +1,9 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 
 namespace AssetManagementTeam6.API.ErrorHandling
 {
+    [ExcludeFromCodeCoverage]
     public class MyCustomException: Exception
     {
         public HttpStatusCode StatusCode { get; set; }
