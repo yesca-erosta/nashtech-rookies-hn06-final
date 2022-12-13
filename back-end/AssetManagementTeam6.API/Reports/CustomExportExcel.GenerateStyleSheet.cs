@@ -3,7 +3,7 @@ using DocumentFormat.OpenXml;
 
 namespace AssetManagementTeam6.API.Reports
 {
-    public partial class ExportExcel
+    public partial class CustomExportExcel
     {
         private Stylesheet GenerateStyleSheetForSampleReport()
         {

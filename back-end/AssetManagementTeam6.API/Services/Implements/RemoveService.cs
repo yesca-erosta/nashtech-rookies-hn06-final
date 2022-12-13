@@ -1,15 +1,16 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.ErrorHandling;
-using AssetManagementTeam6.API.Models;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Net;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
+    [ExcludeFromCodeCoverage]
     public class RemoveService : IRemoveService
     {
         private readonly IAssignmentRepository _assignmentRepository;
@@ -114,24 +115,6 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw new MyCustomException(HttpStatusCode.InternalServerError, "Create new assignment failed");
 
             return createdAssignment;
-        }
-
-        public List<ExampleModelsClass> GetExportExcelData()
-        {
-            var output = new List<ExampleModelsClass>();
-            for(int i = 0; i < 100; i++)
-            {
-                output.Add(new ExampleModelsClass()
-                {
-                    Name = $"Name {i+1}",
-                    Age = 20 + i%10,
-                    DoB = new DateTime(2000,1,1),
-                    Score = 2 + i/20.0,
-                    Pass = (2 + i / 20.0) > 4,
-                    Remark = $"Remark {i+1} : Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, ...."
-                });
-            }
-            return output;
         }
 
         public async Task<Assignment> Update(AssignmentRequest createRequest)

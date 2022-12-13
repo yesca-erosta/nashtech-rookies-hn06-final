@@ -1,5 +1,5 @@
 ﻿using AssetManagementTeam6.API.ErrorHandling;
-using AssetManagementTeam6.API.Models;
+using AssetManagementTeam6.Data.Entities;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -7,9 +7,9 @@ using System.Net;
 
 namespace AssetManagementTeam6.API.Reports
 {
-    public partial class ExportExcel
+    public partial class CustomExportExcel
     {
-        public MemoryStream ExportDataToStreamForSampleReport(List<ExampleModelsClass> list)
+        public MemoryStream ExportDataToStream(List<Report> list)
         {
             try
             {
@@ -42,13 +42,13 @@ namespace AssetManagementTeam6.API.Reports
                 //
                 var newExcelRow = new Row { RowIndex = rowIndex };
                 sheetData!.Append(newExcelRow);
-                AppendStyle(excelColumnNames[0] + rowIndex.ToString(), "No.", newExcelRow, 9);
-                AppendStyle(excelColumnNames[1] + rowIndex.ToString(), "Name", newExcelRow, 2);
-                AppendStyle(excelColumnNames[2] + rowIndex.ToString(), "Age", newExcelRow, 9);
-                AppendStyle(excelColumnNames[3] + rowIndex.ToString(), "D.o.B", newExcelRow, 2);
-                AppendStyle(excelColumnNames[4] + rowIndex.ToString(), "Score", newExcelRow, 9);
-                AppendStyle(excelColumnNames[5] + rowIndex.ToString(), "Remark", newExcelRow, 2);
-                AppendStyle(excelColumnNames[6] + rowIndex.ToString(), "Pass/Failed", newExcelRow, 2);
+                AppendStyle(excelColumnNames[0] + rowIndex.ToString(), "Category", newExcelRow, 2);
+                AppendStyle(excelColumnNames[1] + rowIndex.ToString(), "Total", newExcelRow, 2);
+                AppendStyle(excelColumnNames[2] + rowIndex.ToString(), "Assigned", newExcelRow, 2);
+                AppendStyle(excelColumnNames[3] + rowIndex.ToString(), "Available", newExcelRow, 2);
+                AppendStyle(excelColumnNames[4] + rowIndex.ToString(), "Not available", newExcelRow, 2);
+                AppendStyle(excelColumnNames[5] + rowIndex.ToString(), "Waiting for recycling", newExcelRow, 2);
+                AppendStyle(excelColumnNames[6] + rowIndex.ToString(), "Recycled", newExcelRow, 2);
 
                 //
                 //Data
@@ -61,20 +61,13 @@ namespace AssetManagementTeam6.API.Reports
                     newExcelRow = new Row { RowIndex = rowIndex };
                     sheetData.Append(newExcelRow);
 
-                    AppendStyle(excelColumnNames[0] + rowIndex.ToString(), orderNumber.ToString(), newExcelRow, 3, true);
-                    AppendStyle(excelColumnNames[1] + rowIndex.ToString(), item.Name, newExcelRow, 3);
-                    AppendStyle(excelColumnNames[2] + rowIndex.ToString(), item.Age.ToString(), newExcelRow, 3, true);
-
-                    var actionDate = ConvertToExcelDate(item.DoB);
-                    AppendStyle(excelColumnNames[3] + rowIndex.ToString(), actionDate, newExcelRow, 4, true);
-
-                    AppendStyle(excelColumnNames[4] + rowIndex.ToString(), item.Score.ToString(), newExcelRow, 5, true);
-                    AppendStyle(excelColumnNames[5] + rowIndex.ToString(), item.Remark, newExcelRow, 6);
-                    
-                    if (item.Pass)
-                        AppendStyle(excelColumnNames[6] + rowIndex.ToString(), "Pass", newExcelRow, 7);
-                    else
-                        AppendStyle(excelColumnNames[6] + rowIndex.ToString(), "Failed", newExcelRow, 8);
+                    AppendStyle(excelColumnNames[0] + rowIndex.ToString(), item.Category.Name, newExcelRow, 3);
+                    AppendStyle(excelColumnNames[1] + rowIndex.ToString(), item.Total.ToString(), newExcelRow, 3, true);
+                    AppendStyle(excelColumnNames[2] + rowIndex.ToString(), item.Assigned.ToString(), newExcelRow, 3, true);
+                    AppendStyle(excelColumnNames[3] + rowIndex.ToString(), item.Available.ToString(), newExcelRow, 3, true);
+                    AppendStyle(excelColumnNames[4] + rowIndex.ToString(), item.NotAvailable.ToString(), newExcelRow, 3, true);
+                    AppendStyle(excelColumnNames[5] + rowIndex.ToString(), item.WaitingForRecycling.ToString(), newExcelRow, 3, true);
+                    AppendStyle(excelColumnNames[6] + rowIndex.ToString(), item.Recycled.ToString(), newExcelRow, 3, true);
 
                 }
                 newWorksheetPart.Worksheet.Save();
