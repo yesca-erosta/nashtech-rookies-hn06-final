@@ -9,7 +9,7 @@ namespace AssetManagementTeam6.API.ErrorHandling
 
         public MyCustomException(string? message): base(message)
         {
-            StatusCode = HttpStatusCode.InternalServerError;
+            StatusCode = HttpStatusCode.BadRequest;
         }
         public MyCustomException(string? message, HttpStatusCode statusCode) : base(message)
         {

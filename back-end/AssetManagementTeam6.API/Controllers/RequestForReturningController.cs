@@ -30,30 +30,23 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin, StaffRoles.Staff)]
         public async Task<IActionResult> CreateAsync([FromBody] RequestForReturningRequest requestModel)
         {
-            try
-            {
-                var userId = _userProvider.GetUserId();
+            var userId = _userProvider.GetUserId();
 
-                if (userId == null)
-                    return NotFound();
+            if (userId == null)
+                return NotFound();
 
-                var user = await _userService.GetUserById(userId.Value);
+            var user = await _userService.GetUserById(userId.Value);
 
-                if (user == null) return StatusCode(500, "Wrong user");
+            if (user == null) return StatusCode(400, "Wrong user");
 
-                requestModel.RequestedById = userId;
+            requestModel.RequestedById = userId;
 
-                var result = await _requestForReturningService.Create(requestModel);
+            var result = await _requestForReturningService.Create(requestModel);
 
-                if (result == null)
-                    return StatusCode(500, "Sorry the request failed");
+            if (result == null)
+                return StatusCode(400, "Sorry the request failed");
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return StatusCode(500, e.Message);
-            }
+            return Ok(result);
         }
 
         [HttpGet()]
@@ -106,63 +99,48 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CompleteRequestForReturn(int id)
         {
-            try
+            var userId = _userProvider.GetUserId();
+
+            if (userId == null)
             {
-                var userId = _userProvider.GetUserId();
-
-                if (userId == null)
-                {
-                    return StatusCode(500, "Sorry the request failed");
-                }
-
-                var request = await _requestForReturningService.GetRequestForReturningById(id);
-
-                if (request == null)
-                {
-                    return StatusCode(500, "Request for returning is not exist");
-                }
-
-                request.AcceptedBy = await _userService.GetUserById(userId.Value);
-
-                var result = await _requestForReturningService.CompleteReturningRequest(request!);
-
-                return Ok(result);
-
+                return StatusCode(500, "Sorry the request failed");
             }
-            catch (Exception e)
+
+            var request = await _requestForReturningService.GetRequestForReturningById(id);
+
+            if (request == null)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, "Request for returning is not exist");
             }
+
+            request.AcceptedBy = await _userService.GetUserById(userId.Value);
+
+            var result = await _requestForReturningService.CompleteReturningRequest(request!);
+
+            return Ok(result);
         }
 
         [HttpPut("cancel/{id}")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CancelRequestForReturn(int id)
         {
-            try
+            var userId = _userProvider.GetUserId();
+
+            if (userId == null)
             {
-                var userId = _userProvider.GetUserId();
-
-                if (userId == null)
-                {
-                    return StatusCode(500, "Sorry the request failed");
-                }
-
-                var request = await _requestForReturningService.GetRequestForReturningById(id);
-
-                if (request == null)
-                {
-                    return StatusCode(500, "Request for returning is not exist");
-                }
-
-                var result = await _requestForReturningService.CancelReturningRequest(request);
-
-                return Ok(result);
+                return StatusCode(500, "Sorry the request failed");
             }
-            catch (Exception e)
+
+            var request = await _requestForReturningService.GetRequestForReturningById(id);
+
+            if (request == null)
             {
-                return StatusCode(500, e.Message);
+                return StatusCode(500, "Request for returning is not exist");
             }
+
+            var result = await _requestForReturningService.CancelReturningRequest(request);
+
+            return Ok(result);
         }
 
     }

@@ -1,11 +1,14 @@
 ﻿using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
+using AssetManagementTeam6.API.ErrorHandling;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Constants;
 using Common.Enums;
+using System.Dynamic;
+using System.Net;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
@@ -48,44 +51,76 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             var assetInAssignment = await _assignmentRepository.GetListAsync(a => a.State != AssignmentStateEnum.Deleted && a.AssetId == createRequest.AssetId);
 
-            if(asset == null)
+            var isValid = true;
+            var listErrorAsset = new List<string>();
+            var listErrorAssignee = new List<string>();
+            var listErrorAssigner = new List<string>();
+
+            if (asset == null)
             {
-                throw new Exception("Asset is not exist");
+                isValid = false;
+                listErrorAsset.Add("Asset is not exist");
+            }
+            else
+            {
+                if (asset.State == AssetStateEnum.Assigned)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is assigned for someone else");
+                }
+
+                if (asset.State != AssetStateEnum.Available)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not available");
+                }
             }
 
-            if (asset.State == AssetStateEnum.Assigned)
+            if (assetInAssignment.Any())
             {
-                throw new Exception("Asset is assigned for someone else");
+                isValid = false;
+                listErrorAsset.Add("Asset is existed in assignment");
             }
 
-            if (asset.State != AssetStateEnum.Available)
+            if (assignedTo == null)
             {
-                throw new Exception("Asset is not available");
+                isValid = false;
+                listErrorAssignee.Add("Assignee is not exist");
             }
 
-            if(assignedTo == null)
+            if (assignedBy == null)
             {
-                throw new Exception("Assignee is not exist");
+                isValid = false;
+                listErrorAssigner.Add("Assigner is not exist");
             }
 
-            if(assignedBy == null)
-            {
-                throw new Exception("Assigner is not exist");
-            }
 
-            if(assetInAssignment.Count() != 0)
+            if (!isValid)
             {
-                throw new Exception("Asset is existed in assignment");
+                var error = new ExpandoObject() as IDictionary<string, object>;
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssigner.Any())
+                    error.Add("AssignedBy", listErrorAssigner);
+                if (listErrorAssignee.Any())
+                    error.Add("AssignedTo", listErrorAssignee);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
             var newAssignment = new Assignment
             {
                 AssetId = createRequest.AssetId,
-                Asset = asset,
+                Asset = asset!,
                 AssignedBy = assignedBy,
                 AssignedById = createRequest.AssignedById,
                 AssignedDate = createRequest.AssignedDate,
-                AssignedTo = assignedTo,
+                AssignedTo = assignedTo!,
                 AssignedToId = createRequest.AssignedToId,
                 Note = createRequest.Note,
                 State = AssignmentStateEnum.WaitingForAcceptance
@@ -94,9 +129,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             var createdAssignment = await _assignmentRepository.Create(newAssignment);
 
             if (createdAssignment == null)
-            {
-                return null;
-            }
+                throw new MyCustomException(HttpStatusCode.BadRequest, "Create new assignment failed");
 
             return createdAssignment;
         }
@@ -127,14 +160,14 @@ namespace AssetManagementTeam6.API.Services.Implements
             if (result.Count() == 0 || result == null)
             {
                 return false;
-            }           
+            }
 
             return true;
         }
 
         public async Task<IEnumerable<GetAssignmentResponse>> GetListAssignmentByUserLoggedIn(int id)
         {
-            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id 
+            var assignments = await _assignmentRepository.GetListAsync(ass => ass.AssignedToId == id
                                                                     && ass.State != AssignmentStateEnum.Deleted
                                                                     && ass.State != AssignmentStateEnum.Declined
                                                                     && ass.AssignedDate <= DateTime.UtcNow);
@@ -152,7 +185,7 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             // get all list
             var assignments = await _assignmentRepository.GetListAsync(x => x.State != AssignmentStateEnum.Deleted);
-           
+
             // search assignment by assetcode or assetname or assignee
             var nameToQuery = "";
             if (!string.IsNullOrEmpty(queryModel.ValueSearch))
@@ -169,7 +202,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             {
                 assignments = assignments?.Where(u => queryModel.AssignmentStates.Contains(u.State))?.ToList();
             }
-            if(queryModel.FilterByAssignedDates != null)
+            if (queryModel.FilterByAssignedDates != null)
             {
                 assignments = assignments?.Where(u => u.AssignedDate.Day.Equals(queryModel.FilterByAssignedDates.Value.Day)
                                                     && u.AssignedDate.Month.Equals(queryModel.FilterByAssignedDates.Value.Month)
@@ -253,28 +286,56 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<GetAssignmentResponse> AcceptedAssignment(int id)
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
+            var isValid = true;
+            var listErrorAssignment = new List<string>();
+            var listErrorAsset = new List<string>();
 
-            if(updatedAssignment == null)
+            if (updatedAssignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
+            }
+            else
+            {
+                if (updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Assignment state is not waiting for acceptance");
+                }
+
+                if (updatedAssignment.Asset == null)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not exist");
+                }
+                else
+                {
+                    if (updatedAssignment.Asset.State != AssetStateEnum.Available)
+                    {
+                        isValid = false;
+                        listErrorAsset.Add("Asset state not available");
+                    }
+                }
             }
 
-            if(updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            if (!isValid)
             {
-                throw new Exception("Assignment state is not waiting for acceptance");
+                var error = new ExpandoObject() as IDictionary<string, object>;
+
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
-            if(updatedAssignment.Asset == null)
-            {
-                throw new Exception("Asset is not exist");
-            }
-
-            if(updatedAssignment.Asset.State != AssetStateEnum.Available)
-            {
-                throw new Exception("Asset state not available");
-            }
-
-            updatedAssignment.Asset.State = AssetStateEnum.Assigned;
+            updatedAssignment!.Asset!.State = AssetStateEnum.Assigned;
 
             updatedAssignment.State = AssignmentStateEnum.Accepted;
 
@@ -286,31 +347,59 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<GetAssignmentResponse> DeclinedAssignment(int id)
         {
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
+            var isValid = true;
+            var listErrorAssignment = new List<string>();
+            var listErrorAsset = new List<string>();
 
             if (updatedAssignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
             }
-
-            if (updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            else
             {
-                throw new Exception("Assignment state is not waiting for acceptance");
+                if (updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Assignment state is not waiting for acceptance");
+                }
+
+                if (updatedAssignment.Asset == null)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not exist");
+                }
+                else
+                {
+                    if (updatedAssignment.Asset.State != AssetStateEnum.Available)
+                    {
+                        isValid = false;
+                        listErrorAsset.Add("Asset state not available");
+                    }
+                }
             }
 
-            if (updatedAssignment.Asset == null)
+            if (!isValid)
             {
-                throw new Exception("Asset is not exist");
+                var error = new ExpandoObject() as IDictionary<string, object>;
+
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
-            if (updatedAssignment.Asset.State != AssetStateEnum.Available)
-            {
-                throw new Exception("Asset state not available");
-            }
-
-            var assetState = updatedAssignment.Asset.State;
+            var assetState = updatedAssignment!.Asset!.State;
 
             updatedAssignment.Asset.State = AssetStateEnum.Available;
-            
+
             updatedAssignment.State = AssignmentStateEnum.Declined;
 
             var result = await _assignmentRepository.Update(updatedAssignment);
@@ -328,48 +417,83 @@ namespace AssetManagementTeam6.API.Services.Implements
             var updatedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
             var assignedTo = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedToId);
             var assignedBy = await _userRepository.GetOneAsync(x => x.Id == updatedRequest!.AssignedById);
-            var updatedAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId );
-            var assetInAssignment = await _assignmentRepository.GetListAsync(a => a.State != AssignmentStateEnum.Deleted && a.AssetId == updatedRequest.AssetId);
+            var updatedAsset = await _assetRepository.GetOneAsync(x => x.Id == updatedRequest!.AssetId);
+            var assetInAssignment = await _assignmentRepository.GetListAsync(a => a.State != AssignmentStateEnum.Deleted
+                                                                            && a.AssetId == updatedRequest.AssetId
+                                                                            && a.Id != id);
+            var isValid = true;
+            var listErrorAssignment = new List<string>();
+            var listErrorAsset = new List<string>();
+            var listErrorAssignee = new List<string>();
 
             if (updatedAssignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
+            }
+            else
+            {
+                if (updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Invalid state");
+                }
             }
 
-            if(updatedAssignment.State != AssignmentStateEnum.WaitingForAcceptance)
+            if (updatedAsset == null)
             {
-                throw new Exception("Invalid state");
+                isValid = false;
+                listErrorAsset.Add("Asset is not exist");
+            }
+            else
+            {
+                if (updatedAsset.State != AssetStateEnum.Available)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset not available");
+                }
             }
 
-            if(updatedAsset == null)
+            if (assignedTo == null)
             {
-                throw new Exception("Asset is not exist");
-            }
-
-            if(updatedAsset.State != AssetStateEnum.Available)
-            {
-                throw new Exception("Asset not available");
-            }
-
-            if(assignedTo == null)
-            {
-                throw new Exception("Asignee is not exist");
+                isValid = false;
+                listErrorAssignee.Add("Asignee is not exist");
             }
 
             if (assetInAssignment.Count() != 0)
             {
-                throw new Exception("Asset is existed in assignment");
+                isValid = false;
+                listErrorAsset.Add("Asset is existed in assignment");
             }
-            
-            updatedAssignment.Note = updatedRequest?.Note ?? "";
+
+            if (!isValid)
+            {
+                var error = new ExpandoObject() as IDictionary<string, object>;
+
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignee.Any())
+                    error.Add("AssignedTo", listErrorAssignee);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
+            }
+
+            updatedAssignment!.Note = updatedRequest?.Note ?? "";
             updatedAssignment.AssignedDate = updatedRequest!.AssignedDate;
             updatedAssignment.AssetId = updatedRequest.AssetId;
-            updatedAssignment.Asset = updatedAsset;
+            updatedAssignment.Asset = updatedAsset!;
             updatedAssignment.AssignedToId = updatedRequest.AssignedToId;
-            updatedAssignment.AssignedTo = assignedTo;
+            updatedAssignment.AssignedTo = assignedTo!;
             updatedAssignment.AssignedById = updatedRequest.AssignedById;
             updatedAssignment.AssignedBy = assignedBy;
-            
+
             await _assignmentRepository.Update(updatedAssignment);
 
             var result = new GetAssignmentResponse(updatedAssignment);
@@ -380,15 +504,36 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<bool> Delete(int id)
         {
             var deletedAssignment = await _assignmentRepository.GetOneAsync(x => x.Id == id && x.State != AssignmentStateEnum.Deleted);
+            var isValid = true;
+            var listErrorAssignment = new List<string>();
 
             if (deletedAssignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
+            }
+            else
+            {
+                if (deletedAssignment.State != AssignmentStateEnum.WaitingForAcceptance && deletedAssignment.State != AssignmentStateEnum.Declined)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Invalid state");
+                }
             }
 
-            if(deletedAssignment.State != AssignmentStateEnum.WaitingForAcceptance && deletedAssignment.State != AssignmentStateEnum.Declined)
+            if (!isValid)
             {
-                throw new Exception("Invalid state");
+                var error = new ExpandoObject() as IDictionary<string, object>;
+
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
             return await _assignmentRepository.Delete(deletedAssignment);
