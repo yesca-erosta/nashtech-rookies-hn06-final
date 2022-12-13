@@ -5,6 +5,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 {
     public class GetRequestForReturningResponse
     {
+        public int Id { get; set; }
         public Assignment Assignment { get; set; }
         public User RequestedBy { get; set; }
         public User? AcceptedBy { get; set; }
@@ -13,6 +14,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public GetRequestForReturningResponse(RequestForReturning request)
         {
+            Id = request.Id;
             Assignment = request.Assignment;
             RequestedBy = request.RequestedBy;
             AcceptedBy = request.AcceptedBy;
