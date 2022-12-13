@@ -38,13 +38,13 @@ namespace AssetManagementTeam6.API.Middlewares
                 case MyCustomException myCustomException:
                     statusCode = myCustomException.StatusCode;
                     message = myCustomException.Message;
-                    expectedResult = JsonSerializer.Serialize(new { error = myCustomException.Error, message, stackTrace = (string)null! });
+                    expectedResult = JsonSerializer.Serialize(new { errors = myCustomException.Error, message, stackTrace = (string)null! });
                     break;
 
                 default:
                     statusCode = HttpStatusCode.InternalServerError;
                     message = ex.Message;
-                    expectedResult = JsonSerializer.Serialize(new { error = (string)null!, message, stackTrace = ex.StackTrace });
+                    expectedResult = JsonSerializer.Serialize(new { errors = (string)null!, message, stackTrace = ex.StackTrace });
                     break;
             }
 
