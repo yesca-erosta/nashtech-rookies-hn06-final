@@ -7,15 +7,15 @@ import { faPen, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
 import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
-import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
-import { StateFilter } from './StateFilter/StateFilter';
-import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { ASSIGNMENT } from '../../constants';
+import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { DetailAssignment } from './DetailAssignment/DetailAssignment';
-import DatePicker from 'react-datepicker';
+import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
+import { StateFilter } from './StateFilter/StateFilter';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -36,10 +36,10 @@ function Assignment() {
     const [date, setDate] = useState();
 
     const onChangeDate = async (date) => {
+        setLoading(true);
         const d = new Date(date).toLocaleDateString('fr-CA');
 
         setDate(date);
-        setLoading(true);
         setTimeout(async () => {
             if (date) {
                 setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: d });
@@ -390,10 +390,8 @@ function Assignment() {
                                 selected={date}
                                 className="form-control w-full"
                                 onChange={(date) => onChangeDate(date)}
-                                placeholderText="Click to select a date"
-                                disabledKeyboardNavigation
+                                placeholderText="dd/MM/yyyy"
                                 dateFormat="dd/MM/yyyy"
-                                isClearable
                             />
                         </Form.Group>
                     </InputGroup>

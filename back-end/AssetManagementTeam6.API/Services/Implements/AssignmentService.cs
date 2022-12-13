@@ -460,7 +460,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 listErrorAssignee.Add("Asignee is not exist");
             }
 
-            if (assetInAssignment.Count() != 0)
+            if (assetInAssignment.Count() > 1)
             {
                 isValid = false;
                 listErrorAsset.Add("Asset is existed in assignment");

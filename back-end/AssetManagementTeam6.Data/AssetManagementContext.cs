@@ -151,7 +151,8 @@ namespace AssetManagementTeam6.Data
                          AssignedDate = DateTime.UtcNow,
                          AssignedToId = 1,
                          Note = $"Assignment {i}",
-                         State = (AssignmentStateEnum)(i % 2)
+                         State = (AssignmentStateEnum)(i % 2),
+                         IsReturning = false
                      }
                  );
             }
