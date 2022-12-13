@@ -1,8 +1,10 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Reports
 {
-    public partial class ExportExcel
+    [ExcludeFromCodeCoverage]
+    public partial class CustomExportExcel
     {
         private static string ConvertToExcelDate(DateTime d)
         {
