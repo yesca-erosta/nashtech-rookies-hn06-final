@@ -1,11 +1,14 @@
 ﻿using AssetManagementTeam6.API.Dtos.Pagination;
 using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.Dtos.Responses;
+using AssetManagementTeam6.API.ErrorHandling;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Common.Constants;
 using Common.Enums;
+using System.Dynamic;
+using System.Net;
 
 namespace AssetManagementTeam6.API.Services.Implements
 {
@@ -26,37 +29,65 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             var assignment = await _assignmentRepository.GetOneAsync(assignment => assignment.Id == createRequest.AssignmentId
                                                                     && assignment.State == AssignmentStateEnum.Accepted);
-
             var requestBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.RequestedById);
-
             var acceptedBy = await _userRepository.GetOneAsync(u => u.Id == createRequest.AcceptedById);
+            var isValid = true;
+            var listErrorAsset = new List<string>();
+            var listErrorAssignment = new List<string>();
+            var listErrorRequester = new List<string>();
 
             if (assignment == null)
             {
-                throw new Exception("Assignment is not exist or not accepted state");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist or not accepted state");
             }
-
-            if (assignment.Asset == null)
+            else
             {
-                throw new Exception("Asset is not exist");
-            }
-
-            if (assignment.Asset.State != AssetStateEnum.Assigned)
-            {
-                throw new Exception("Asset is not assigned");
+                if (assignment.Asset == null)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not exist");
+                }
+                else
+                {
+                    if (assignment.Asset.State != AssetStateEnum.Assigned)
+                    {
+                        isValid = false;
+                        listErrorAsset.Add("Asset is not assigned");
+                    }
+                }
             }
 
             if (requestBy == null)
             {
-                throw new Exception("Requester is not found");
+                isValid = false;
+                listErrorRequester.Add("Requester is not found");
+            }
+
+            if (!isValid)
+            {
+                var error = new ExpandoObject() as IDictionary<string, object>;
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+                if (listErrorRequester.Any())
+                    error.Add("Requester", listErrorRequester);
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
             var request = new RequestForReturning
             {
                 AssignmentId = createRequest.AssignmentId,
-                Assignment = assignment,
+                Assignment = assignment!,
                 RequestedById = createRequest.RequestedById,
-                RequestedBy = requestBy,
+                RequestedBy = requestBy!,
                 AcceptedById = createRequest.AcceptedById,
                 AcceptedBy = acceptedBy,
                 State = RequestForReturningStateEnum.WaitingForReturning
@@ -70,7 +101,6 @@ namespace AssetManagementTeam6.API.Services.Implements
             }
 
             return createdRequest;
-
         }
 
         public async Task<IEnumerable<GetRequestForReturningResponse>> GetAllAsync()
@@ -207,40 +237,77 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<GetRequestForReturningResponse> CompleteReturningRequest(RequestForReturning request)
         {
-            
-            if(request.State != RequestForReturningStateEnum.WaitingForReturning)
+            var isValid = true;
+            var listErrorAsset = new List<string>();
+            var listErrorAssignment = new List<string>();
+            var listErrorRequestForReturning = new List<string>();
+            var listErrorRequester = new List<string>();
+
+            if (request.State != RequestForReturningStateEnum.WaitingForReturning)
             {
-                throw new Exception("Request state is wrong");
+                isValid = false;
+                listErrorRequestForReturning.Add("Request state is wrong");
             }
 
             if (request.Assignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
             }
-            
-            if(request.Assignment.State != AssignmentStateEnum.Accepted)
+            else
             {
-                throw new Exception("Assignment state is not accepted");
-            }
+                if (request.Assignment.State != AssignmentStateEnum.Accepted)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Assignment state is not accepted");
+                }
 
-            if (request.Assignment.Asset == null)
-            {
-                throw new Exception("Asset is not exist");
-            }
-
-            if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
-            {
-                throw new Exception("Asset is not assigned");
+                if (request.Assignment.Asset == null)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not exist");
+                }
+                else
+                {
+                    if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
+                    {
+                        isValid = false;
+                        listErrorAsset.Add("Asset is not assigned");
+                    }
+                }
             }
 
             if (request.RequestedBy == null)
             {
-                throw new Exception("Requester is not found");
+                isValid = false;
+                listErrorRequester.Add("Requester is not found");
+            }
+
+            if (!isValid)
+            {
+                var error = new ExpandoObject() as IDictionary<string, object>;
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+                if (listErrorRequester.Any())
+                    error.Add("Requester", listErrorRequester);
+                if (listErrorRequestForReturning.Any())
+                {
+                    error.Add("RequestForReturning", listErrorRequestForReturning);
+                }
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
             }
 
             request.State = RequestForReturningStateEnum.Completed;
             request.ReturnedDate = DateTime.UtcNow;
-            request.Assignment.Asset.State = AssetStateEnum.Available;
+            request.Assignment!.Asset!.State = AssetStateEnum.Available;
             request.Assignment.State = AssignmentStateEnum.Deleted;
 
             await _assignmentRepository.Update(request.Assignment);
@@ -252,37 +319,75 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<GetRequestForReturningResponse> CancelReturningRequest(RequestForReturning request)
         {
-            if(request.State != RequestForReturningStateEnum.WaitingForReturning)
+            var isValid = true;
+            var listErrorAsset = new List<string>();
+            var listErrorAssignment = new List<string>();
+            var listErrorRequestForReturning = new List<string>();
+            var listErrorRequester = new List<string>();
+
+            if (request.State != RequestForReturningStateEnum.WaitingForReturning)
             {
-                throw new Exception("Request state is wrong");
+                isValid = false;
+                listErrorRequestForReturning.Add("Request state is wrong");
             }
 
             if (request.Assignment == null)
             {
-                throw new Exception("Assignment is not exist");
+                isValid = false;
+                listErrorAssignment.Add("Assignment is not exist");
             }
-
-            if (request.Assignment.State != AssignmentStateEnum.Accepted)
+            else
             {
-                throw new Exception("Assignment state is not accepted");
-            }
+                if (request.Assignment.State != AssignmentStateEnum.Accepted)
+                {
+                    isValid = false;
+                    listErrorAssignment.Add("Assignment state is not accepted");
+                }
 
-            if (request.Assignment.Asset == null)
-            {
-                throw new Exception("Asset is not exist");
-            }
-
-            if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
-            {
-                throw new Exception("Asset is not assigned");
+                if (request.Assignment.Asset == null)
+                {
+                    isValid = false;
+                    listErrorAsset.Add("Asset is not exist");
+                }
+                else
+                {
+                    if (request.Assignment.Asset.State != AssetStateEnum.Assigned)
+                    {
+                        isValid = false;
+                        listErrorAsset.Add("Asset is not assigned");
+                    }
+                }
             }
 
             if (request.RequestedBy == null)
             {
-                throw new Exception("Requester is not found");
+                isValid = false;
+                listErrorRequester.Add("Requester is not found");
             }
 
-            var result = await _requestForReturningRepository.Delete(request);
+            if (!isValid)
+            {
+                var error = new ExpandoObject() as IDictionary<string, object>;
+                if (listErrorAsset.Any())
+                    error.Add("Asset", listErrorAsset);
+                if (listErrorAssignment.Any())
+                    error.Add("Assignment", listErrorAssignment);
+                if (listErrorRequester.Any())
+                    error.Add("Requester", listErrorRequester);
+                if (listErrorRequestForReturning.Any())
+                {
+                    error.Add("RequestForReturning", listErrorRequestForReturning);
+                }
+
+                var myCustomException = new MyCustomException(HttpStatusCode.BadRequest, "Some properties are not valid")
+                {
+                    Error = error
+                };
+
+                throw myCustomException;
+            }
+
+            _ = await _requestForReturningRepository.Delete(request);
 
             return new GetRequestForReturningResponse(request);
         }
