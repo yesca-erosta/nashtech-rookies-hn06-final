@@ -5,3 +5,4 @@ export const USER = 'User';
 export const ASSET = 'Asset';
 export const CATEGORY = 'Category';
 export const ASSIGNMENT = 'Assignment';
+export const REQUEST_FOR_RETURNING = 'RequestForReturning';

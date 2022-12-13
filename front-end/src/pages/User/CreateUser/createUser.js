@@ -6,7 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
-
+import DatePicker from 'react-datepicker';
 import styles from './createUser.module.scss';
 
 const cx = classNames.bind(styles);
@@ -44,7 +44,19 @@ function CreateUser() {
     }, [dataAdd]);
 
     const onSaveAdd = async () => {
-        const res = await createData(USER, dataAdd);
+        // Trim() all value dataAdd
+        // KEYSEARCH: trim all properties of an object dataAdd
+        Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
+
+        // Handle datepicker date off by one day
+        const newDateOfBirth = new Date(dataAdd.dateOfBirth);
+        const newJoinedDate = new Date(dataAdd.joinedDate);
+
+        newDateOfBirth.setDate(newDateOfBirth.getDate() + 1);
+        newJoinedDate.setDate(newJoinedDate.getDate() + 1);
+
+        const res = await createData(USER, { ...dataAdd, dateOfBirth: newDateOfBirth, joinedDate: newJoinedDate });
+
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
             if (res?.response?.status === 409) {
@@ -54,17 +66,6 @@ function CreateUser() {
                 alert('Please input all fields');
             }
         } else {
-            setDataAdd({
-                userName: '',
-                password: '',
-                firstName: '',
-                lastName: '',
-                dateOfBirth: '',
-                gender: '',
-                joinedDate: '',
-                type: 0,
-            });
-
             navigate('/manageruser');
         }
     };
@@ -79,6 +80,14 @@ function CreateUser() {
 
     const onCancelAdd = () => {
         navigate('/manageruser');
+    };
+
+    const onChangeDateOfBirth = (date) => {
+        setDataAdd({ ...dataAdd, dateOfBirth: date });
+    };
+
+    const onChangeJoinedDate = (date) => {
+        setDataAdd({ ...dataAdd, joinedDate: date });
     };
 
     return (
@@ -137,12 +146,14 @@ function CreateUser() {
                 {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-                    <Form.Control
-                        isInvalid={arrMsg.DateOfBirth}
-                        type="date"
-                        className={cx('input')}
+
+                    <DatePicker
                         name="dateOfBirth"
-                        onChange={handleChangeAdd}
+                        selected={dataAdd.dateOfBirth}
+                        className={`${arrMsg?.DateOfBirth ? 'border-danger' : ''} form-control w-full `}
+                        onChange={(date) => onChangeDateOfBirth(date)}
+                        placeholderText="dd/MM/yyyy"
+                        dateFormat="dd/MM/yyyy"
                     />
                 </Form.Group>
                 {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
@@ -174,12 +185,13 @@ function CreateUser() {
 
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-                    <Form.Control
-                        isInvalid={arrMsg.JoinedDate}
-                        type="date"
-                        className={cx('input')}
+                    <DatePicker
                         name="joinedDate"
-                        onChange={handleChangeAdd}
+                        selected={dataAdd.joinedDate}
+                        className={`${arrMsg?.JoinedDate ? 'border-danger' : ''} form-control w-full `}
+                        onChange={(date) => onChangeJoinedDate(date)}
+                        placeholderText="dd/MM/yyyy"
+                        dateFormat="dd/MM/yyyy"
                     />
                 </Form.Group>
                 {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}

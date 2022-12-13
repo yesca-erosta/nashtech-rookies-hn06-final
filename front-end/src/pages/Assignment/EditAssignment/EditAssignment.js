@@ -77,11 +77,9 @@ function EditAssignment() {
 
         const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
 
-        const { assignedDate, ...otherData } = dataAdd;
+        const { fullName, assetName, assetCode, staffCode, assignedDate, ...otherData } = dataAdd;
 
         otherData.assignedDate = d;
-
-        // const { fullName, assetName, assetCode, staffCode, ...otherData } = dataAdd;
 
         const res = await updateData(`${ASSIGNMENT}/${assignment.id}`, otherData);
 

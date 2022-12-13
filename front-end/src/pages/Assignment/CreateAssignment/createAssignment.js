@@ -79,13 +79,13 @@ function CreateAssignment() {
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
+        // const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
 
-        const { assignedDate, ...otherData } = dataAdd;
+        // const { assignedDate, ...otherData } = dataAdd;
 
-        otherData.assignedDate = d;
+        // otherData.assignedDate = d;
 
-        const res = await createData(ASSIGNMENT, otherData);
+        const res = await createData(ASSIGNMENT, dataAdd);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
