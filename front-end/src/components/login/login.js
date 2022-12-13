@@ -114,6 +114,7 @@ const Login = () => {
                                 setIsUserNameError('');
                                 setIsLoginError(false);
                             }}
+                            onKeyUp={handleOnChangeEnter}
                         />
                         {isUserNameError && <label className="form_item_error">{isUserNameError}</label>}
                     </div>
