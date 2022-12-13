@@ -1,9 +1,11 @@
 ﻿using AssetManagementTeam6.API.ErrorHandling;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json;
 
 namespace AssetManagementTeam6.API.Middlewares
 {
+    [ExcludeFromCodeCoverage]
     public class GlobalErrorHandlingMiddleware
     {
         private readonly RequestDelegate _next;
