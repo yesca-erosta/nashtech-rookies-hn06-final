@@ -2,10 +2,12 @@ import { faCheck, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link } from 'react-router-dom';
-import { getAllDataWithFilterBox, updateData } from '../../apiServices';
-import { ASSIGNMENT } from '../../constants';
+import { Link, useNavigate } from 'react-router-dom';
+import { createData, getAllDataWithFilterBox, updateData } from '../../apiServices';
+import { Loading } from '../../components/Loading/Loading';
+import { ASSIGNMENT, REQUEST_FOR_RETURNING } from '../../constants';
 import { dateStrToStr } from '../../lib/helper';
+import { ModalRequest } from '../Assignment/Modal/ModalRequest/ModalRequest';
 import { DetailAssignmentForUser } from './DetailAssignmentForUser/DetailAssignmentForUser';
 import './home.scss';
 
@@ -31,8 +33,10 @@ function Home() {
 
     // Get Data
     const getData = async () => {
+        setLoading(true);
         const data = await getAllDataWithFilterBox(`Assignment/getlistbyuserid`);
         setDataAssignment(data);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -96,6 +100,28 @@ function Home() {
 
     const handleCloseDetail = () => {
         setShowDetail(false);
+    };
+
+    const [showRequest, setShowRequest] = useState(false);
+
+    const handleShowReturning = (e, assignment) => {
+        if (assignment.state === 1 || assignment.isReturning || assignment.state === 2) {
+            e.preventDefault();
+        } else {
+            setDataId(assignment.id);
+            setShowRequest(true);
+        }
+    };
+
+    const navigate = useNavigate();
+
+    const handleRequest = async () => {
+        setLoading(true);
+        await createData(REQUEST_FOR_RETURNING, { assignmentId: dataId });
+
+        setShowRequest(false);
+        navigate('/requestforreturning');
+        setLoading(false);
     };
 
     const columns = [
@@ -165,12 +191,12 @@ function Home() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 1
+                        row.state === 1 || row.isReturning || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRefresh} />
+                    <FontAwesomeIcon icon={faRefresh} onClick={(e) => handleShowReturning(e, row)} />
                 </Link>,
             ],
         },
@@ -200,7 +226,6 @@ function Home() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     customStyles={customStyles}
                 />
             </div>
@@ -221,6 +246,10 @@ function Home() {
                 setIsShowDecline={setIsShowDecline}
                 handleDecline={handleDecline}
             />
+
+            <ModalRequest showRequest={showRequest} setShowRequest={setShowRequest} handleRequest={handleRequest} />
+
+            {loading && <Loading />}
         </>
     );
 }

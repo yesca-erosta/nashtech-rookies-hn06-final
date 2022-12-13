@@ -8,6 +8,7 @@ import { updateData } from '../../../apiServices';
 import { USER } from '../../../constants';
 import styles from './EditUser.module.scss';
 import DatePicker from 'react-datepicker';
+import { Loading } from '../../../components/Loading/Loading';
 
 const EditUser = () => {
     const cx = classNames.bind(styles);
@@ -37,7 +38,9 @@ const EditUser = () => {
     });
     const navigate = useNavigate();
 
+    const [loading, setLoading] = useState(false);
     const onSubmit = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
@@ -62,6 +65,7 @@ const EditUser = () => {
 
             navigate('/manageruser');
         }
+        setLoading(false);
     };
 
     const onChange = (e) => {
@@ -215,6 +219,8 @@ const EditUser = () => {
                     <Toast.Body>User is edited successfully.</Toast.Body>
                 </Toast>
             </ToastContainer>
+
+            {loading && <Loading />}
         </>
     );
 };

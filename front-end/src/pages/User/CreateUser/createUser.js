@@ -8,6 +8,7 @@ import { createData } from '../../../apiServices';
 import { USER } from '../../../constants';
 import DatePicker from 'react-datepicker';
 import styles from './createUser.module.scss';
+import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -43,7 +44,10 @@ function CreateUser() {
         return Object.values(otherData).every((x) => x !== null && x !== '');
     }, [dataAdd]);
 
+    const [loading, setLoading] = useState(false);
+
     const onSaveAdd = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
@@ -68,6 +72,8 @@ function CreateUser() {
         } else {
             navigate('/manageruser');
         }
+
+        setLoading(false);
     };
 
     const handleChangeAdd = (e) => {
@@ -211,6 +217,8 @@ function CreateUser() {
                     </Button>
                 </div>
             </Form>
+
+            {loading && <Loading />}
         </div>
     );
 }

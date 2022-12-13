@@ -33,6 +33,13 @@ export const StateFilter = ({ setLoading, setQueryParams, queryParams, setDataAs
             );
             setPlaceholderState('Waiting for acceptance');
         }
+        if (checkedState.declined) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '2' });
+            data = await getAllDataWithFilterBox(
+                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '2' }),
+            );
+            setPlaceholderState('Declined');
+        }
         if (checkedState.accepted && checkedState.waitingForAccepted) {
             setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
             data = await getAllDataWithFilterBox(
