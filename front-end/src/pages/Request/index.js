@@ -181,13 +181,20 @@ function Request() {
                     key={row.id}
                     state={{ dataRequestForReturning: row }}
                     className={styles.customPen}
+                    style={
+                        row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '16px' } : { fontSize: '16px' }
+                    }
                 >
                     <FontAwesomeIcon icon={faCheck} onClick={(e) => handleShowComplete(e, row)} />
                 </Link>,
                 <Link
                     key={`keyDelete_${row.id}`}
                     to={'#'}
-                    style={{ cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }}
+                    style={
+                        row.state === 0
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
+                            : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
+                    }
                 >
                     <FontAwesomeIcon icon={faRemove} onClick={(e) => handleShowDelete(e, row)} />
                 </Link>,
