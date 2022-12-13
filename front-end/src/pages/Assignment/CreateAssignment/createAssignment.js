@@ -87,11 +87,12 @@ function CreateAssignment() {
 
         const res = await createData(ASSIGNMENT, dataAdd);
 
+        console.log('res', res);
+
         if (res.code === 'ERR_BAD_REQUEST') {
-            setArrMsg(res?.response?.data?.errors);
-            if (res?.response?.status === 409) {
-                setArrMsg({ Asset: [res?.response?.data] });
-            }
+            // TODO:
+            setArrMsg(res?.response?.data?.error);
+
             if (res?.response?.data?.errors?.requestModel) {
                 alert('Please input all fields');
             }
@@ -99,6 +100,7 @@ function CreateAssignment() {
             navigate('/manageassignment');
         }
     };
+    console.log('arrMsg', arrMsg);
 
     const isInputComplete = useMemo(() => {
         const { note, ...otherData } = dataAdd;
