@@ -49,20 +49,6 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet()]
-        [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> GetAll()
-        {
-            var result = await _requestForReturningService.GetAllAsync();
-
-            if (result == null)
-            {
-                return StatusCode(500, "Sorry the request failed");
-            }
-
-            return Ok(result);
-        }
-
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states, DateTime? date, string? sort)

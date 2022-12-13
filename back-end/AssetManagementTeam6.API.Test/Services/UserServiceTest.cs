@@ -80,7 +80,7 @@ namespace AssetManagementTeam6.API.Test.Services
 
         public List<User> GetSampleUserLists()
         {
-            return TestBase.ReadJsonFromFile<List<User>>("dummy_user_data.json"); ;
+            return TestBase.ReadJsonFromFile<List<User>>("dummy_user_data.json"); 
         }
 
         [Fact]
@@ -558,7 +558,7 @@ namespace AssetManagementTeam6.API.Test.Services
         private Pagination<GetUserResponse?> GetExpectedPaginationUserOutput(List<User>? users, PaginationQueryModel queryModel)
         {
             // filter by type
-            if (queryModel.Types != null)
+            if (queryModel.Types.Any())
             {
                 users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
             }

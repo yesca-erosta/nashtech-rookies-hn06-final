@@ -95,28 +95,10 @@ namespace AssetManagementTeam6.API.Services.Implements
                 State = RequestForReturningStateEnum.WaitingForReturning
             };
 
-            var createdRequest = await _requestForReturningRepository.Create(request);
-
-            if (createdRequest == null)
-            {
-                return null;
-            }
-
-            return createdRequest;
+            return await _requestForReturningRepository.Create(request);
         }
 
-        public async Task<IEnumerable<GetRequestForReturningResponse>> GetAllAsync()
-        {
-            var requests = await _requestForReturningRepository.GetListAsync();
-
-            if (requests == null)
-            {
-                return null!;
-            }
-
-            return requests.Select(r => new GetRequestForReturningResponse(r)).ToList();
-        }
-        private bool GetFilterByReturnedDate(RequestForReturning r, PaginationQueryModel queryModel)
+        public bool GetFilterByReturnedDate(RequestForReturning r, PaginationQueryModel queryModel)
         {
             if (r.ReturnedDate.HasValue)
             {
@@ -389,7 +371,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw myCustomException;
             }
 
-            _ = await _requestForReturningRepository.Delete(request);
+            await _requestForReturningRepository.Delete(request);
 
             return new GetRequestForReturningResponse(request);
         }

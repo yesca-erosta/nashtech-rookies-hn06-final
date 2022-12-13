@@ -18,7 +18,6 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Category?> Create(CategoryRequest createRequest)
         {
-            if (createRequest == null) return null;
             var newCategory = new Category
             {
                 Id = createRequest.Id,
