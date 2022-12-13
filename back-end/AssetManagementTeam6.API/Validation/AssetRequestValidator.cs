@@ -18,7 +18,7 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.Specification)
                 .NotEmpty()
                 .WithMessage("Specification is required")
-                .Matches(StringPattern.Specification).WithMessage("Invalid Specification. Please try again");
+                .Matches(StringPattern.Specification).WithMessage("Specification can only contain alphabetic and numeric characters and must start with an alphabetic character.");
             //Edit
 
             RuleFor(x => x.InstalledDate)

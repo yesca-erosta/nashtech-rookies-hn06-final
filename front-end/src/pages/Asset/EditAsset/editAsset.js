@@ -7,6 +7,7 @@ import { updateData } from '../../../apiServices';
 import { ASSET } from '../../../constants';
 import styles from '../CreateAsset/createAsset.module.scss';
 import DatePicker from 'react-datepicker';
+import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -42,7 +43,9 @@ function EditAsset() {
 
     const [arrMsg, setArrMsg] = useState('');
 
+    const [loading, setLoading] = useState(false);
     const handleUpdate = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object data
         Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
@@ -65,6 +68,7 @@ function EditAsset() {
         } else {
             navigate('/manageasset');
         }
+        setLoading(false);
     };
 
     const isInputComplete = useMemo(() => {
@@ -177,6 +181,8 @@ function EditAsset() {
                     </Button>
                 </div>
             </Form>
+
+            {loading && <Loading />}
         </div>
     );
 }

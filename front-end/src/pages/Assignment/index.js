@@ -17,6 +17,7 @@ import { DetailAssignment } from './DetailAssignment/DetailAssignment';
 import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { StateFilter } from './StateFilter/StateFilter';
 import { ModalRequest } from './Modal/ModalRequest/ModalRequest';
+import { Loading } from '../../components/Loading/Loading';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -95,7 +96,7 @@ function Assignment() {
     const [assignmentId, setAssignmentId] = useState('');
 
     const handleShowDelete = (e, assignment) => {
-        if (assignment.state === 0 || assignment.state === 2) {
+        if (assignment.state === 0 || assignment.isReturning) {
             e.preventDefault();
         } else {
             setAssignmentId(assignment.id);
@@ -104,7 +105,7 @@ function Assignment() {
     };
 
     const handleShowReturning = (e, assignment) => {
-        if (assignment.state === 1 || assignment.isReturning) {
+        if (assignment.state === 1 || assignment.isReturning || assignment.state === 2) {
             e.preventDefault();
         } else {
             setAssignmentId(assignment.id);
@@ -210,7 +211,7 @@ function Assignment() {
                     key={`keyDelete_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0 || row.state === 2
+                        row.state === 0 || row.isReturning
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
@@ -221,7 +222,7 @@ function Assignment() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 1 || row.isReturning
+                        row.state === 1 || row.isReturning || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
@@ -455,7 +456,6 @@ function Assignment() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
@@ -473,6 +473,8 @@ function Assignment() {
             <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
 
             <ModalRequest showRequest={showRequest} setShowRequest={setShowRequest} handleRequest={handleRequest} />
+
+            {loading && <Loading />}
         </div>
     );
 }

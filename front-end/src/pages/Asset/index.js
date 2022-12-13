@@ -15,6 +15,7 @@ import { ASSET } from '../../constants';
 import { queryToStringForAsset } from '../../lib/helper';
 import { DetailAsset } from './DetailAsset/DetailAsset';
 import { ShowModalDelete } from './showDelete/showDelete';
+import { Loading } from '../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -61,7 +62,7 @@ function Asset() {
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
-        sort: 'AssetCodeAcsending',
+        sort: 'AssetNameAcsending',
         states: '0,1,4',
     });
 
@@ -213,7 +214,6 @@ function Asset() {
         setLoading(false);
     };
 
-    // Category
     const [categories, setCategories] = useState([]);
 
     const getDataCategory = async () => {
@@ -247,7 +247,6 @@ function Asset() {
         setTotalPageHoan(data.totalRecord);
         setAssetsHoan(data.source);
 
-        // Handle placehoderCategory
         // eslint-disable-next-line array-callback-return
         checkedCategoryHoan?.map((item) => {
             if (item.isChecked === true) {
@@ -325,8 +324,6 @@ function Asset() {
             handleSearch(search);
         }
     };
-
-    /// Hoan
 
     const [showDetail, setShowDetail] = useState(false);
     const [assetDetail, setAssetDetails] = useState('');
@@ -738,7 +735,6 @@ function Asset() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
@@ -768,11 +764,15 @@ function Asset() {
                             </Form.Label>
                         )}
 
-                        {/* TODO: */}
-                        <Form.Label>If the asset is not able to be used anymore, please update ...</Form.Label>
+                        <Form.Label>
+                            If the asset is not able to be used anymore, please update its state in{' '}
+                            <Link to={'/manageassignment'}>Assignment page</Link>
+                        </Form.Label>
                     </Form>
                 </Modal.Body>
             </Modal>
+
+            {loading && <Loading />}
         </div>
     );
 }

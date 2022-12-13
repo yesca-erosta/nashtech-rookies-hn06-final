@@ -9,6 +9,7 @@ import DataTable from 'react-data-table-component';
 import ReactPaginate from 'react-paginate';
 import { Link } from 'react-router-dom';
 import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
+import { Loading } from '../../components/Loading/Loading';
 import { USER } from '../../constants';
 import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
@@ -308,7 +309,6 @@ function User() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
@@ -341,6 +341,8 @@ function User() {
             </Modal>
 
             <ModalNotify isShowModalCantDelete={isShowModalCantDelete} setIsShowModalCantDelete={setIsShowModalCantDelete} />
+
+            {loading && <Loading />}
         </div>
     );
 }

@@ -94,7 +94,5 @@ namespace AssetManagementTeam6.API.Services.Implements
 
             return reports;
         }
-
-
     }
 }
