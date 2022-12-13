@@ -2,7 +2,7 @@ import { faCheck, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { createData, getAllDataWithFilterBox, updateData } from '../../apiServices';
 import { Loading } from '../../components/Loading/Loading';
 import { ASSIGNMENT, REQUEST_FOR_RETURNING } from '../../constants';
@@ -113,14 +113,12 @@ function Home() {
         }
     };
 
-    const navigate = useNavigate();
-
     const handleRequest = async () => {
         setLoading(true);
         await createData(REQUEST_FOR_RETURNING, { assignmentId: dataId });
 
+        getData();
         setShowRequest(false);
-        navigate('/requestforreturning');
         setLoading(false);
     };
 

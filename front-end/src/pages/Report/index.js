@@ -79,7 +79,7 @@ function Report() {
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
-                <h1>Request List</h1>
+                <h1>Report</h1>
             </div>
 
             <Button variant="danger" className={cx('btn_export')}>

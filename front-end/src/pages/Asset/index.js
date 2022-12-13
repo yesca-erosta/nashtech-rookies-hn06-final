@@ -572,8 +572,8 @@ function Asset() {
     };
 
     return (
-        <div className={cx('main tableMain')}>
-            <h4 className={cx('tableTitle')}>Asset List</h4>
+        <div className={cx('container')}>
+            <h1 style={{ color: 'red' }}>Asset List</h1>
             <div className={cx('tableExtension')}>
                 <div className={cx('filterbox')}>
                     <div>
