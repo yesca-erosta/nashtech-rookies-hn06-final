@@ -24,6 +24,8 @@ namespace AssetManagementTeam6.API.Dtos.Responses
 
         public string StaffCode { get; set; }
 
+        public bool IsReturning { get; set; }
+
         public GetAssignmentResponse(Assignment assignment)
         {
             Id = assignment.Id;
@@ -39,6 +41,7 @@ namespace AssetManagementTeam6.API.Dtos.Responses
             AssetId = assignment.AssetId;
             Specification = assignment.Asset.Specification!;
             StaffCode = assignment.AssignedTo.StaffCode!;
+            IsReturning = assignment.IsReturning;
         }
     }
 }
