@@ -13,6 +13,6 @@ namespace AssetManagementTeam6.Data.Entities
         public DateTime AssignedDate { get; set; }
         public AssignmentStateEnum State { get; set; }
         public string? Note { get; set; }
-    
+        public bool IsReturning { get; set; }
     }
 }

@@ -82,6 +82,8 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw myCustomException;
             }
 
+            assignment.IsReturning = true;
+
             var request = new RequestForReturning
             {
                 AssignmentId = createRequest.AssignmentId,
