@@ -16,6 +16,7 @@ import { StateFilterRequest } from './StateFilter/StateFilter';
 import { REQUEST_FOR_RETURNING } from '../../constants';
 import { ShowModalDelete } from './Modal/ShowModalDelete';
 import { ShowModalComplete } from './Modal/ShowModalComplete';
+import { Loading } from '../../components/Loading/Loading';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrRFR = (state) => {
@@ -429,7 +430,6 @@ function Request() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
@@ -444,6 +444,8 @@ function Request() {
                 setShowComplete={setShowComplete}
                 handleComplete={handleComplete}
             />
+
+            {loading && <Loading />}
         </div>
     );
 }

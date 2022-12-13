@@ -1,11 +1,11 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 import styles from './report.module.scss';
-
 import { Button } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { createData, getAllDataWithFilterBox } from '../../apiServices';
-// import { Excel } from 'antd-table-saveas-excel';
+import { CSVLink } from 'react-csv';
+import { Loading } from '../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -23,8 +23,8 @@ function Report() {
         },
         {
             name: 'Assigned',
-            sortable: true,
             selector: (row) => row.assigned,
+            sortable: true,
         },
         {
             name: 'Available',
@@ -52,10 +52,17 @@ function Report() {
 
     const [dataReport, setDataReport] = useState([]);
 
+    const a = dataReport.map((item) => {
+        const b = { ...item, category: item.category.name };
+        const { categoryId, id, ...otherData } = b;
+
+        return otherData;
+    });
+
     // Get Data
     const getData = async () => {
         setLoading(true);
-
+        await createData(`Report`, null);
         const data = await getAllDataWithFilterBox(`Report`);
 
         setDataReport(data);
@@ -69,21 +76,16 @@ function Report() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleExport = async () => {
-        await createData(`Report/exportdemo`);
-        //  const searchResults =
-        // const excel = new Excel();
-        // excel.addSheet('Asset').addColumns(columns).addDataSource(searchResults).saveAs('Report_Data_Team5.xlsx');
-    };
-
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
                 <h1>Request List</h1>
             </div>
 
-            <Button variant="danger" className={cx('btn_export')} onClick={() => handleExport()}>
-                Export
+            <Button variant="danger" className={cx('btn_export')}>
+                <CSVLink data={a} filename={'Report_Data'} style={{ color: 'white', textDecoration: 'none' }}>
+                    Export
+                </CSVLink>
             </Button>
 
             <div className={cx('main_table')}>
@@ -96,10 +98,10 @@ function Report() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
-                    sortServer
                 />
             </div>
+
+            {loading && <Loading />}
         </div>
     );
 }

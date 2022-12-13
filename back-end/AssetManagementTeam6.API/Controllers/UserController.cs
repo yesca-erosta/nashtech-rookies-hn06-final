@@ -53,7 +53,7 @@ namespace AssetManagementTeam6.API.Controllers
             var isExistedUser = await _userService.GetUserByUserAccount(requestModel.UserName);
 
             if (isExistedUser != null)
-                return StatusCode(409, $"The user name {requestModel.UserName} has already existed in the system");
+                return StatusCode(409, $"{requestModel.UserName} has already existed in the system");
 
             var location = _userProvider.GetLocation();
             if (location == null) return NotFound();

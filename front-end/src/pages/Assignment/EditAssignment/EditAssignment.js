@@ -12,6 +12,7 @@ import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from '../CreateAssignment/createAssignment.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
 import DatePicker from 'react-datepicker';
+import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -69,8 +70,9 @@ function EditAssignment() {
     };
 
     const [arrMsg, setArrMsg] = useState([]);
-
+    const [loading, setLoading] = useState(false);
     const handleUpdate = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
@@ -91,6 +93,7 @@ function EditAssignment() {
         } else {
             navigate('/manageassignment');
         }
+        setLoading(false);
     };
 
     const isInputComplete = useMemo(() => {
@@ -185,6 +188,7 @@ function EditAssignment() {
                     data={dataAdd}
                 />
             )}
+            {loading && <Loading />}
         </div>
     );
 }

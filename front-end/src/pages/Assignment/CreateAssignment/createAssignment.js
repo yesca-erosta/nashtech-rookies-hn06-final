@@ -12,13 +12,14 @@ import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from './createAssignment.module.scss';
 import DatePicker from 'react-datepicker';
+import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
 function CreateAssignment() {
     const navigate = useNavigate();
 
-    // Date time now
+    // NO USING: Date time now
     var dateObj = new Date();
     var month = dateObj.getUTCMonth() + 1; //months from 1-12
     if (month.toString().length === 1) {
@@ -74,24 +75,17 @@ function CreateAssignment() {
 
     const [arrMsg, setArrMsg] = useState([]);
 
+    const [loading, setLoading] = useState(false);
     const handleCreate = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        // const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
-
-        // const { assignedDate, ...otherData } = dataAdd;
-
-        // otherData.assignedDate = d;
-
         const res = await createData(ASSIGNMENT, dataAdd);
 
-        console.log('res', res);
-
         if (res.code === 'ERR_BAD_REQUEST') {
-            // TODO:
-            setArrMsg(res?.response?.data?.error);
+            setArrMsg(res?.response?.data?.errors);
 
             if (res?.response?.data?.errors?.requestModel) {
                 alert('Please input all fields');
@@ -99,8 +93,9 @@ function CreateAssignment() {
         } else {
             navigate('/manageassignment');
         }
+
+        setLoading(false);
     };
-    console.log('arrMsg', arrMsg);
 
     const isInputComplete = useMemo(() => {
         const { note, ...otherData } = dataAdd;
@@ -207,6 +202,7 @@ function CreateAssignment() {
                     data={asset}
                 />
             )}
+            {loading && <Loading />}
         </div>
     );
 }
