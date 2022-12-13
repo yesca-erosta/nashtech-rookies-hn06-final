@@ -49,5 +49,13 @@ namespace AssetManagementTeam6.API.Controllers
             var fileName = $"Report-{DateTime.UtcNow}.xlsx";
             return File(memoryStream.ToArray(), contentType, fileName);
         }
+
+        [HttpPost("exportdemo")]
+        [AuthorizeRoles(StaffRoles.Admin)]
+        public async Task<IActionResult> ExportDemo()
+        {
+            var report = await _reportService.GetListReport();
+            return Ok(report);
+        }
     }
 }

@@ -13,6 +13,7 @@ import { USER } from '../../constants';
 import { dateStrToStr, queryToString } from '../../lib/helper';
 import { ButtonCreate } from './ButtonCreate/ButtonCreate';
 import { ModalDetails } from './ModalDetails/ModalDetails';
+import { ModalNotify } from './ModalNotify/ModalNotify';
 import { SearchUser } from './SearchUser/SearchUser';
 import { TypeFilter } from './TypeFilter/TypeFilter';
 import styles from './User.module.scss';
@@ -51,9 +52,15 @@ function User() {
 
     const handleCloseRemove = () => setShowRemove(false);
 
+    const [isShowModalCantDelete, setIsShowModalCantDelete] = useState(false);
+
     const handleDisable = async (id) => {
         setLoading(true);
-        await deleteData(USER, id);
+        const deleteRecord = await deleteData(USER, id);
+
+        if (deleteRecord.code === 'ERR_BAD_REQUEST') {
+            setIsShowModalCantDelete(true);
+        }
 
         await getData();
         setUserId('');
@@ -332,6 +339,8 @@ function User() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <ModalNotify isShowModalCantDelete={isShowModalCantDelete} setIsShowModalCantDelete={setIsShowModalCantDelete} />
         </div>
     );
 }
