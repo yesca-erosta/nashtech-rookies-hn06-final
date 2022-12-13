@@ -10,12 +10,13 @@ import DataTable from 'react-data-table-component';
 import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
-import { ASSIGNMENT } from '../../constants';
+import { createData, deleteData, getAllDataWithFilterBox } from '../../apiServices';
+import { ASSIGNMENT, REQUEST_FOR_RETURNING } from '../../constants';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { DetailAssignment } from './DetailAssignment/DetailAssignment';
 import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
 import { StateFilter } from './StateFilter/StateFilter';
+import { ModalRequest } from './Modal/ModalRequest/ModalRequest';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -89,15 +90,25 @@ function Assignment() {
     };
 
     const [showDelete, setShowDelete] = useState(false);
+    const [showRequest, setShowRequest] = useState(false);
 
     const [assignmentId, setAssignmentId] = useState('');
 
     const handleShowDelete = (e, assignment) => {
-        if (assignment.state === 0) {
+        if (assignment.state === 0 || assignment.state === 2) {
             e.preventDefault();
         } else {
             setAssignmentId(assignment.id);
             setShowDelete(true);
+        }
+    };
+
+    const handleShowReturning = (e, assignment) => {
+        if (assignment.state === 1 || assignment.isReturning) {
+            e.preventDefault();
+        } else {
+            setAssignmentId(assignment.id);
+            setShowRequest(true);
         }
     };
 
@@ -109,6 +120,15 @@ function Assignment() {
         setAssignmentId('');
         setShowDelete(false);
         setLoading(false);
+    };
+
+    const handleRequest = async () => {
+        setLoading(true);
+        await createData(REQUEST_FOR_RETURNING, { assignmentId: assignmentId });
+
+        setShowRequest(false);
+        setLoading(false);
+        navigate('/requestforreturning');
     };
 
     const [showDetail, setShowDetail] = useState(false);
@@ -179,7 +199,9 @@ function Assignment() {
                     state={{ assignment: row }}
                     className={styles.customPen}
                     style={
-                        row.state === 0 || row.state === 2 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}
+                        row.state === 0 || row.state === 2
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' }
+                            : { color: 'rgb(102, 101, 101)' }
                     }
                 >
                     <FontAwesomeIcon icon={faPen} />
@@ -188,7 +210,7 @@ function Assignment() {
                     key={`keyDelete_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0
+                        row.state === 0 || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
@@ -199,12 +221,12 @@ function Assignment() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0 || row.state === 2
+                        row.state === 1 || row.isReturning
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRefresh} />
+                    <FontAwesomeIcon icon={faRefresh} onClick={(e) => handleShowReturning(e, row)} />
                 </Link>,
             ],
         },
@@ -217,6 +239,7 @@ function Assignment() {
     const [loading, setLoading] = useState(false);
 
     const [dataAssignments, setDataAssignments] = useState([]);
+
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
@@ -448,6 +471,8 @@ function Assignment() {
             />
 
             <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
+
+            <ModalRequest showRequest={showRequest} setShowRequest={setShowRequest} handleRequest={handleRequest} />
         </div>
     );
 }

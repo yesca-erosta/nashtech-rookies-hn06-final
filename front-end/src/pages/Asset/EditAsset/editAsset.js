@@ -47,13 +47,13 @@ function EditAsset() {
         // KEYSEARCH: trim all properties of an object data
         Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
 
-        const d = new Date(data.assignedDate).toLocaleDateString('fr-CA');
+        const d = new Date(data.installedDate).toLocaleDateString('fr-CA');
 
-        const { assignedDate, ...otherData } = data;
+        const { installedDate, ...otherData } = data;
 
-        otherData.assignedDate = d;
+        otherData.installedDate = d;
 
-        const res = await updateData(`${ASSET}/${asset.id}`, data);
+        const res = await updateData(`${ASSET}/${asset.id}`, otherData);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             if (res?.response?.data?.errors) {

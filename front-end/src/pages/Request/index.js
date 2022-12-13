@@ -10,9 +10,12 @@ import DataTable from 'react-data-table-component';
 import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { getAllDataWithFilterBox, updateData } from '../../apiServices';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
 import { StateFilterRequest } from './StateFilter/StateFilter';
+import { REQUEST_FOR_RETURNING } from '../../constants';
+import { ShowModalDelete } from './Modal/ShowModalDelete';
+import { ShowModalComplete } from './Modal/ShowModalComplete';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrRFR = (state) => {
@@ -85,10 +88,43 @@ function Request() {
         }
     };
 
+    const [showDelete, setShowDelete] = useState(false);
+    const [showComplete, setShowComplete] = useState(false);
+
+    const [id, setId] = useState('');
+
+    const handleShowDelete = (e, asset) => {
+        setId(asset.id);
+        setShowDelete(true);
+    };
+
+    const handleShowComplete = (e, asset) => {
+        setId(asset.id);
+        setShowComplete(true);
+    };
+
+    const handleDelete = async () => {
+        setLoading(true);
+        await updateData(`${REQUEST_FOR_RETURNING}/cancel/${id}`, id);
+
+        getData();
+        setShowDelete(false);
+        setLoading(false);
+    };
+
+    const handleComplete = async () => {
+        setLoading(true);
+        await updateData(`${REQUEST_FOR_RETURNING}/complete/${id}`, id);
+
+        getData();
+        setShowComplete(false);
+        setLoading(false);
+    };
+
     const columns = [
         {
             name: 'No.',
-            selector: (row, index) => index + 1,
+            selector: (row) => row.id,
             sortable: true,
             maxWidth: '20px',
         },
@@ -117,7 +153,7 @@ function Request() {
         },
         {
             name: 'Accepted by',
-            selector: (row) => row.acceptedBy,
+            selector: (row) => row.acceptedBy?.userName,
             sortable: true,
         },
         {
@@ -146,10 +182,10 @@ function Request() {
                     state={{ dataRequestForReturning: row }}
                     className={styles.customPen}
                     style={
-                        row.state === 0 || row.state === 2 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}
+                        row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '16px' } : { fontSize: '16px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faCheck} />
+                    <FontAwesomeIcon icon={faCheck} onClick={(e) => handleShowComplete(e, row)} />
                 </Link>,
                 <Link
                     key={`keyDelete_${row.id}`}
@@ -160,7 +196,7 @@ function Request() {
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRemove} />
+                    <FontAwesomeIcon icon={faRemove} onClick={(e) => handleShowDelete(e, row)} />
                 </Link>,
             ],
         },
@@ -169,6 +205,7 @@ function Request() {
     const [loading, setLoading] = useState(false);
 
     const [dataRequestForReturning, setDataRequestForReturning] = useState([]);
+
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
@@ -185,7 +222,6 @@ function Request() {
             `RequestForReturning/query` + queryToStringForAssignments({ ...queryParams, page: 1 }),
         );
 
-        console.log('data', data);
         setDataRequestForReturning(data.source);
         setTotalPage(data.totalRecord);
         setSelectedPage(1);
@@ -280,7 +316,7 @@ function Request() {
             case 6:
                 return 'RequestForReturningAcceptedBy';
             case 7:
-                return 'equestForReturningReturnedDate';
+                return 'RequestForReturningReturnedDate';
             case 8:
                 return 'RequestForReturningState';
             default:
@@ -393,6 +429,13 @@ function Request() {
                     onSort={handleSort}
                 />
             </div>
+
+            <ShowModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
+            <ShowModalComplete
+                showComplete={showComplete}
+                setShowComplete={handleShowComplete}
+                handleComplete={handleComplete}
+            />
 
             {/* <DetailAssignment
                 showDetail={showDetail}

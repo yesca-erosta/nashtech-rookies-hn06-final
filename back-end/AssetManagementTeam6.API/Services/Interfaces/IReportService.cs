@@ -6,5 +6,6 @@ namespace AssetManagementTeam6.API.Services.Interfaces
     {
         Task<IEnumerable<Report>> GetAll();
         Task CreateReport();
+        Task<IEnumerable<Report>> GetListReport();
     }
 }
