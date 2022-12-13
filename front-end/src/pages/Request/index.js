@@ -94,13 +94,21 @@ function Request() {
     const [id, setId] = useState('');
 
     const handleShowDelete = (e, asset) => {
-        setId(asset.id);
-        setShowDelete(true);
+        if (asset.state === 0) {
+            e.preventDefault();
+        } else {
+            setId(asset.id);
+            setShowDelete(true);
+        }
     };
 
     const handleShowComplete = (e, asset) => {
-        setId(asset.id);
-        setShowComplete(true);
+        if (asset.state === 0) {
+            e.preventDefault();
+        } else {
+            setId(asset.id);
+            setShowComplete(true);
+        }
     };
 
     const handleDelete = async () => {
@@ -177,7 +185,7 @@ function Request() {
             selector: (row) => row.null,
             cell: (row) => [
                 <Link
-                    to={row.state === 0 || row.state === 2 ? `.` : ``}
+                    to={row.state === 0 ? `.` : ``}
                     key={row.id}
                     state={{ dataRequestForReturning: row }}
                     className={styles.customPen}
@@ -433,17 +441,9 @@ function Request() {
             <ShowModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
             <ShowModalComplete
                 showComplete={showComplete}
-                setShowComplete={handleShowComplete}
+                setShowComplete={setShowComplete}
                 handleComplete={handleComplete}
             />
-
-            {/* <DetailAssignment
-                showDetail={showDetail}
-                assignmentDetail={assignmentDetail}
-                handleCloseDetail={handleCloseDetail}
-            /> */}
-
-            {/* <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} /> */}
         </div>
     );
 }

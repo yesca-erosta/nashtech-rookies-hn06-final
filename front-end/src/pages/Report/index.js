@@ -4,7 +4,8 @@ import styles from './report.module.scss';
 
 import { Button } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
-import { getAllDataWithFilterBox } from '../../apiServices';
+import { createData, getAllDataWithFilterBox } from '../../apiServices';
+// import { Excel } from 'antd-table-saveas-excel';
 
 const cx = classNames.bind(styles);
 
@@ -68,13 +69,20 @@ function Report() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const handleExport = async () => {
+        await createData(`Report/exportdemo`);
+        //  const searchResults =
+        // const excel = new Excel();
+        // excel.addSheet('Asset').addColumns(columns).addDataSource(searchResults).saveAs('Report_Data_Team5.xlsx');
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
                 <h1>Request List</h1>
             </div>
 
-            <Button variant="danger" className={cx('btn_export')}>
+            <Button variant="danger" className={cx('btn_export')} onClick={() => handleExport()}>
                 Export
             </Button>
 
