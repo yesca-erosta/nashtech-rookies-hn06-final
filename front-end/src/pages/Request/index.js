@@ -181,7 +181,9 @@ function Request() {
                     key={row.id}
                     state={{ dataRequestForReturning: row }}
                     className={styles.customPen}
-                    style={row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}}
+                    style={
+                        row.state === 0 ? { cursor: 'default', color: '#b7b7b7', fontSize: '16px' } : { fontSize: '16px' }
+                    }
                 >
                     <FontAwesomeIcon icon={faCheck} onClick={(e) => handleShowComplete(e, row)} />
                 </Link>,
