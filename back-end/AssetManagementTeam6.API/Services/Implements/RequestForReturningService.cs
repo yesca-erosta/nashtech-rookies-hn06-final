@@ -82,7 +82,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw myCustomException;
             }
 
-            assignment.IsReturning = true;
+            assignment!.IsReturning = true;
 
             var request = new RequestForReturning
             {
@@ -169,10 +169,10 @@ namespace AssetManagementTeam6.API.Services.Implements
                     requests = requests?.OrderByDescending(r => r.RequestedBy.UserName)?.ToList();
                     break;
                 case Constants.RequestForReturningAcceptedByAcsending:
-                    requests = requests?.OrderBy(r => r.AcceptedBy!.UserName)?.ToList();
+                    requests = requests?.OrderBy(r => r.AcceptedBy?.UserName)?.ToList();
                     break;
                 case Constants.RequestForReturningAcceptedByDescending:
-                    requests = requests?.OrderByDescending(r => r.AcceptedBy!.UserName)?.ToList();
+                    requests = requests?.OrderByDescending(r => r.AcceptedBy?.UserName)?.ToList();
                     break;
                 case Constants.RequestForReturningAssignedDateAcsending:
                     requests = requests?.OrderBy(r => r.Assignment.AssignedDate)?.ToList();
@@ -292,6 +292,7 @@ namespace AssetManagementTeam6.API.Services.Implements
             request.State = RequestForReturningStateEnum.Completed;
             request.ReturnedDate = DateTime.UtcNow;
             request.Assignment!.Asset!.State = AssetStateEnum.Available;
+            request.Assignment!.IsReturning = false;
             request.Assignment.State = AssignmentStateEnum.Deleted;
 
             await _assignmentRepository.Update(request.Assignment);
@@ -371,7 +372,8 @@ namespace AssetManagementTeam6.API.Services.Implements
                 throw myCustomException;
             }
 
-            await _requestForReturningRepository.Delete(request);
+            request.Assignment!.IsReturning = false;
+            _ = await _requestForReturningRepository.Delete(request);
 
             return new GetRequestForReturningResponse(request);
         }

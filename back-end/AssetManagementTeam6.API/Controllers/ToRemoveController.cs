@@ -1,7 +1,6 @@
 ﻿using AssetManagementTeam6.API.Dtos.Requests;
 using AssetManagementTeam6.API.ErrorHandling;
 using AssetManagementTeam6.API.Heplers;
-using AssetManagementTeam6.API.Reports;
 using AssetManagementTeam6.API.Services.Interfaces;
 using AssetManagementTeam6.Data.Entities;
 using Common.Constants;
@@ -88,14 +87,14 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("excel-example")]
-        public IActionResult ExportExcel()
-        {
-            var listData = _removeService.GetExportExcelData();
-            var memoryStream = new ExportExcel().ExportDataToStreamForSampleReport(listData);
-            var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-            var fileName = $"SampleReport-{Guid.NewGuid()}.xlsx";
-            return File(memoryStream.ToArray(), contentType, fileName);
-        }
+        //[HttpGet("excel-example")]
+        //public IActionResult ExportExcel()
+        //{
+        //    var listData = _removeService.GetExportExcelData();
+        //    var memoryStream = new ExportExcel().ExportDataToStreamForSampleReport(listData.ToList);
+        //    var contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+        //    var fileName = $"SampleReport-{Guid.NewGuid()}.xlsx";
+        //    return File(memoryStream.ToArray(), contentType, fileName);
+        //}
     }
 }

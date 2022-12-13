@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { useAppContext } from '../../context/RequiredAuth/authContext';
 import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
+import { Loading } from '../Loading/Loading';
 
 const Login = () => {
     const [isUserNameError, setIsUserNameError] = useState('');
@@ -29,7 +30,10 @@ const Login = () => {
         return;
     }, [userName, password]);
 
+    const [loading, setLoading] = useState(false);
     const handleLogin = async () => {
+        setLoading(true);
+
         const result = await fetch(`${BASE_URL}/Account`, {
             method: 'POST',
             headers: {
@@ -75,6 +79,8 @@ const Login = () => {
         localStorage.setItem(TOKEN_KEY, data.token);
         setOldPasswordLogin(password);
         localStorage.setItem(USER_INFORMATION, JSON.stringify(data));
+
+        setLoading(false);
     };
 
     const handleOnChangeEnter = (e) => {
@@ -108,6 +114,7 @@ const Login = () => {
                                 setIsUserNameError('');
                                 setIsLoginError(false);
                             }}
+                            onKeyUp={handleOnChangeEnter}
                         />
                         {isUserNameError && <label className="form_item_error">{isUserNameError}</label>}
                     </div>
@@ -149,6 +156,8 @@ const Login = () => {
                     {isNoResponseError && <div className="login_false">Sorry the request failed!</div>}
                 </form>
             </div>
+
+            {loading && <Loading />}
         </section>
     );
 };

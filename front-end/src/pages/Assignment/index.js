@@ -7,15 +7,17 @@ import { faPen, faRefresh, faRemove } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Col, Form, InputGroup, Row } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
+import DatePicker from 'react-datepicker';
 import { BsSearch } from 'react-icons/bs';
 import ReactPaginate from 'react-paginate';
-import { deleteData, getAllDataWithFilterBox } from '../../apiServices';
+import { createData, deleteData, getAllDataWithFilterBox } from '../../apiServices';
+import { ASSIGNMENT, REQUEST_FOR_RETURNING } from '../../constants';
 import { dateStrToStr, queryToStringForAssignments } from '../../lib/helper';
-import { StateFilter } from './StateFilter/StateFilter';
-import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
-import { ASSIGNMENT } from '../../constants';
 import { DetailAssignment } from './DetailAssignment/DetailAssignment';
-import DatePicker from 'react-datepicker';
+import { ModalDelete } from './Modal/ModalDelete/ModalDelete';
+import { StateFilter } from './StateFilter/StateFilter';
+import { ModalRequest } from './Modal/ModalRequest/ModalRequest';
+import { Loading } from '../../components/Loading/Loading';
 const cx = classNames.bind(styles);
 
 export const convertStatetoStrAsm = (state) => {
@@ -36,10 +38,10 @@ function Assignment() {
     const [date, setDate] = useState();
 
     const onChangeDate = async (date) => {
+        setLoading(true);
         const d = new Date(date).toLocaleDateString('fr-CA');
 
         setDate(date);
-        setLoading(true);
         setTimeout(async () => {
             if (date) {
                 setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: d });
@@ -89,15 +91,25 @@ function Assignment() {
     };
 
     const [showDelete, setShowDelete] = useState(false);
+    const [showRequest, setShowRequest] = useState(false);
 
     const [assignmentId, setAssignmentId] = useState('');
 
     const handleShowDelete = (e, assignment) => {
-        if (assignment.state === 0) {
+        if (assignment.state === 0 || assignment.isReturning) {
             e.preventDefault();
         } else {
             setAssignmentId(assignment.id);
             setShowDelete(true);
+        }
+    };
+
+    const handleShowReturning = (e, assignment) => {
+        if (assignment.state === 1 || assignment.isReturning || assignment.state === 2) {
+            e.preventDefault();
+        } else {
+            setAssignmentId(assignment.id);
+            setShowRequest(true);
         }
     };
 
@@ -109,6 +121,15 @@ function Assignment() {
         setAssignmentId('');
         setShowDelete(false);
         setLoading(false);
+    };
+
+    const handleRequest = async () => {
+        setLoading(true);
+        await createData(REQUEST_FOR_RETURNING, { assignmentId: assignmentId });
+
+        setShowRequest(false);
+        setLoading(false);
+        navigate('/requestforreturning');
     };
 
     const [showDetail, setShowDetail] = useState(false);
@@ -179,7 +200,9 @@ function Assignment() {
                     state={{ assignment: row }}
                     className={styles.customPen}
                     style={
-                        row.state === 0 || row.state === 2 ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' } : {}
+                        row.state === 0 || row.state === 2
+                            ? { cursor: 'default', color: '#b7b7b7', fontSize: '13px' }
+                            : { color: 'rgb(102, 101, 101)' }
                     }
                 >
                     <FontAwesomeIcon icon={faPen} />
@@ -188,7 +211,7 @@ function Assignment() {
                     key={`keyDelete_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0
+                        row.state === 0 || row.isReturning
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.5em', marginLeft: '10px' }
                             : { cursor: 'pointer', color: 'red', fontSize: '1.5em', marginLeft: '10px' }
                     }
@@ -199,12 +222,12 @@ function Assignment() {
                     key={`keyReturn_${row.id}`}
                     to={'#'}
                     style={
-                        row.state === 0 || row.state === 2
+                        row.state === 1 || row.isReturning || row.state === 2
                             ? { cursor: 'default', color: '#b7b7b7', fontSize: '1.3em', marginLeft: '10px' }
                             : { cursor: 'pointer', fontSize: '1.2em', marginLeft: '10px' }
                     }
                 >
-                    <FontAwesomeIcon icon={faRefresh} />
+                    <FontAwesomeIcon icon={faRefresh} onClick={(e) => handleShowReturning(e, row)} />
                 </Link>,
             ],
         },
@@ -217,6 +240,7 @@ function Assignment() {
     const [loading, setLoading] = useState(false);
 
     const [dataAssignments, setDataAssignments] = useState([]);
+
     const [queryParams, setQueryParams] = useState({
         page: 1,
         pageSize: 10,
@@ -390,10 +414,8 @@ function Assignment() {
                                 selected={date}
                                 className="form-control w-full"
                                 onChange={(date) => onChangeDate(date)}
-                                placeholderText="Click to select a date"
-                                disabledKeyboardNavigation
+                                placeholderText="dd/MM/yyyy"
                                 dateFormat="dd/MM/yyyy"
-                                isClearable
                             />
                         </Form.Group>
                     </InputGroup>
@@ -434,7 +456,6 @@ function Assignment() {
                     highlightOnHover
                     noDataComponent={'There are no records to display'}
                     dense
-                    progressPending={loading}
                     pagination
                     paginationComponent={CustomPagination}
                     paginationServer
@@ -450,6 +471,10 @@ function Assignment() {
             />
 
             <ModalDelete showDelete={showDelete} setShowDelete={setShowDelete} handleDelete={handleDelete} />
+
+            <ModalRequest showRequest={showRequest} setShowRequest={setShowRequest} handleRequest={handleRequest} />
+
+            {loading && <Loading />}
         </div>
     );
 }

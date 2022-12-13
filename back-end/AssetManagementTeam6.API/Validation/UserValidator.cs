@@ -21,7 +21,8 @@ namespace AssetManagementTeam6.API.Validation
                      .Cascade(CascadeMode.StopOnFirstFailure)
                      .NotNull()
                      .NotEmpty()
-                     .Matches(StringPattern.UserPassword).WithMessage("Password must match the complexity");
+                     .Matches(StringPattern.UserPasswordLength).WithMessage("The password should be 8-16 characters")
+                     .Matches(StringPattern.UserPassword).WithMessage("The password should be have 1 Capital character, 1 normal character and 1 digit");
 
                 RuleFor(x => x.UserName)
                     .Cascade(CascadeMode.StopOnFirstFailure)
@@ -33,13 +34,13 @@ namespace AssetManagementTeam6.API.Validation
                     .Cascade(CascadeMode.StopOnFirstFailure)
                     .NotNull()
                     .NotEmpty()
-                    .Matches(StringPattern.UserFirstName).WithMessage("Please input a valid name");
+                    .Matches(StringPattern.UserFirstName).WithMessage("First name can only contain alphabetic characters and must start with an alphabetic character.");
 
                 RuleFor(x => x.LastName)
                     .Cascade(CascadeMode.StopOnFirstFailure)
                     .NotNull()
                     .NotEmpty()
-                    .Matches(StringPattern.UserLastName).WithMessage("Please input a valid name");
+                    .Matches(StringPattern.UserLastName).WithMessage("Last name can only contain alphabetic characters and must start with an alphabetic character.");
             });
 
             RuleFor(x => x.DateOfBirth)

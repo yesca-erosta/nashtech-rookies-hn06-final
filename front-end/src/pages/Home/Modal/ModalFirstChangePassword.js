@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { useNavigate } from 'react-router-dom';
 import styles from '../../../components/Header/header.module.scss';
+import { Loading } from '../../../components/Loading/Loading';
 import { BASE_URL } from '../../../constants';
 import { useAppContext } from '../../../context/RequiredAuth/authContext';
 export const ModalFirstChangePassword = () => {
@@ -19,7 +21,11 @@ export const ModalFirstChangePassword = () => {
     const [isComplexityPasswordError, setIsComplexityPasswordError] = useState(false);
 
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
+    const navigate = useNavigate();
+    const handleClose = () => {
+        navigate('/login');
+        setShow(false);
+    };
 
     const toggleBtnNew = () => {
         setHideNew((pre) => !pre);
@@ -43,7 +49,10 @@ export const ModalFirstChangePassword = () => {
         return;
     }, [newPassword]);
 
+    const [loading, setLoading] = useState(false);
+
     const handleSave = async () => {
+        setLoading(true);
         const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
@@ -73,6 +82,14 @@ export const ModalFirstChangePassword = () => {
             setIsComplexityPasswordError(false);
         } else {
             setIsSamePasswordError(false);
+        }
+
+        setLoading(false);
+    };
+
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
         }
     };
 
@@ -110,6 +127,7 @@ export const ModalFirstChangePassword = () => {
                                     setIsSamePasswordError(false);
                                     setIsComplexityPasswordError(false);
                                 }}
+                                onKeyUp={handleOnChangeEnter}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
                                 {hideNew ? <AiFillEye /> : <AiFillEyeInvisible />}
@@ -151,6 +169,8 @@ export const ModalFirstChangePassword = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {loading && <Loading />}
         </>
     );
 };

@@ -7,11 +7,12 @@ import Form from 'react-bootstrap/Form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { ASSIGNMENT } from '../../../constants';
-import { dateStrToDate } from '../../../lib/helper';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from '../CreateAssignment/createAssignment.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
+import DatePicker from 'react-datepicker';
+import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -38,7 +39,7 @@ function EditAssignment() {
     const [dataAdd, setDataAdd] = useState({
         assignedToId: assignment.userId,
         assetId: assignment.assetId,
-        assignedDate: assignment.assignedDate,
+        assignedDate: new Date(assignment.assignedDate),
         note: assignment.note,
         fullName: assignment.fullName,
         assetName: assignment.assetName,
@@ -64,14 +65,23 @@ function EditAssignment() {
         setDataAdd({ ...dataAdd, [e.target.name]: e.target.value });
     };
 
-    const [arrMsg, setArrMsg] = useState([]);
+    const onChangeDate = (date) => {
+        setDataAdd({ ...dataAdd, assignedDate: date });
+    };
 
+    const [arrMsg, setArrMsg] = useState([]);
+    const [loading, setLoading] = useState(false);
     const handleUpdate = async () => {
+        setLoading(true);
         // Trim() all value dataAdd
         // KEYSEARCH: trim all properties of an object dataAdd
         Object.keys(dataAdd).map((k) => (dataAdd[k] = typeof dataAdd[k] == 'string' ? dataAdd[k].trim() : dataAdd[k]));
 
-        const { fullName, assetName, assetCode, staffCode, ...otherData } = dataAdd;
+        const d = new Date(dataAdd.assignedDate).toLocaleDateString('fr-CA');
+
+        const { fullName, assetName, assetCode, staffCode, assignedDate, ...otherData } = dataAdd;
+
+        otherData.assignedDate = d;
 
         const res = await updateData(`${ASSIGNMENT}/${assignment.id}`, otherData);
 
@@ -83,6 +93,7 @@ function EditAssignment() {
         } else {
             navigate('/manageassignment');
         }
+        setLoading(false);
     };
 
     const isInputComplete = useMemo(() => {
@@ -117,12 +128,13 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
 
-                    <Form.Control
-                        isInvalid={arrMsg?.AssignedDate}
-                        type="date"
+                    <DatePicker
                         name="assignedDate"
-                        onChange={onChange}
-                        value={dateStrToDate(dataAdd?.assignedDate)}
+                        selected={dataAdd.assignedDate}
+                        className={`${arrMsg?.AssignedDate ? 'border-danger' : ''} form-control w-full `}
+                        onChange={(date) => onChangeDate(date)}
+                        placeholderText="dd/MM/yyyy"
+                        dateFormat="dd/MM/yyyy"
                     />
                 </Form.Group>
                 {arrMsg?.AssignedDate && <p className={cx('msgErrorBg')}>{arrMsg?.AssignedDate[0]}</p>}
@@ -176,6 +188,7 @@ function EditAssignment() {
                     data={dataAdd}
                 />
             )}
+            {loading && <Loading />}
         </div>
     );
 }
