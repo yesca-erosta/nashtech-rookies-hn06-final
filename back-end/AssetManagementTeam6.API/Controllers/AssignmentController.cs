@@ -30,8 +30,6 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateAsync([FromBody] AssignmentRequest requestModel)
         {
-            try
-            {
                 var userId = _userProvider.GetUserId();
 
                 if (userId == null)
@@ -39,21 +37,16 @@ namespace AssetManagementTeam6.API.Controllers
 
                 var user = await _userService.GetUserById(userId.Value);
 
-                if (user == null) return StatusCode(500, "Sorry the request failed");
+                if (user == null) return StatusCode(400, "Sorry the request failed");
 
                 requestModel.AssignedById = user.Id;
 
                 var result = await _assignmentService.Create(requestModel);
 
                 if (result == null)
-                    return StatusCode(500, "Sorry the request failed");
+                    return StatusCode(400, "Sorry the request failed");
 
                 return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
         }
 
         [HttpGet]
@@ -62,19 +55,19 @@ namespace AssetManagementTeam6.API.Controllers
         {
             try
             {
-               var entities = await _assignmentService.GetAllAsync();
+                var entities = await _assignmentService.GetAllAsync();
 
-               return Ok(entities);
+                return Ok(entities);
             }
             catch
             {
-               return BadRequest("Bad request");
+                return BadRequest("Bad request");
             }
         }
 
         [HttpGet("query")]
         [AuthorizeRoles(StaffRoles.Admin)]
-        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states,DateTime? date, string? sort)
+        public async Task<IActionResult> Pagination(int page, int pageSize, string? valueSearch, string? states, DateTime? date, string? sort)
         {
             var listStates = new List<AssignmentStateEnum>();
 
@@ -137,82 +130,54 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(result);
         }
 
-       
+
         [HttpPut("{id}")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AssignmentRequest requestModel)
         {
-            try
-            {
-                var userId = _userProvider.GetUserId();
-                var location = _userProvider.GetLocation();
+            var userId = _userProvider.GetUserId();
+            var location = _userProvider.GetLocation();
 
-                if (userId == null && location == null) return BadRequest("Sorry the request failed");
+            if (userId == null && location == null) return BadRequest("Sorry the request failed");
 
-                var assignedTo = await _userService.GetUserById(requestModel.AssignedToId);
+            var assignedTo = await _userService.GetUserById(requestModel.AssignedToId);
 
-                if (assignedTo == null && assignedTo?.Location != location) return BadRequest("Assignee not same location");
+            if (assignedTo == null && assignedTo?.Location != location) return BadRequest("Assignee not same location");
 
-                requestModel.AssignedById = userId;
+            requestModel.AssignedById = userId;
 
-                var result = await _assignmentService.Update(id, requestModel);
+            var result = await _assignmentService.Update(id, requestModel);
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return Ok(result);
         }
 
         [HttpPut("accepted/{id}")]
         [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> AcceptedAssignment(int id)
         {
-            try
-            {
-                var result = await _assignmentService.AcceptedAssignment(id);
+            var result = await _assignmentService.AcceptedAssignment(id);
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return Ok(result);
         }
 
         [HttpPut("declined/{id}")]
         [AuthorizeRoles(StaffRoles.Staff, StaffRoles.Admin)]
         public async Task<IActionResult> DeclinedAssignment(int id)
         {
-            try
-            {
-                var result = await _assignmentService.DeclinedAssignment(id);
+            var result = await _assignmentService.DeclinedAssignment(id);
 
-                return Ok(result);
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
+            return Ok(result);
         }
 
         [HttpDelete("{id}")]
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> DeleteAsync(int id)
         {
-            try
-            {
                 var isDeleted = await _assignmentService.Delete(id);
 
                 if (!isDeleted) return StatusCode(500, "Sorry the Request failed");
 
                 return Ok();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e.Message);
-            }
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using AssetManagementTeam6.API.ErrorHandling;
-using System.Diagnostics;
 using System.Net;
-using System.Reflection.Metadata;
 using System.Text.Json;
 
 namespace AssetManagementTeam6.API.Middlewares
@@ -21,7 +19,7 @@ namespace AssetManagementTeam6.API.Middlewares
             {
                 await _next(context);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await HandleExecptionAsync(context, ex);
             }
