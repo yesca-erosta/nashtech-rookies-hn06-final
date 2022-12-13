@@ -6,8 +6,8 @@ import Form from 'react-bootstrap/Form';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { USER } from '../../../constants';
-import { dateStrToDate } from '../../../lib/helper';
 import styles from './EditUser.module.scss';
+import DatePicker from 'react-datepicker';
 
 const EditUser = () => {
     const cx = classNames.bind(styles);
@@ -15,9 +15,9 @@ const EditUser = () => {
     const { user } = location?.state;
 
     const initUser = {
-        dateOfBirth: user.dateOfBirth,
+        dateOfBirth: new Date(user.dateOfBirth),
         gender: user.gender,
-        joinedDate: user.joinedDate,
+        joinedDate: new Date(user.joinedDate),
         type: user.type === 'Staff' ? 0 : 1,
         password: '',
         userName: user.userName,
@@ -38,6 +38,10 @@ const EditUser = () => {
     const navigate = useNavigate();
 
     const onSubmit = async () => {
+        // Trim() all value dataAdd
+        // KEYSEARCH: trim all properties of an object dataAdd
+        Object.keys(data).map((k) => (data[k] = typeof data[k] == 'string' ? data[k].trim() : data[k]));
+
         const res = await updateData(`${USER}/${user.id}`, data);
 
         if (res.code === 'ERR_BAD_REQUEST') {
@@ -67,6 +71,14 @@ const EditUser = () => {
         } else {
             setData({ ...data, [e.target.name]: e.target.value });
         }
+    };
+
+    const onChangeDateOfBirth = (date) => {
+        setData({ ...data, dateOfBirth: date });
+    };
+
+    const onChangeJoinedDate = (date) => {
+        setData({ ...data, joinedDate: date });
     };
 
     const isInputComplete = useMemo(() => {
@@ -105,13 +117,22 @@ const EditUser = () => {
 
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-                        <Form.Control
+                        {/* <Form.Control
                             isInvalid={arrMsg.DateOfBirth}
                             type="date"
                             className={cx('input')}
                             name="dateOfBirth"
                             value={dateStrToDate(data.dateOfBirth)}
                             onChange={onChange}
+                        /> */}
+
+                        <DatePicker
+                            name="dateOfBirth"
+                            selected={data.dateOfBirth}
+                            className={`${arrMsg?.DateOfBirth ? 'border-danger' : ''} form-control w-full `}
+                            onChange={(date) => onChangeDateOfBirth(date)}
+                            placeholderText="dd/MM/yyyy"
+                            dateFormat="dd/MM/yyyy"
                         />
                     </Form.Group>
                     {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
@@ -141,13 +162,21 @@ const EditUser = () => {
 
                     <Form.Group className={cx('common-form')}>
                         <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-                        <Form.Control
+                        {/* <Form.Control
                             isInvalid={arrMsg.JoinedDate}
                             type="date"
                             className={cx('input')}
                             name="joinedDate"
                             value={dateStrToDate(data.joinedDate)}
                             onChange={onChange}
+                        /> */}
+                        <DatePicker
+                            name="joinedDate"
+                            selected={data.joinedDate}
+                            className={`${arrMsg?.JoinedDate ? 'border-danger' : ''} form-control w-full `}
+                            onChange={(date) => onChangeJoinedDate(date)}
+                            placeholderText="dd/MM/yyyy"
+                            dateFormat="dd/MM/yyyy"
                         />
                     </Form.Group>
                     {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}

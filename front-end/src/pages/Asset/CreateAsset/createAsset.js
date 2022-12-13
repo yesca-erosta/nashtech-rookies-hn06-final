@@ -63,7 +63,7 @@ function CreateAsset() {
 
         otherData.installedDate = d;
 
-        const res = await createData(ASSET, dataAdd);
+        const res = await createData(ASSET, otherData);
 
         if (res.code === 'ERR_BAD_REQUEST') {
             setArrMsg(res?.response?.data?.errors);
