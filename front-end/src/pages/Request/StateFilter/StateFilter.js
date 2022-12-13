@@ -5,59 +5,52 @@ import { FaFilter } from 'react-icons/fa';
 import { getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToStringForAssignments } from '../../../lib/helper';
 import styles from '../request.module.scss';
+
 export const StateFilterRequest = ({ setLoading, setQueryParams, queryParams, setDataAssignments, setTotalPage }) => {
     const cx = classNames.bind(styles);
     const [placeholderState, setPlaceholderState] = useState('State');
     const [showState, setShowState] = useState(false);
-    const [checkedState, setCheckedState] = useState({ accepted: false, waitingForAccepted: false, declined: false });
+    const [checkedState, setCheckedState] = useState({ accepted: false, waitingForReturning: false });
     const ref = useRef();
 
     const handleOkState = async () => {
         setLoading(true);
 
         let data = await getAllDataWithFilterBox(
-            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' }),
+            `RequestForReturning/query` +
+                queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
         );
 
-        if (checkedState.accepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0' });
-            data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0' }),
-            );
-            setPlaceholderState('Accepted');
-        }
-        if (checkedState.waitingForAccepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1' });
-            data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '1' }),
-            );
-            setPlaceholderState('Waiting for acceptance');
-        }
-        if (checkedState.accepted && checkedState.waitingForAccepted) {
+        if (!checkedState.completed && !checkedState.waitingForReturning) {
             setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
+                `RequestForReturning/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
             );
-            setPlaceholderState('Accepted, Waiting for acceptance');
+            setPlaceholderState('State');
         }
-        if (checkedState.accepted && checkedState.declined) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,2' });
+
+        if (checkedState.completed) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,2' }),
+                `RequestForReturning/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0' }),
             );
-            setPlaceholderState('Accepted, Declined');
+            setPlaceholderState('Completed');
         }
-        if (checkedState.waitingForAccepted && checkedState.declined) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1,2' });
+        if (checkedState.waitingForReturning) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '1' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '1,2' }),
+                `RequestForReturning/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '1' }),
             );
-            setPlaceholderState('Waiting for acceptance, Declined');
+            setPlaceholderState('Waiting for returning');
         }
-        if (checkedState.waitingForAccepted && checkedState.declined && checkedState.accepted) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' });
+        if (checkedState.completed && checkedState.waitingForReturning) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
             data = await getAllDataWithFilterBox(
-                `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1,2' }),
+                `RequestForReturning/query` +
+                    queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
             );
             setPlaceholderState('All');
         }
@@ -76,7 +69,8 @@ export const StateFilterRequest = ({ setLoading, setQueryParams, queryParams, se
         setLoading(true);
         setQueryParams({ ...queryParams, page: 1, pageSize: 10, states: '0,1' });
         const data = await getAllDataWithFilterBox(
-            `Assignment/query` + queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
+            `RequestForReturning/query` +
+                queryToStringForAssignments({ ...queryParams, page: 1, pageSize: 10, states: '0,1' }),
         );
         setPlaceholderState('State');
         setTotalPage(data.totalRecord);
@@ -122,30 +116,21 @@ export const StateFilterRequest = ({ setLoading, setQueryParams, queryParams, se
                         <div>
                             <Form.Check
                                 type={'checkbox'}
-                                label={`Accepted`}
-                                id={`accepted`}
+                                label={`Completed`}
+                                id={`completed`}
                                 value={0}
-                                name="accepted"
+                                name="completed"
                                 onChange={handleChangeCheckboxState}
-                                checked={checkedState.accepted}
+                                checked={checkedState.completed}
                             />
                             <Form.Check
                                 type={'checkbox'}
-                                label={`Waiting for accepted`}
-                                id={`waitingForAccepted`}
+                                label={`Waiting for returning`}
+                                id={`waitingForReturning`}
                                 value={1}
-                                name="waitingForAccepted"
+                                name="waitingForReturning"
                                 onChange={handleChangeCheckboxState}
-                                checked={checkedState.waitingForAccepted}
-                            />
-                            <Form.Check
-                                type={'checkbox'}
-                                label={`Declined`}
-                                id={`declined`}
-                                value={2}
-                                name="declined"
-                                onChange={handleChangeCheckboxState}
-                                checked={checkedState.declined}
+                                checked={checkedState.waitingForReturning}
                             />
                         </div>
 
