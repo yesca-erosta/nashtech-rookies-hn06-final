@@ -1,6 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './header.module.scss';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import routes from '../../config/routes';
 import { useEffect, useState } from 'react';
@@ -14,6 +14,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { AiFillEyeInvisible, AiFillEye } from 'react-icons/ai';
 import { useAppContext } from '../../context/RequiredAuth/authContext';
 import { BASE_URL, TOKEN_KEY, USER_INFORMATION } from '../../constants';
+import { Loading } from '../Loading/Loading';
 
 const cx = classNames.bind(styles);
 
@@ -36,7 +37,13 @@ function Header() {
     const handleShow = () => setShow(true);
 
     const [showSuccess, setShowSuccess] = useState(false);
-    const handleCloseSuccess = () => setShowSuccess(false);
+
+    const navigate = useNavigate();
+
+    const handleCloseSuccess = () => {
+        navigate('/login');
+        setShowSuccess(false);
+    };
 
     const [showChangePassword, setShowChangePassword] = useState(false);
     const handleCloseChangePassword = () => setShowChangePassword(false);
@@ -93,7 +100,10 @@ function Header() {
         setName(result[0][1].name);
     }, [location]);
 
+    const [loading, setLoading] = useState(false);
+
     const handleSave = async () => {
+        setLoading(true);
         const result = await fetch(`${BASE_URL}/Account`, {
             method: 'PUT',
             headers: {
@@ -126,6 +136,8 @@ function Header() {
         } else {
             setShowSuccess(false);
         }
+
+        setLoading(false);
     };
 
     return (
@@ -257,6 +269,8 @@ function Header() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            {loading && <Loading />}
         </header>
     );
 }
