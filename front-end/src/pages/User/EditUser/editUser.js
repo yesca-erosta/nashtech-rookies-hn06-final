@@ -7,11 +7,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { USER } from '../../../constants';
 import styles from './EditUser.module.scss';
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 import DatePicker from 'react-datepicker';
 import { Loading } from '../../../components/Loading/Loading';
 
 const EditUser = () => {
     const cx = classNames.bind(styles);
+    const cxx = classNames.bind(styless);
     const location = useLocation();
     const { user } = location?.state;
 
@@ -93,11 +95,13 @@ const EditUser = () => {
     return (
         <>
             <div className={cx('container')}>
-                <h3 className={cx('title')}>Edit User</h3>
+                <h3 className={cx('title')}>Edit User {<b className={cxx('asterisk')}>*</b>}</h3>
 
                 <Form>
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>First Name</Form.Label>
+                        <Form.Label className={cx('title_input')}>
+                            First Name {<b className={cxx('asterisk')}>*</b>}
+                        </Form.Label>
                         <Form.Control
                             type="text"
                             className={cx('input')}
@@ -108,7 +112,9 @@ const EditUser = () => {
                         />
                     </Form.Group>
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>Last Name</Form.Label>
+                        <Form.Label className={cx('title_input')}>
+                            Last Name {<b className={cxx('asterisk')}>*</b>}
+                        </Form.Label>
                         <Form.Control
                             type="text"
                             className={cx('input')}
@@ -120,15 +126,9 @@ const EditUser = () => {
                     </Form.Group>
 
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
-                        {/* <Form.Control
-                            isInvalid={arrMsg.DateOfBirth}
-                            type="date"
-                            className={cx('input')}
-                            name="dateOfBirth"
-                            value={dateStrToDate(data.dateOfBirth)}
-                            onChange={onChange}
-                        /> */}
+                        <Form.Label className={cx('title_input')}>
+                            Date of Birth {<b className={cxx('asterisk')}>*</b>}
+                        </Form.Label>
 
                         <DatePicker
                             name="dateOfBirth"
@@ -141,7 +141,7 @@ const EditUser = () => {
                     </Form.Group>
                     {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>Gender</Form.Label>
+                        <Form.Label className={cx('title_input')}>Gender {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                         <div key={`gender-radio`} onChange={onChange} className={cx('input-radio-gender')}>
                             <Form.Check
                                 inline
@@ -165,15 +165,10 @@ const EditUser = () => {
                     </Form.Group>
 
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
-                        {/* <Form.Control
-                            isInvalid={arrMsg.JoinedDate}
-                            type="date"
-                            className={cx('input')}
-                            name="joinedDate"
-                            value={dateStrToDate(data.joinedDate)}
-                            onChange={onChange}
-                        /> */}
+                        <Form.Label className={cx('title_input')}>
+                            Joined Date {<b className={cxx('asterisk')}>*</b>}
+                        </Form.Label>
+
                         <DatePicker
                             name="joinedDate"
                             selected={data.joinedDate}
@@ -185,7 +180,7 @@ const EditUser = () => {
                     </Form.Group>
                     {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
                     <Form.Group className={cx('common-form')}>
-                        <Form.Label className={cx('title_input')}>Type</Form.Label>
+                        <Form.Label className={cx('title_input')}>Type {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                         <Form.Select onChange={onChange} name="type" value={data.type}>
                             <option value={0} defaultValue={data.type === 0}>
                                 Staff

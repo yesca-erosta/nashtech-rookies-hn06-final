@@ -39,6 +39,7 @@ function Assignment() {
 
     const onChangeDate = async (date) => {
         setLoading(true);
+
         const d = new Date(date).toLocaleDateString('fr-CA');
 
         setDate(date);
@@ -414,7 +415,7 @@ function Assignment() {
                                 selected={date}
                                 className="form-control w-full"
                                 onChange={(date) => onChangeDate(date)}
-                                placeholderText="dd/MM/yyyy"
+                                placeholderText="Assigned Date"
                                 dateFormat="dd/MM/yyyy"
                             />
                         </Form.Group>
