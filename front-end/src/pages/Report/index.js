@@ -4,8 +4,10 @@ import styles from './report.module.scss';
 import { Button } from 'react-bootstrap';
 import DataTable from 'react-data-table-component';
 import { createData, getAllDataWithFilterBox } from '../../apiServices';
-import { CSVLink } from 'react-csv';
 import { Loading } from '../../components/Loading/Loading';
+import axios from 'axios';
+import fileDownload from 'js-file-download';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 
 const cx = classNames.bind(styles);
 
@@ -52,13 +54,6 @@ function Report() {
 
     const [dataReport, setDataReport] = useState([]);
 
-    const a = dataReport.map((item) => {
-        const b = { ...item, category: item.category.name };
-        const { categoryId, id, ...otherData } = b;
-
-        return otherData;
-    });
-
     // Get Data
     const getData = async () => {
         setLoading(true);
@@ -76,16 +71,38 @@ function Report() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const { token} = useAppContext();
+    const handleClickExport = async (url, fileName) => {
+        axios({
+            url,
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token.token}`,
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },        
+            responseType: 'blob',
+        }).then((res) => {
+            fileDownload(res.data, fileName);
+        });
+      
+    };
     return (
         <div className={cx('container')}>
             <div className={cx('title_asset')}>
                 <h1>Report</h1>
             </div>
 
-            <Button variant="danger" className={cx('btn_export')}>
-                <CSVLink data={a} filename={'Report_Data'} style={{ color: 'white', textDecoration: 'none' }}>
-                    Export
-                </CSVLink>
+            <Button
+                variant="danger"
+                className={cx('btn_export')}
+                onClick={() => handleClickExport(
+                    'https://nashtech-rookies-hn06-gr06-api.azurewebsites.net/api/Report/export',
+                    'Report.xlsx',
+                )}
+            >
+                Export
             </Button>
 
             <div className={cx('main_table')}>
