@@ -41,7 +41,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Location = LocationEnum.HN,
                 Specification = "null",
                 CategoryId = "LA",
-                //AssetCode = "LA00001",
+            
                 Category = GetCategorySample()
 
             };
@@ -52,7 +52,7 @@ namespace AssetManagementTeam6.API.Test.Services
             return new AssetRequest
             {
                 AssetName = "Laptop Sample",
-                InstalledDate = new DateTime(2022, 12, 13),
+                InstalledDate = new DateTime(2022, 12, 29),
                 State = AssetStateEnum.NotAvailable,
                 Location = LocationEnum.HN,
                 Specification = "null",
@@ -132,35 +132,35 @@ namespace AssetManagementTeam6.API.Test.Services
         public static readonly object[][] CorrectGetPagination =
        {
             //LocationEnum location, List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>(), "", "", 1, 10 },
-            new object[] { LocationEnum.HCM, new List<AssetStateEnum>(), "", "", 1, 10 },
-            new object[] { LocationEnum.DN, new List<AssetStateEnum>(), "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Assigned}, "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Available}, "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.NotAvailable, AssetStateEnum.Available}, "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.WaitingForRecycling, AssetStateEnum.Available}, "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Recycled, AssetStateEnum.Available}, "", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "laptop", "", 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameAcsending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameDescending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeAcsending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeDescending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameAcsending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameDescending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateAcsending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 10 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 2 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 2, 2 },
-            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 100, 10 },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>(), "", "", 1, 10, new List<string>(){"LA"} },
+            new object[] { LocationEnum.HCM, new List<AssetStateEnum>(), "", "", 1, 10, new List<string>()},
+            new object[] { LocationEnum.DN, new List<AssetStateEnum>(), "", "", 1, 10,new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Assigned}, "", "", 1, 10,new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.NotAvailable, AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.WaitingForRecycling, AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Recycled, AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "l", "", 1, 10, new List<string>()},
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameAcsending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetNameDescending, 1, 10, new List<string>()},
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeAcsending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCodeDescending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameAcsending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetCategoryNameDescending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateAcsending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 10, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 1, 2, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 2, 2, new List<string>() },
+            new object[] { LocationEnum.HN, new List<AssetStateEnum>() , "", Constants.AssetStateDescending, 100, 10, new List<string>() },
     };
 
         [Theory, MemberData(nameof(CorrectGetPagination))]
         public async Task GetPaginationUser_ShouldReturnNotNull(LocationEnum location, List<AssetStateEnum> assetStates, string nameToQuery
-                                                              , string sort, int page, int pageSize)
+                                                              , string sort, int page, int pageSize,List<string> categories)
         {
             //Arrange
             var assets = GetSampleAssetLists();
-            var userLocations = assets.Where(x => x.Location == location)?.ToList() ?? new List<Asset>();
+            var assetLocation = assets.Where(x => x.Location == location)?.ToList() ?? new List<Asset>();
 
             var queryModel = new PaginationQueryModel
             {
@@ -169,14 +169,14 @@ namespace AssetManagementTeam6.API.Test.Services
                 Sort = sort,
                 ValueSearch = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
                 AssetStates = assetStates,
-                
+                Categories = categories
             };
 
-            var expectedOutput = GetExpectedPaginationAssetOutput(userLocations, queryModel);
+            var expectedOutput = GetExpectedPaginationAssetOutput(assetLocation, queryModel);
             var expectedCount = expectedOutput.Source?.Count() ?? 0;
             var expectedType = expectedOutput?.Source?.GetType();
 
-            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(userLocations);
+            _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetLocation);
 
             var userService = new AssetService(_mockAssetRepository.Object,_mockCategoryRepository.Object);
 
@@ -193,12 +193,12 @@ namespace AssetManagementTeam6.API.Test.Services
         private Pagination<GetAssetResponse?> GetExpectedPaginationAssetOutput(List<Asset>? assets, PaginationQueryModel queryModel)
         {
             // filter by type
-            if (queryModel.AssetStates != null)
+            if (queryModel.AssetStates.Any())
             {
                 assets = assets?.Where(u => queryModel.AssetStates.Contains(u.State))?.ToList();
             }
 
-            if (queryModel.Categories != null)
+            if (queryModel.Categories.Any())
             {
                 assets = assets.Where(u => queryModel.Categories.Contains(u.CategoryId))?.ToList();
             }
