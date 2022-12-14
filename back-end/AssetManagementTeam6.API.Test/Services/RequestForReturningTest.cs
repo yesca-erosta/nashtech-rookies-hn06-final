@@ -267,7 +267,6 @@ namespace AssetManagementTeam6.API.Test.Services
         
         public static readonly object[][] FalseThrowException =
        {
-            //LocationEnum location, List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize
             new object[] { RequestForReturningStateEnum.Completed,new Assignment(),AssignmentStateEnum.Accepted,new Asset(),AssetStateEnum.Assigned,new User() },
             new object[] { RequestForReturningStateEnum.Completed,_assignmentSample,AssignmentStateEnum.Deleted,new Asset(),AssetStateEnum.Assigned,new User() },
             new object[] { RequestForReturningStateEnum.Completed,_assignmentSample, AssignmentStateEnum.Deleted,_assetSample,AssetStateEnum.Assigned,new User() },

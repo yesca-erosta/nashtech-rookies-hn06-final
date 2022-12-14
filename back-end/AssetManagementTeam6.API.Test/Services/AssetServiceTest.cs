@@ -124,7 +124,124 @@ namespace AssetManagementTeam6.API.Test.Services
                     Id = "PC",
                     Name = "Personal Computer"
                 }
-            }
+            },
+                new Asset
+            {
+                Id = 4,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00004",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 5,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00005",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 6,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00006",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 7,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00007",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 8,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00008",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 9,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA00009",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 10,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA000010",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 11,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA000011",
+                Category = GetCategorySample()
+
+            },
+                new Asset
+            {
+                Id = 12,
+                AssetName = "Laptop Sample",
+                InstalledDate = new DateTime(2000, 01, 13),
+                State = AssetStateEnum.NotAvailable,
+                Location = LocationEnum.HN,
+                Specification = "null",
+                CategoryId = "LA",
+                AssetCode ="LA000012",
+                Category = GetCategorySample()
+
+            },
 
         };
         }
@@ -134,7 +251,7 @@ namespace AssetManagementTeam6.API.Test.Services
             //LocationEnum location, List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize
             new object[] { LocationEnum.HN, new List<AssetStateEnum>(), "", "", 1, 10, new List<string>(){"LA"} },
             new object[] { LocationEnum.HCM, new List<AssetStateEnum>(), "", "", 1, 10, new List<string>()},
-            new object[] { LocationEnum.DN, new List<AssetStateEnum>(), "", "", 1, 10,new List<string>() },
+            new object[] { LocationEnum.DN, new List<AssetStateEnum>(), "CACACKLKLNACKL", "", 1, 10,new List<string>() },
             new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Assigned}, "", "", 1, 10,new List<string>() },
             new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
             new object[] { LocationEnum.HN, new List<AssetStateEnum>() { AssetStateEnum.NotAvailable, AssetStateEnum.Available}, "", "", 1, 10, new List<string>() },
@@ -155,7 +272,7 @@ namespace AssetManagementTeam6.API.Test.Services
     };
 
         [Theory, MemberData(nameof(CorrectGetPagination))]
-        public async Task GetPaginationUser_ShouldReturnNotNull(LocationEnum location, List<AssetStateEnum> assetStates, string nameToQuery
+        public async Task GetPaginationAsset_ShouldReturnNotNull(LocationEnum location, List<AssetStateEnum> assetStates, string nameToQuery
                                                               , string sort, int page, int pageSize,List<string> categories)
         {
             //Arrange
@@ -168,8 +285,8 @@ namespace AssetManagementTeam6.API.Test.Services
                 PageSize = pageSize,
                 Sort = sort,
                 ValueSearch = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
-                AssetStates = assetStates,
-                Categories = categories
+                AssetStates = assetStates.Count != 0 ? assetStates : null,
+                Categories = categories.Count != 0 ? categories : null
             };
 
             var expectedOutput = GetExpectedPaginationAssetOutput(assetLocation, queryModel);
@@ -178,9 +295,11 @@ namespace AssetManagementTeam6.API.Test.Services
 
             _mockAssetRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(assetLocation);
 
+            queryModel.Page = page;
+
             var userService = new AssetService(_mockAssetRepository.Object,_mockCategoryRepository.Object);
 
-            //Act
+            // act
             var testResult = await userService.GetPagination(queryModel, location);
             var count = testResult?.Source?.Count() ?? 0;
             var type = testResult?.Source?.GetType();
@@ -193,12 +312,12 @@ namespace AssetManagementTeam6.API.Test.Services
         private Pagination<GetAssetResponse?> GetExpectedPaginationAssetOutput(List<Asset>? assets, PaginationQueryModel queryModel)
         {
             // filter by type
-            if (queryModel.AssetStates.Any())
+            if (queryModel.AssetStates != null)
             {
                 assets = assets?.Where(u => queryModel.AssetStates.Contains(u.State))?.ToList();
             }
 
-            if (queryModel.Categories.Any())
+            if (queryModel.Categories != null)
             {
                 assets = assets.Where(u => queryModel.Categories.Contains(u.CategoryId))?.ToList();
             }

@@ -18,6 +18,8 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.Specification)
                 .NotEmpty()
                 .WithMessage("Specification is required")
+                .Length(255)
+                .WithMessage("Specification over 255 characters")
                 .Matches(StringPattern.Specification).WithMessage("Specification can only contain alphabetic and numeric characters and must start with an alphabetic character.");
             //Edit
 
