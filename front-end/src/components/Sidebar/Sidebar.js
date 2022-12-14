@@ -2,10 +2,13 @@ import styles from './sideBar.module.scss';
 import classNames from 'classnames/bind';
 import config from '../../config';
 import Menu, { MenuItem } from './Menu';
+import { useAppContext } from '../../context/RequiredAuth/authContext';
 
 const cx = classNames.bind(styles);
 
 function Sidebar() {
+    const { token } = useAppContext();
+
     return (
         <aside className={cx('wrapper')}>
             <div className={cx('logo')}>
@@ -18,11 +21,15 @@ function Sidebar() {
 
             <Menu>
                 <MenuItem title="Home" to={config.routes.home} />
-                <MenuItem title="Manage User" to={config.routes.user} />
-                <MenuItem title="Manage Asset" to={config.routes.asset} />
-                <MenuItem title="Manage Assignment" to={config.routes.assignment} />
-                <MenuItem title="Request for Returning" to={config.routes.requestForReturning} />
-                <MenuItem title="Report" to={config.routes.report} />
+                {token.type === 1 && (
+                    <>
+                        <MenuItem title="Manage User" to={config.routes.user} />
+                        <MenuItem title="Manage Asset" to={config.routes.asset} />
+                        <MenuItem title="Manage Assignment" to={config.routes.assignment} />
+                        <MenuItem title="Request for Returning" to={config.routes.requestForReturning} />
+                        <MenuItem title="Report" to={config.routes.report} />{' '}
+                    </>
+                )}
             </Menu>
         </aside>
     );

@@ -6,10 +6,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { updateData } from '../../../apiServices';
 import { ASSET } from '../../../constants';
 import styles from '../CreateAsset/createAsset.module.scss';
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 import DatePicker from 'react-datepicker';
 import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
+const cxx = classNames.bind(styless);
 
 function EditAsset() {
     const location = useLocation();
@@ -81,7 +83,7 @@ function EditAsset() {
 
             <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}> Name</Form.Label>
+                    <Form.Label className={cx('title_input')}> Name {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control
                         isInvalid={arrMsg?.AssetName}
                         type="text"
@@ -95,12 +97,14 @@ function EditAsset() {
                 {arrMsg?.AssetName && <p className={cx('msgErrorEdit')}>{arrMsg?.AssetName[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Category</Form.Label>
+                    <Form.Label className={cx('title_input')}>Category {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control type="text" className={cx('input')} value={asset.category.name} disabled readOnly />
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Specification</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Specification {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
                     <Form.Control
                         isInvalid={arrMsg?.Specification}
                         rows={5}
@@ -116,7 +120,9 @@ function EditAsset() {
                 </Form.Group>
                 {arrMsg?.Specification && <p className={cx('msgErrorEdit')}>{arrMsg?.Specification[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Installed Date {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
                     <DatePicker
                         name="installedDate"
                         selected={data.installedDate}
@@ -128,7 +134,7 @@ function EditAsset() {
                 </Form.Group>
                 {arrMsg?.InstalledDate && <p className={cx('msgErrorEdit')}>{arrMsg?.InstalledDate[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
+                    <Form.Label className={cx('title_input-state')}>State {<b className={cxx('asterisk')}>*</b>}</Form.Label>
 
                     <div key={`state-radio`} onChange={onChange} className={cx('input-radio-state')}>
                         <Form.Check
