@@ -77,12 +77,12 @@ namespace AssetManagementTeam6.API.Services.Implements
             var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != AssetStateEnum.Recycled && x.State != AssetStateEnum.WaitingForRecycling);
 
             // filter by type
-            if (queryModel.AssetStates.Any())
+            if (queryModel.AssetStates != null)
             {
                 assets = assets?.Where(u => queryModel.AssetStates.Contains(u.State))?.ToList();
             }
 
-            if (queryModel.Categories.Any())
+            if (queryModel.Categories != null)
             {
                 assets = assets.Where(u => queryModel.Categories.Contains(u.CategoryId))?.ToList();
             }
