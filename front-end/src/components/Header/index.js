@@ -174,7 +174,7 @@ function Header() {
                     <h3 className={cx('modal-title')}>Are you sure</h3>
                 </Modal.Header>
                 <Modal.Body>Do you want to log out?</Modal.Body>
-                <Modal.Footer style={{ justifyContent: 'flex-start' }}>
+                <Modal.Footer style={{ justifyContent: 'flex-end' }}>
                     <Button variant="danger" onClick={handleCloseRemoveAccessToken} href="/">
                         Log out
                     </Button>
