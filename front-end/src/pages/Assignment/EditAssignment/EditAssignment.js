@@ -10,11 +10,13 @@ import { ASSIGNMENT } from '../../../constants';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from '../CreateAssignment/createAssignment.module.scss';
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 import { GoTriangleDown } from 'react-icons/go';
 import DatePicker from 'react-datepicker';
 import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
+const cxx = classNames.bind(styless);
 
 function EditAssignment() {
     const location = useLocation();
@@ -106,7 +108,7 @@ function EditAssignment() {
             <h3 className={cx('title')}>Edit Assignment</h3>
             <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>User</Form.Label>
+                    <Form.Label className={cx('title_input')}>User {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
                         <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd?.fullName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
@@ -116,7 +118,7 @@ function EditAssignment() {
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Asset</Form.Label>
+                    <Form.Label className={cx('title_input')}>Asset {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
                         <Form.Control placeholder={'Enter asset'} readOnly value={dataAdd.assetName} />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
@@ -126,7 +128,9 @@ function EditAssignment() {
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Assigned Date {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
 
                     <DatePicker
                         name="assignedDate"

@@ -6,6 +6,7 @@ import Form from 'react-bootstrap/Form';
 import { useNavigate } from 'react-router-dom';
 import { createData, getAllData } from '../../../apiServices';
 import styles from './createAsset.module.scss';
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 
 import { GoTriangleDown } from 'react-icons/go';
 import { HiPlusSm } from 'react-icons/hi';
@@ -14,6 +15,7 @@ import DatePicker from 'react-datepicker';
 import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
+const cxx = classNames.bind(styless);
 
 function CreateAsset() {
     const [showCategory, setShowCategory] = useState(false);
@@ -168,7 +170,7 @@ function CreateAsset() {
 
             <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Name</Form.Label>
+                    <Form.Label className={cx('title_input')}>Name {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control
                         isInvalid={arrMsg.AssetName}
                         type="text"
@@ -181,7 +183,7 @@ function CreateAsset() {
                 </Form.Group>
                 {arrMsg.AssetName && <p className={cx('msgErrorBg')}>{arrMsg.AssetName[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Category</Form.Label>
+                    <Form.Label className={cx('title_input')}>Category {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
                         <Form.Control
                             placeholder={'Category'}
@@ -226,7 +228,9 @@ function CreateAsset() {
                 )}
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Specification</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Specification {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
                     <Form.Group className="w-100" controlId="exampleForm.ControlTextarea1">
                         <Form.Control
                             isInvalid={arrMsg.Specification}
@@ -245,7 +249,9 @@ function CreateAsset() {
                 {arrMsg.Specification && <p className={cx('msgErrorBg')}>{arrMsg.Specification[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Installed Date</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Installed Date {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
 
                     <DatePicker
                         name="installedDate"
@@ -259,7 +265,7 @@ function CreateAsset() {
                 {arrMsg.InstalledDate && <p className={cx('msgErrorBg')}>{arrMsg.InstalledDate[0]}</p>}
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input-state')}>State</Form.Label>
+                    <Form.Label className={cx('title_input-state')}>State {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <div key={`state-radio`} onChange={handleChangeAdd} className={cx('input-radio-state')}>
                         <Form.Check label="Not Available" name="state" type="radio" value={0} id={`state-radio-1`} />
                         <Form.Check label="Available" name="state" type="radio" value={1} id={`state-radio-2`} />
@@ -286,7 +292,7 @@ function CreateAsset() {
                     <div className={cx('container_title')}>Create New Category</div>
 
                     <Form.Group>
-                        <Form.Label>Category Name:</Form.Label>
+                        <Form.Label>Category Name {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                         <Form.Control
                             isInvalid={
                                 arrMsgCategoryHoan?.Name ||
@@ -303,7 +309,7 @@ function CreateAsset() {
                     )}
                     {arrMsgCategoryHoan?.Name && <p className={cx('msgError')}>{arrMsgCategoryHoan?.Name[0]}</p>}
                     <Form.Group>
-                        <Form.Label>Category ID:</Form.Label>
+                        <Form.Label>Category ID {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                         <Form.Control
                             isInvalid={
                                 arrMsgCategoryHoan?.Id ||

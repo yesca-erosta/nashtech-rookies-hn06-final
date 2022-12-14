@@ -9,8 +9,9 @@ import { USER } from '../../../constants';
 import DatePicker from 'react-datepicker';
 import styles from './createUser.module.scss';
 import { Loading } from '../../../components/Loading/Loading';
-
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 const cx = classNames.bind(styles);
+const cxx = classNames.bind(styless);
 
 function CreateUser() {
     let navigate = useNavigate();
@@ -102,7 +103,7 @@ function CreateUser() {
 
             <Form>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Username</Form.Label>
+                    <Form.Label className={cx('title_input')}>Username {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control
                         isInvalid={arrMsg.UserName}
                         type="text"
@@ -113,7 +114,7 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.UserName && <p className={cx('msgError')}>{arrMsg.UserName[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Password</Form.Label>
+                    <Form.Label className={cx('title_input')}>Password {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <div className={cx('input-new-password')}>
                         <Form.Control
                             isInvalid={arrMsg.Password}
@@ -129,7 +130,7 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.Password && <p className={cx('msgError')}>{arrMsg.Password[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>First Name</Form.Label>
+                    <Form.Label className={cx('title_input')}>First Name {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control
                         isInvalid={arrMsg.FirstName}
                         type="text"
@@ -140,7 +141,7 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.FirstName && <p className={cx('msgError')}>{arrMsg.FirstName[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Last Name</Form.Label>
+                    <Form.Label className={cx('title_input')}>Last Name {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Control
                         isInvalid={arrMsg.LastName}
                         type="text"
@@ -151,7 +152,9 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.LastName && <p className={cx('msgError')}>{arrMsg.LastName[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Date of Birth</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Date of Birth {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
 
                     <DatePicker
                         name="dateOfBirth"
@@ -164,7 +167,7 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.DateOfBirth && <p className={cx('msgError')}>{arrMsg.DateOfBirth[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Gender</Form.Label>
+                    <Form.Label className={cx('title_input')}>Gender {<b className={cxx('asterisk')}>*</b>}</Form.Label>
 
                     <div key={`gender-radio`} className={cx('input-radio-gender')}>
                         <Form.Check
@@ -190,7 +193,7 @@ function CreateUser() {
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Joined Date</Form.Label>
+                    <Form.Label className={cx('title_input')}>Joined Date {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <DatePicker
                         name="joinedDate"
                         selected={dataAdd.joinedDate}
@@ -202,7 +205,7 @@ function CreateUser() {
                 </Form.Group>
                 {arrMsg.JoinedDate && <p className={cx('msgError')}>{arrMsg.JoinedDate[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Type</Form.Label>
+                    <Form.Label className={cx('title_input')}>Type {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <Form.Select onChange={handleChangeAdd} name="type">
                         <option value={0}>Staff</option>
                         <option value={1}>Admin</option>
