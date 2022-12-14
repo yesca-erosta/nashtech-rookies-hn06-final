@@ -8,7 +8,7 @@ export const ShowModalAccepted = ({ isShowAccepted, setIsShowAccepted, handleAcc
             </Modal.Header>
             <Modal.Body>
                 <Form>
-                    <Form.Label>Do you want to accepted this assignment?</Form.Label>
+                    <Form.Label>Do you want to accept this assignment?</Form.Label>
                 </Form>
             </Modal.Body>
             <Modal.Footer>
