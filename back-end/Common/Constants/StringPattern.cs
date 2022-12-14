@@ -16,7 +16,7 @@
         #endregion
         
         #region Asset
-        public const string Specification = @"^[a-zA-Z](.{0,49})$";
+        public const string Specification = @"^.{0,255}$";
         #endregion
 
         #region Assignment
