@@ -34,7 +34,6 @@ namespace AssetManagementTeam6.API.Test.Services
                 Password = SystemFunction.CreateMD5("Admin@123"),
                 Type = StaffEnum.Admin,
             };
-
         }
 
         public static readonly object[][] CorrectUpdateData =
@@ -533,14 +532,14 @@ namespace AssetManagementTeam6.API.Test.Services
                 Page = page,
                 PageSize = pageSize,
                 Sort = sort,
-                ValueSearch = nameToQuery?.Trim()?.ToLower() ?? string.Empty,
-                Types = types,
+                ValueSearch = nameToQuery?.Trim().ToLower() ?? string.Empty,
+                Types = types.Count != 0 ? types : null,
             };
 
             var expectedOutput = GetExpectedPaginationUserOutput(userLocations, queryModel);
             var expectedCount = expectedOutput.Source?.Count() ?? 0;
             var expectedType = expectedOutput?.Source?.GetType();
-
+            queryModel.Page = page;
             _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
 
             var userService = new UserService(_mockUserRepository.Object);
@@ -558,7 +557,7 @@ namespace AssetManagementTeam6.API.Test.Services
         private Pagination<GetUserResponse?> GetExpectedPaginationUserOutput(List<User>? users, PaginationQueryModel queryModel)
         {
             // filter by type
-            if (queryModel.Types.Any())
+            if (queryModel.Types != null)
             {
                 users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
             }
@@ -568,8 +567,10 @@ namespace AssetManagementTeam6.API.Test.Services
             if (!string.IsNullOrEmpty(queryModel.ValueSearch))
             {
                 nameToQuery = queryModel.ValueSearch.Trim().ToLower();
+                               nameToQuery = queryModel.ValueSearch.Trim().ToLower();
                 users = users?.Where(u => u!.UserName!.ToLower().Contains(nameToQuery) ||
-                                        u!.StaffCode!.ToLower().Contains(nameToQuery))?.ToList();
+                                        u!.StaffCode!.ToLower().Contains(nameToQuery) ||
+                                        u!.FullName!.ToLower().Contains(nameToQuery))?.ToList();
             }
 
             //sorting

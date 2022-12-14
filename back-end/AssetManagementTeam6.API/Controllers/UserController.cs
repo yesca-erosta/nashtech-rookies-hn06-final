@@ -136,7 +136,7 @@ namespace AssetManagementTeam6.API.Controllers
             var listTypes = new List<StaffEnum>();
 
             if (!string.IsNullOrWhiteSpace(types)) 
-               {
+            {
                 var typeArr = types.Split(",");
                 foreach (string typeValue in typeArr)
                 {

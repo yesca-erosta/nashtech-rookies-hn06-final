@@ -23,7 +23,7 @@ namespace AssetManagementTeam6.Data.Entities
         public string? FullName
         {
             get { return _fullName; }
-            private set { _fullName = $"{FirstName} {LastName}"; }
+            set { _fullName = $"{FirstName} {LastName}"; }
         } 
         public string UserName { get; set; }
 
@@ -34,7 +34,7 @@ namespace AssetManagementTeam6.Data.Entities
         public string? StaffCode
         {
             get { return _staffcode; }
-            private set { _staffcode = $"SD{Id.ToString("D4")}"; }
+            set { _staffcode = $"SD{Id.ToString("D4")}"; }
         }
 
     }
