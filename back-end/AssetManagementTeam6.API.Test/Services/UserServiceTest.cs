@@ -558,7 +558,7 @@ namespace AssetManagementTeam6.API.Test.Services
         private Pagination<GetUserResponse?> GetExpectedPaginationUserOutput(List<User>? users, PaginationQueryModel queryModel)
         {
             // filter by type
-            if (queryModel.Types != null)
+            if (queryModel.Types.Count() != 0)
             {
                 users = users?.Where(u => queryModel.Types.Contains(u.Type))?.ToList();
             }
