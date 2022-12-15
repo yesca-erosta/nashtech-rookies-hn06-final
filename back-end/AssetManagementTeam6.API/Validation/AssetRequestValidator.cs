@@ -13,18 +13,15 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.AssetName)
                 .NotEmpty()
                 .WithMessage("Asset Name is required")
-                .Matches(StringPattern.Name).WithMessage("Invalid Name. Please try again");
-                //edit
+                .Matches(StringPattern.Name).WithMessage("The name can only contain alphabetic and numeric characters.");
+            //edit
             RuleFor(x => x.Specification)
                 .NotEmpty()
                 .WithMessage("Specification is required")
-                .Length(1,255)
-                .WithMessage("Specification should not be longer than 255 characters")
-                .Matches(StringPattern.Specification).WithMessage("Specification can only contain alphabetic and numeric characters and must start with an alphabetic character.");
-            //Edit
+                .MaximumLength(255).WithMessage("Specification can only contain maximum 255 alphabetic and numeric characters");
 
+            //Edit
             RuleFor(x => x.InstalledDate)
-                .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotEmpty().WithMessage("Installed Date is required")
                 .Must(Over1Month)
                 .WithMessage("Installed Date must not be over 30 days");

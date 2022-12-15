@@ -1,59 +1,59 @@
-
 // reset css
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 .tableMain {
-  width: 66vw;
+    width: 66vw;
 }
 
 .tableTitle {
-  font-size: 21px;
-  margin-top: 50px;
-  margin-bottom: 30px;
-  color: #e4010b;
-  font-weight: 700;
+    font-size: 21px;
+    margin-top: 50px;
+    margin-bottom: 30px;
+    color: #e4010b;
+    font-weight: 700;
 }
 
 .tableExtension {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 .tableExtensionLeft {
-  margin-top: 20px;
+    position: relative;
+    margin-top: 20px;
 }
 
 .tableExtensionRight {
-  display: flex;
+    display: flex;
 }
 
 .text-color {
-  color: #e4010b;
+    color: #e4010b;
 }
 
 .page-item.text-color.active .page-link.text-color {
-  color: #fff !important;
-  background-color: #e4010b !important;
+    color: #fff !important;
+    background-color: #e4010b !important;
 }
 
 @media screen and (max-width: 767px) {
-  .tableExtension {
-    display: block;
-  }
-  .tableExtensionRight {
-    display: block;
-    margin-bottom: 10px;
-  }
-  .inputSearch {
-    margin-left: 0 !important;
-  }
+    .tableExtension {
+        display: block;
+    }
+    .tableExtensionRight {
+        display: block;
+        margin-bottom: 10px;
+    }
+    .inputSearch {
+        margin-left: 0 !important;
+    }
 }
 
 .toastContainer {
-  padding-top: 90px !important;
+    padding-top: 90px !important;
 }

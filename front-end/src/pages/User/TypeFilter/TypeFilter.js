@@ -1,130 +1,160 @@
-import { useState } from 'react';
-import { Button, Dropdown, DropdownButton, Form, InputGroup } from 'react-bootstrap';
+import classNames from 'classnames/bind';
+import { useEffect, useRef, useState } from 'react';
+import { Button, Form, InputGroup } from 'react-bootstrap';
+import { FaFilter } from 'react-icons/fa';
 import { getAllDataWithFilterBox } from '../../../apiServices';
 import { queryToString } from '../../../lib/helper';
 import styles from './TypeFilter.module.scss';
 
 export const TypeFilter = ({ setDataState, setQueryParams, queryParams, setTotalRows, setLoading }) => {
-    const [arrChecked, setArrChecked] = useState({ admin: false, staff: false });
+    const cx = classNames.bind(styles);
+    const [placeholderState, setPlaceholderState] = useState('Type');
+    const [showState, setShowState] = useState(false);
 
-    const [showDropdown, setShowDropdown] = useState(false);
+    const handleState = () => {
+        setShowState((pre) => !pre);
+    };
+    const ref = useRef();
+    const [checkedStateHoan, setCheckedStateHoan] = useState({ admin: false, staff: false });
 
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
+    useEffect(() => {
+        const initSelectState = { admin: false, staff: false };
+
+        const checkIfClickedOutside = async (e) => {
+            if (showState && ref.current && !ref.current.contains(e.target)) {
+                setLoading(true);
+                setCheckedStateHoan(initSelectState);
+                setPlaceholderState('Type');
+                setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+                const data = await getAllDataWithFilterBox(
+                    `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+                );
+                setTotalRows(data.totalRecord);
+                setDataState(data.source);
+                setShowState(false);
+                setLoading(false);
+            }
+        };
+        document.addEventListener('mousedown', checkIfClickedOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', checkIfClickedOutside);
+        };
+        // I dont want render when categories changed
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showState, queryParams]);
+
+    const handleChangeCheckboxHoan = (e) => {
+        setCheckedStateHoan({ ...checkedStateHoan, [e.target.name]: e.target.checked });
     };
 
-    // TODO: still can't handle cancel
-    const onCancelType = async () => {
+    const handleOkState = async () => {
         setLoading(true);
-
-        setArrChecked({ admin: false, staff: false });
-        setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
-
-        const data = await getAllDataWithFilterBox(
-            `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
-        );
-
-        setTotalRows(data.totalRecord);
-        setDataState(data.source);
-        setShowDropdown(false);
-
-        setLoading(false);
-    };
-
-    const handleChangeCheckbox = (e, type) => {
-        setArrChecked({ ...arrChecked, [type]: e.target.checked });
-    };
-
-    const onSubmitType = async () => {
-        setLoading(true);
-
         let data = await getAllDataWithFilterBox(
             `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
         );
 
-        if (arrChecked.admin) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 1 });
+        if (checkedStateHoan.admin) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '1' });
 
             data = await getAllDataWithFilterBox(
-                `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 1 }),
+                `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '1' }),
             );
+            setPlaceholderState('Admin');
         }
-        if (arrChecked.staff) {
-            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: 0 });
+        if (checkedStateHoan.staff) {
+            setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0' });
 
             data = await getAllDataWithFilterBox(
-                `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: 0 }),
+                `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0' }),
             );
+            setPlaceholderState('Staff');
         }
-        if (arrChecked.admin && arrChecked.staff) {
+        if (checkedStateHoan.admin && checkedStateHoan.staff) {
             setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+
             data = await getAllDataWithFilterBox(
                 `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
             );
+
+            setPlaceholderState('All');
         }
+
         setTotalRows(data.totalRecord);
         setDataState(data.source);
-        setShowDropdown(false);
-
+        setShowState(false);
         setLoading(false);
     };
 
-    const displayTitleType = () => {
-        if (arrChecked.admin && arrChecked.staff) {
-            return 'All';
-        }
-        if (arrChecked.admin) {
-            return 'Admin';
-        }
-        if (arrChecked.staff) {
-            return 'Staff';
-        }
-        return 'Type';
+    const handleCancelState = async () => {
+        setLoading(true);
+        setQueryParams({ ...queryParams, page: 1, pageSize: 10, types: '0,1' });
+        const data = await getAllDataWithFilterBox(
+            `User/query` + queryToString({ ...queryParams, page: 1, pageSize: 10, types: '0,1' }),
+        );
+        setPlaceholderState('Type');
+        setTotalRows(data.totalRecord);
+        setDataState(data.source);
+        setCheckedStateHoan({ admin: false, staff: false });
+        setShowState(false);
+        setLoading(false);
     };
 
     return (
         <>
-            <Dropdown>
-                <DropdownButton
-                    variant="outline-dark"
-                    title={displayTitleType()}
-                    id="dropdown-basic"
-                    onToggle={toggleDropdown}
-                    show={showDropdown}
-                >
-                    <div className={styles.menuDropdown}>
-                        <span className={styles.typeTitle}>Select type(s)</span>
-                        <InputGroup></InputGroup>
-                        <Form.Check
-                            type={'checkbox'}
-                            id={`admin`}
-                            label={`Admin`}
-                            onChange={(e) => handleChangeCheckbox(e, 'admin')}
-                            checked={arrChecked.admin}
-                        />
-                        <Form.Check
-                            type={'checkbox'}
-                            id={`staff`}
-                            label={`Staff`}
-                            onChange={(e) => handleChangeCheckbox(e, 'staff')}
-                            checked={arrChecked.staff}
-                        />
-                        <div className={styles.wrapButton}>
-                            <Button variant="danger" size="sm" style={{ minWidth: '60px' }} onClick={onSubmitType}>
+            <div>
+                <InputGroup>
+                    <Form.Control placeholder={placeholderState} readOnly onClick={handleState} />
+
+                    <InputGroup.Text>
+                        <button className={cx('input-state')} onClick={handleState}>
+                            <FaFilter />
+                        </button>
+                    </InputGroup.Text>
+                </InputGroup>
+            </div>
+
+            {showState && (
+                <div className={cx('dropdown')} ref={ref}>
+                    <div className={cx('dropdown_container')}>
+                        <div className={cx('dropdown_title')}>Select type(s)</div>
+                        <div>
+                            <Form.Check
+                                type={'checkbox'}
+                                label={`Admin`}
+                                id={`admin`}
+                                value={1}
+                                name="admin"
+                                onChange={handleChangeCheckboxHoan}
+                                checked={checkedStateHoan.admin}
+                            />
+                            <Form.Check
+                                type={'checkbox'}
+                                label={`Staff`}
+                                id={`staff`}
+                                value={0}
+                                name="staff"
+                                onChange={handleChangeCheckboxHoan}
+                                checked={checkedStateHoan.staff}
+                            />
+                        </div>
+
+                        <div className={cx('button')}>
+                            <Button variant="danger" size="sm" className={cx('button_ok')} onClick={handleOkState}>
                                 OK
                             </Button>
                             <Button
                                 variant="outline-secondary"
                                 size="sm"
-                                className={styles.btnCancel}
-                                onClick={onCancelType}
+                                className={cx('button_cancel')}
+                                onClick={handleCancelState}
                             >
                                 Cancel
                             </Button>
                         </div>
                     </div>
-                </DropdownButton>
-            </Dropdown>
+                </div>
+            )}
         </>
     );
 };

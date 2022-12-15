@@ -27,7 +27,7 @@ function Sidebar() {
                         <MenuItem title="Manage Asset" to={config.routes.asset} />
                         <MenuItem title="Manage Assignment" to={config.routes.assignment} />
                         <MenuItem title="Request for Returning" to={config.routes.requestForReturning} />
-                        <MenuItem title="Report" to={config.routes.report} />{' '}
+                        <MenuItem title="Report" to={config.routes.report} />
                     </>
                 )}
             </Menu>

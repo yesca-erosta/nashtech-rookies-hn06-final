@@ -11,13 +11,10 @@ namespace AssetManagementTeam6.API.Validation
         public AssignmentRequestValidator()
         {
             RuleFor(x => x.AssignedDate)
-                .Cascade(CascadeMode.StopOnFirstFailure)
                 .Must(IsAssignedDate)
                 .WithMessage("The assigned date must be current date or future date");
             RuleFor(x => x.Note)
-                .Cascade(CascadeMode.StopOnFirstFailure)
-                .Matches(StringPattern.Note)
-                .WithMessage("The note should not be longer than 255 characters");
+                .MaximumLength(255).WithMessage("The note should not be longer than 255 characters");
         }
 
         protected bool IsAssignedDate(DateTime date)
