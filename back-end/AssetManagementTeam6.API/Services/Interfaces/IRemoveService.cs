@@ -7,5 +7,7 @@ namespace AssetManagementTeam6.API.Services.Interfaces
     {
         Task<Assignment> Create(AssignmentRequest createRequest);
         Task<Assignment> Update(AssignmentRequest createRequest);
+
+        Task<string> CreateTestXyz(int assignedToId, int assignedById);
     }
 }

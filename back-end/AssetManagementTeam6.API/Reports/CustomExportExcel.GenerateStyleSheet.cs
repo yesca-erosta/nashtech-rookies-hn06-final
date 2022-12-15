@@ -104,7 +104,8 @@ namespace AssetManagementTeam6.API.Reports
                     //Index 3 - Normal, all border, center align vertical
                     new CellFormat(new Alignment()
                     {
-                        Vertical = VerticalAlignmentValues.Center
+                        Vertical = VerticalAlignmentValues.Center,
+                        Horizontal = HorizontalAlignmentValues.Center,
                     })
                     { FontId = 0, FillId = 0, BorderId = 1, ApplyAlignment = true, ApplyBorder = true },
 

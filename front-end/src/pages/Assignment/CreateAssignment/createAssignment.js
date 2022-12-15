@@ -11,10 +11,12 @@ import { ASSIGNMENT } from '../../../constants';
 import { ModalAsset } from '../Modal/ModalAsset/ModalAsset';
 import { ModalUser } from '../Modal/ModalUser/ModalUser';
 import styles from './createAssignment.module.scss';
+import styless from '../../../components/scssAsterisk/assterisk.module.scss';
 import DatePicker from 'react-datepicker';
 import { Loading } from '../../../components/Loading/Loading';
 
 const cx = classNames.bind(styles);
+const cxx = classNames.bind(styless);
 
 function CreateAssignment() {
     const navigate = useNavigate();
@@ -108,7 +110,7 @@ function CreateAssignment() {
 
             <Form className={cx('form')}>
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>User</Form.Label>
+                    <Form.Label className={cx('title_input')}>User {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
                         <Form.Control
                             placeholder={'Enter user'}
@@ -124,7 +126,7 @@ function CreateAssignment() {
                 </Form.Group>
 
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Asset</Form.Label>
+                    <Form.Label className={cx('title_input')}>Asset {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
                         <Form.Control
                             isInvalid={arrMsg?.Asset}
@@ -140,7 +142,9 @@ function CreateAssignment() {
                 </Form.Group>
                 {arrMsg?.Asset && <p className={cx('msgErrorBg')}>{arrMsg?.Asset[0]}</p>}
                 <Form.Group className={cx('common-form')}>
-                    <Form.Label className={cx('title_input')}>Assigned Date</Form.Label>
+                    <Form.Label className={cx('title_input')}>
+                        Assigned Date {<b className={cxx('asterisk')}>*</b>}
+                    </Form.Label>
                     <DatePicker
                         name="assignedDate"
                         selected={dataAdd.assignedDate}

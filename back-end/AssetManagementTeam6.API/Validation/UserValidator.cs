@@ -18,36 +18,30 @@ namespace AssetManagementTeam6.API.Validation
             RuleSet("CreateUser", () =>
             {
                 RuleFor(x => x.Password)
-                     .Cascade(CascadeMode.StopOnFirstFailure)
                      .NotNull()
                      .NotEmpty()
                      .Matches(StringPattern.UserPassword).WithMessage("Password must be at least 8 characters and contain at least 1 capital letter and a number");
 
                 RuleFor(x => x.UserName)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
                     .NotNull()
                     .NotEmpty()
                     .Matches(StringPattern.UserName).WithMessage("The user name must be from 6 to 50 characters, can contain only alphabetic  and numeric characters, and must start with an alphabetic character.");
 
                 RuleFor(x => x.FirstName)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
                     .NotNull()
                     .NotEmpty()
                     .Matches(StringPattern.UserFirstName).WithMessage("First name can only contain alphabetic characters and must start with an alphabetic character.");
 
                 RuleFor(x => x.LastName)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
                     .NotNull()
                     .NotEmpty()
                     .Matches(StringPattern.UserLastName).WithMessage("Last name can only contain alphabetic characters and must start with an alphabetic character.");
             });
 
             RuleFor(x => x.DateOfBirth)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
                     .Must(BeOver18).WithMessage("User is under 18. Please select a different date.");
 
             RuleFor(m => m.JoinedDate)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
                     .GreaterThan(m => m.DateOfBirth).WithMessage("Joined date is not later than Date of Birth. Please select a different date.")
                     .Must(CheckWeekend).WithMessage("Joined date is Saturday or Sunday. Please select a different date.");
         }

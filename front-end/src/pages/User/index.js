@@ -330,7 +330,7 @@ function User() {
                         <Form.Label>Do you want to disable this user?</Form.Label>
                     </Form>
                 </Modal.Body>
-                <Modal.Footer style={{ justifyContent: 'flex-start' }}>
+                <Modal.Footer style={{ justifyContent: 'flex-end' }}>
                     <Button variant="danger" onClick={() => handleDisable(userId)}>
                         Disable
                     </Button>

@@ -121,5 +121,17 @@ namespace AssetManagementTeam6.API.Services.Implements
         {
             throw new MyCustomException(HttpStatusCode.Conflict, "The data has changed"); 
         }
+
+        public async Task<string> CreateTestXyz(int assignedToId, int assignedById)
+        {
+            var assignedTo = await _userRepository.GetOneAsync(u => u.Id == assignedToId);
+
+            var assignedBy = await _userRepository.GetOneAsync(u => u.Id == assignedById);
+
+            if (assignedTo == null || assignedBy == null)
+                return "Data invalid";
+
+            return $"assignedTo: {assignedTo.UserName} - assignedBy: {assignedBy.UserName}";
+        }
     }
 }

@@ -385,7 +385,7 @@ namespace AssetManagementTeam6.API.Test.Services
             var users = GetSampleUserLists();
             var userLocations = users.Where(x => x.Location == location)?.ToList() ?? new List<User>();
             var expectedType = typeof(List<GetUserResponse>);
-            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
+            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(users);
             var userService = new UserService(_mockUserRepository.Object);
             var expectedCount = userLocations.Count();
 
@@ -409,7 +409,7 @@ namespace AssetManagementTeam6.API.Test.Services
             // Arrange
             var users = new List<User>();
             var userLocations = users.Where(x => x.Location == location)?.ToList() ?? new List<User>();
-            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(userLocations);
+            _mockUserRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(users);
             var service = new UserService(_mockUserRepository.Object);
 
             // Act
