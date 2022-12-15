@@ -1,18 +1,68 @@
 .menuDropdown {
-  padding: 0 10px 10px 10px !important;
+    padding: 0 10px 10px 10px !important;
 }
 
 .wrapButton {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
 }
 
 .typeTitle {
-  color: red;
-  font-weight: bold;
+    color: red;
+    font-weight: bold;
 }
 
 .btnCancel {
-  border: solid 1px #000 !important;
+    border: solid 1px #000 !important;
+}
+
+.input-state,
+.input-category {
+    border: none;
+    background-color: transparent;
+}
+.filter_category {
+    margin-left: 76px;
+}
+
+.input_search {
+    border: none;
+    background-color: transparent;
+}
+
+.modalTitle {
+    font-size: 20px !important;
+}
+
+.dropdown {
+    position: absolute;
+    border: 1px solid #b7b7b7;
+    border-radius: 6px;
+    width: 186px;
+    right: 0;
+    background-color: #fff;
+    margin-top: 2px;
+    z-index: 1;
+    .dropdown_container {
+        margin: 16px;
+
+        .dropdown_title {
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #cf2338;
+        }
+
+        .button {
+            margin-top: 10px;
+
+            .button_ok {
+                width: 50px;
+            }
+
+            .button_cancel {
+                margin-left: 10px;
+            }
+        }
+    }
 }

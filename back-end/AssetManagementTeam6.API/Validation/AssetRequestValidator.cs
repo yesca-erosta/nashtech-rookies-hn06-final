@@ -13,7 +13,7 @@ namespace AssetManagementTeam6.API.Validation
             RuleFor(x => x.AssetName)
                 .NotEmpty()
                 .WithMessage("Asset Name is required")
-                .Matches(StringPattern.Name).WithMessage("Invalid Name. Please try again");
+                .Matches(StringPattern.Name).WithMessage("The name can only contain alphabetic and numeric characters.");
             //edit
             RuleFor(x => x.Specification)
                 .NotEmpty()
