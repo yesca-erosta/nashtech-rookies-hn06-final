@@ -129,7 +129,6 @@ namespace AssetManagementTeam6.API.Services.Implements
                                         u!.RequestedBy.UserName!.ToLower().Contains(nameToQuery)).ToList();
             }
 
-            //TODO: filter request for returning by state or returned date
             if (queryModel.RequestForReturningState != null)
             {
                 requests = requests?.Where(r => queryModel.RequestForReturningState.Contains(r.State))?.ToList();
