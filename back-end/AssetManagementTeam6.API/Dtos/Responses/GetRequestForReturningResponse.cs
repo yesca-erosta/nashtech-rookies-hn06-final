@@ -1,8 +1,10 @@
 ﻿using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Responses
 {
+    [ExcludeFromCodeCoverage]
     public class GetRequestForReturningResponse
     {
         public int Id { get; set; }
