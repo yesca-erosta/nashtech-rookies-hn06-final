@@ -53,7 +53,16 @@ export const DetailAsset = ({ showDetail, assetDetail, handleCloseDetail }) => {
                         Specification
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assetDetail.specification} readOnly disabled />
+                        <Form.Control
+                            type="text"
+                            placeholder={assetDetail.specification}
+                            name="specification"
+                            as="textarea"
+                            rows={3}
+                            cols={40}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
 

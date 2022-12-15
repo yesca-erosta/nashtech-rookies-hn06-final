@@ -31,7 +31,7 @@
     border-radius: 100%;
     display: inline-block;
     border: solid 0.3rem;
-    border-color: transparent #314284 #314284 transparent;
+    border-color: transparent red red transparent;
     animation: spinner_animation 0.9s linear infinite;
 }
 .spinner::after {
@@ -41,7 +41,7 @@
     height: 2rem;
     border-radius: 100%;
     border: solid 0.3rem;
-    border-color: #314284 transparent transparent transparent;
+    border-color: red transparent transparent transparent;
     position: absolute;
     top: 50%;
     left: 50%;
