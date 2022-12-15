@@ -86,7 +86,16 @@ export const DetailAssignment = ({ showDetail, assignmentDetail, handleCloseDeta
                         Note
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.note} readOnly disabled />
+                        <Form.Control
+                            placeholder={assignmentDetail.note}
+                            type="text"
+                            name="specification"
+                            as="textarea"
+                            rows={3}
+                            cols={40}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
             </Modal.Body>

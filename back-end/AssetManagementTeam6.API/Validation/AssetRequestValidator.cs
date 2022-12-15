@@ -22,7 +22,6 @@ namespace AssetManagementTeam6.API.Validation
 
             //Edit
             RuleFor(x => x.InstalledDate)
-                .Cascade(CascadeMode.StopOnFirstFailure)
                 .NotEmpty().WithMessage("Installed Date is required")
                 .Must(Over1Month)
                 .WithMessage("Installed Date must not be over 30 days");

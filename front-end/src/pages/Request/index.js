@@ -35,12 +35,12 @@ function Request() {
     const [date, setDate] = useState();
 
     const onChangeDate = async (date) => {
-        setLoading(true);
-
+        
         const d = new Date(date).toLocaleDateString('fr-CA');
-
+        
         setDate(date);
         setTimeout(async () => {
+            setLoading(true);
             if (date) {
                 setQueryParams({ ...queryParams, page: 1, pageSize: 10, date: d });
                 const data = await getAllDataWithFilterBox(
