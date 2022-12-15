@@ -49,6 +49,71 @@ namespace AssetManagementTeam6.API.Controllers
             return Ok(output);
         }
 
+        [HttpGet("assignment")]
+        public IActionResult FakeAssignment()
+        {
+            var output = new List<Assignment>();
+            for (int i = 0; i < 35; i++)
+            {
+                output.Add(new Assignment
+                {
+                    AssignedDate = DateTime.Now,
+                    Note = $"Assignment {i}",
+                    IsReturning = i%2==0 ? true : false,
+                    State = (AssignmentStateEnum) (i%3),
+                    Id = i,
+                    AssetId = 1,
+                    AssignedToId = 2,
+                    AssignedById = 1,
+                    Asset = new Asset
+                    {
+                        Id = 1,
+                        AssetName = $"Laptop Sample {i}",
+                        InstalledDate = new DateTime(2000, 01, 13),
+                        State = AssetStateEnum.NotAvailable,
+                        Location = LocationEnum.HN,
+                        Specification = "null",
+                        CategoryId = "LA",
+
+                        Category = new Category
+                        {
+                            Id = "LA",
+                            Name = "Laptop"
+                        }
+                    },
+                    AssignedBy = new User
+                    {
+                        Id = 1,
+                        UserName = $"dongnp13{i}",
+                        FirstName = "Dong",
+                        LastName = "Nguyen Phuong",
+                        DateOfBirth = new DateTime(2000, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2010, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Admin,
+                    },
+                    AssignedTo = new User
+                    {
+                        Id = 2,
+                        UserName = $"tineship{i}",
+                        FirstName = "Tien",
+                        LastName = "Nguyen",
+                        DateOfBirth = new DateTime(1999, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2012, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Staff,
+                    }
+                });
+            };
+            return Ok(output);
+        }
+
         [HttpPost("assigment")]
         public async Task<IActionResult> CreateNewAssigment([FromBody] AssignmentRequest requestModel)
         {

@@ -1,8 +1,6 @@
 ﻿using AssetManagementTeam6.API.Services.Implements;
 using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
-using Common.Constants;
-using Common.Enums;
 using Moq;
 using System.Linq.Expressions;
 
