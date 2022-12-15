@@ -31,7 +31,16 @@ export const DetailAssignment = ({ showDetail, assignmentDetail, handleCloseDeta
                         Specification
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.specification} readOnly disabled />
+                        <Form.Control
+                            type="text"
+                            placeholder={assignmentDetail.specification}
+                            name="specification"
+                            as="textarea"
+                            rows={3}
+                            cols={40}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
                 <Row className="mt-3">
@@ -89,7 +98,7 @@ export const DetailAssignment = ({ showDetail, assignmentDetail, handleCloseDeta
                         <Form.Control
                             placeholder={assignmentDetail.note}
                             type="text"
-                            name="specification"
+                            name="note"
                             as="textarea"
                             rows={3}
                             cols={40}
