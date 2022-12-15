@@ -27,7 +27,6 @@ namespace AssetManagementTeam6.Data.Entities
         } 
         public string UserName { get; set; }
 
-        // TODO: type hash password
         public string Password { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

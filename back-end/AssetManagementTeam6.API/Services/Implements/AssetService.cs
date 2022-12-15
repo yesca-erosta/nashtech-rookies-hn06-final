@@ -73,7 +73,6 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Pagination<GetAssetResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
         {
-            // TODO: get list assets not set with location
             var assets = await _assetRepository.GetListAsync(x => x.Location == location && x.State != AssetStateEnum.Recycled && x.State != AssetStateEnum.WaitingForRecycling);
 
             // filter by type
@@ -168,6 +167,16 @@ namespace AssetManagementTeam6.API.Services.Implements
         public async Task<Asset?> Update(int id, AssetRequest updateRequest)
         {
             var updatedAssert = await _assetRepository.GetOneAsync(x => x.Id == id);
+
+            var now = DateTime.Now;
+
+            var dateCompare = DateTime.Compare(now, updateRequest.InstalledDate);
+
+            if (dateCompare < 0)
+            {
+                updateRequest.State = AssetStateEnum.NotAvailable;
+            }
+
             if (updatedAssert == null) return null;
 
             {

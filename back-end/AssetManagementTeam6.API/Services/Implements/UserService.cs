@@ -99,7 +99,6 @@ namespace AssetManagementTeam6.API.Services.Implements
 
         public async Task<Pagination<GetUserResponse?>> GetPagination(PaginationQueryModel queryModel, LocationEnum location)
         {
-            // TODO: get list users not set with location
             var users = await _userRepository.GetListAsync(x => x.Location == location);
 
             // filter by type
