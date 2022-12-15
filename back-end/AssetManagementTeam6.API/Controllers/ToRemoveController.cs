@@ -6,12 +6,14 @@ using AssetManagementTeam6.Data.Entities;
 using Common.Constants;
 using Common.Enums;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 
 namespace AssetManagementTeam6.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class ToRemoveController : ControllerBase
     {
         private readonly IRemoveService _removeService;

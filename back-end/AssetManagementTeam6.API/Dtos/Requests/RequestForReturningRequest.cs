@@ -1,7 +1,9 @@
 ﻿using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.API.Dtos.Requests
 {
+    [ExcludeFromCodeCoverage]
     public class RequestForReturningRequest
     {
         public int AssignmentId { get; set; }

@@ -1,9 +1,10 @@
 ﻿using Common.Enums;
-using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Claims;
 
 namespace AssetManagementTeam6.API.Heplers
 {
+    [ExcludeFromCodeCoverage]
     public class UserProvider : IUserProvider
     {
         private readonly ClaimsIdentity? _identity;
