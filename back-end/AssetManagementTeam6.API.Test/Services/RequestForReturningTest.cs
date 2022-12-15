@@ -89,6 +89,200 @@ namespace AssetManagementTeam6.API.Test.Services
                 Name = "Laptop"
             }
         };
+        public List<RequestForReturning> GetListRfrSample ()
+        {
+            return new List<RequestForReturning>
+            {
+                new RequestForReturning()
+            {
+                ReturnedDate = DateTime.Now,
+                State = RequestForReturningStateEnum.WaitingForReturning,
+                Id = 1,
+                AssignmentId = 1,
+                RequestedById = 1,
+                AcceptedById = 2,
+                Assignment = new Assignment
+                {
+                    AssignedDate = DateTime.Now,
+                    Note = "Assignment 1",
+                    IsReturning = false,
+                    State = AssignmentStateEnum.WaitingForAcceptance,
+                    Id = 1,
+                    AssetId = 1,
+                    AssignedToId = 2,
+                    AssignedById = 1,
+                    Asset = new Asset
+                    {
+                        Id = 1,
+                        AssetName = "Laptop Sample",
+                        InstalledDate = new DateTime(2000, 01, 13),
+                        State = AssetStateEnum.NotAvailable,
+                        Location = LocationEnum.HN,
+                        Specification = "null",
+                        CategoryId = "LA",
+                        AssetCode = "LA00001",
+
+                        Category = new Category
+                        {
+                            Id = "LA",
+                            Name = "Laptop"
+                        }
+                    },
+                    AssignedBy = new User
+                    {
+                        Id = 1,
+                        UserName = "dongnp13",
+                        FirstName = "Dong",
+                        LastName = "Nguyen Phuong",
+                        DateOfBirth = new DateTime(2000, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2010, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Admin,
+                    },
+                    AssignedTo = new User
+                    {
+                        Id = 2,
+                        UserName = "tineship",
+                        FirstName = "Tien",
+                        LastName = "Nguyen",
+                        DateOfBirth = new DateTime(1999, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2012, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Staff,
+                    }
+                },
+                RequestedBy = new User
+                {
+                    Id = 2,
+                    UserName = "tineship",
+                    FirstName = "Tien",
+                    LastName = "Nguyen",
+                    DateOfBirth = new DateTime(1999, 01, 13),
+                    Gender = GenderEnum.Male,
+                    JoinedDate = new DateTime(2012, 10, 10),
+                    Location = LocationEnum.HN,
+                    NeedUpdatePwdOnLogin = true,
+                    Password = SystemFunction.CreateMD5("Admin@123"),
+                    Type = StaffEnum.Staff,
+                },
+                AcceptedBy = new User
+                {
+                    Id = 1,
+                    UserName = "dongnp13",
+                    FirstName = "Dong",
+                    LastName = "Nguyen Phuong",
+                    DateOfBirth = new DateTime(2000, 01, 13),
+                    Gender = GenderEnum.Male,
+                    JoinedDate = new DateTime(2010, 10, 10),
+                    Location = LocationEnum.HN,
+                    NeedUpdatePwdOnLogin = true,
+                    Password = SystemFunction.CreateMD5("Admin@123"),
+                    Type = StaffEnum.Admin,
+                },
+            }
+,
+                new RequestForReturning()
+            {
+                ReturnedDate = DateTime.Now,
+                State = RequestForReturningStateEnum.WaitingForReturning,
+                Id = 1,
+                AssignmentId = 1,
+                RequestedById = 1,
+                AcceptedById = 2,
+                Assignment = new Assignment
+                {
+                    AssignedDate = DateTime.Now,
+                    Note = "Assignment 1",
+                    IsReturning = false,
+                    State = AssignmentStateEnum.WaitingForAcceptance,
+                    Id = 1,
+                    AssetId = 1,
+                    AssignedToId = 2,
+                    AssignedById = 1,
+                    Asset = new Asset
+                    {
+                        Id = 1,
+                        AssetName = "Laptop Sample",
+                        InstalledDate = new DateTime(2000, 01, 13),
+                        State = AssetStateEnum.NotAvailable,
+                        Location = LocationEnum.HN,
+                        Specification = "null",
+                        CategoryId = "LA",
+                        AssetCode = "LA00002",
+
+                        Category = new Category
+                        {
+                            Id = "LA",
+                            Name = "Laptop"
+                        }
+                    },
+                    AssignedBy = new User
+                    {
+                        Id = 1,
+                        UserName = "dongnp13",
+                        FirstName = "Dong",
+                        LastName = "Nguyen Phuong",
+                        DateOfBirth = new DateTime(2000, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2010, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Admin,
+                    },
+                    AssignedTo = new User
+                    {
+                        Id = 2,
+                        UserName = "tineship",
+                        FirstName = "Tien",
+                        LastName = "Nguyen",
+                        DateOfBirth = new DateTime(1999, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2012, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Staff,
+                    }
+                },
+                RequestedBy = new User
+                {
+                    Id = 2,
+                    UserName = "tineship",
+                    FirstName = "Tien",
+                    LastName = "Nguyen",
+                    DateOfBirth = new DateTime(1999, 01, 13),
+                    Gender = GenderEnum.Male,
+                    JoinedDate = new DateTime(2012, 10, 10),
+                    Location = LocationEnum.HN,
+                    NeedUpdatePwdOnLogin = true,
+                    Password = SystemFunction.CreateMD5("Admin@123"),
+                    Type = StaffEnum.Staff,
+                },
+                AcceptedBy = new User
+                {
+                    Id = 1,
+                    UserName = "dongnp13",
+                    FirstName = "Dong",
+                    LastName = "Nguyen Phuong",
+                    DateOfBirth = new DateTime(2000, 01, 13),
+                    Gender = GenderEnum.Male,
+                    JoinedDate = new DateTime(2010, 10, 10),
+                    Location = LocationEnum.HN,
+                    NeedUpdatePwdOnLogin = true,
+                    Password = SystemFunction.CreateMD5("Admin@123"),
+                    Type = StaffEnum.Admin,
+                },
+            }
+
+        };
+        }
 
         public RequestForReturningTest()
         {
@@ -444,5 +638,185 @@ namespace AssetManagementTeam6.API.Test.Services
             Assert.Equal(result.RequestedBy, _sample.RequestedBy);
             Assert.Equal(result.ReturnedDate, _sample.ReturnedDate);
         }
+
+        public static readonly object[][] CorrectGetPagination =
+{
+            //List types, string nameToQuery, string sort, int page, int pageSize, DateTime date
+            new object[] { new List<RequestForReturningStateEnum>(), "", Constants.RequestForReturningIdAcsending, 1, 10, DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>(), "a", Constants.RequestForReturningIdAcsending, 1, 10, DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>(), "", Constants.RequestForReturningIdDescending, 1, 10, DateTime.UtcNow},
+            new object[] { new List<RequestForReturningStateEnum>(), "", Constants.RequestForReturningCodeAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() { RequestForReturningStateEnum.Completed}, "", Constants.RequestForReturningCodeDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() { RequestForReturningStateEnum.WaitingForReturning }, "", Constants.RequestForReturningNameAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() { RequestForReturningStateEnum.Completed, RequestForReturningStateEnum.WaitingForReturning}, "", "", 1, 10, DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningNameDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningRequestedByAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningRequestedByDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningAssignedDateAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningAssignedDateDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningAcceptedByAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningAcceptedByDescending, 1, 10 , DateTime.UtcNow},
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningReturnedDateAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningReturnedDateDescending, 1, 2 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningStateAcsending, 1, 2 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", Constants.RequestForReturningStateDescending, 1, 2 , DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>() , "", "", 2, 2 ,DateTime.UtcNow},
+            new object[] { new List<RequestForReturningStateEnum>() , "", "", 100, 10,DateTime.UtcNow },
+            new object[] { new List<RequestForReturningStateEnum>(), "", "", 1, 10 , new DateTime(2000,01, 13)},
+        };
+
+        [Theory, MemberData(nameof(CorrectGetPagination))]
+        public async Task GetPaginationUser_ShouldReturnNotNull(List<RequestForReturningStateEnum> states, string nameToQuery
+                                                                , string sort, int page, int pageSize, DateTime? date)
+        {
+            //Arrange
+            var rfrList = GetListRfrSample();
+
+            var queryModel = new PaginationQueryModel
+            {
+                Page = page,
+                PageSize = pageSize,
+                Sort = sort,
+                ValueSearch = nameToQuery?.Trim().ToLower() ?? string.Empty,
+                RequestForReturningState = states.Count != 0 ? states : null,
+                FilterByReturnedDates = date
+            };
+
+            var expectedOutput = GetExpectedPaginationRfrOutput(rfrList, queryModel);
+            var expectedCount = expectedOutput.Source?.Count() ?? 0;
+            var expectedType = expectedOutput?.Source?.GetType();
+            queryModel.Page = page;
+
+            _mockRequestForReturningRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<RequestForReturning, bool>>>())).ReturnsAsync(rfrList);
+
+            var requestForReturnService = new RequestForReturningService(_mockRequestForReturningRepository.Object,
+               _mockAssignmentRepository.Object, _mockUserRepository.Object);
+
+            //Act
+            var testResult = await requestForReturnService.GetPagination(queryModel);
+            var count = testResult?.Source?.Count() ?? 0;
+            var type = testResult?.Source?.GetType();
+
+            Assert.NotNull(testResult);
+            Assert.Equal(expectedCount, count);
+            Assert.Equal(expectedType, type);
+        }
+        public bool GetFilterByReturnedDate(RequestForReturning r, PaginationQueryModel queryModel)
+        {
+            if (r.ReturnedDate.HasValue)
+            {
+                var resultDay = r.ReturnedDate.Value.Day;
+                var resultMonth = r.ReturnedDate.Value.Month;
+                var resultYear = r.ReturnedDate.Value.Year;
+
+                return resultDay.Equals(queryModel.FilterByReturnedDates.Value.Day)
+                    && resultMonth.Equals(queryModel.FilterByReturnedDates.Value.Month)
+                    && resultYear.Equals(queryModel.FilterByReturnedDates.Value.Year);
+            }
+            return false;
+        }
+        public Pagination<GetRequestForReturningResponse?> GetExpectedPaginationRfrOutput(List<RequestForReturning>? requests, PaginationQueryModel queryModel)
+        {
+            // search assignment by assetcode or assetname or assignee
+            var nameToQuery = "";
+            if (!string.IsNullOrEmpty(queryModel.ValueSearch))
+            {
+                nameToQuery = queryModel.ValueSearch.Trim().ToLower();
+
+                requests = requests?.Where(u => u!.Assignment.Asset.AssetCode!.ToLower().Contains(nameToQuery) ||
+                                        u!.Assignment.Asset.AssetName!.ToLower().Contains(nameToQuery) ||
+                                        u!.RequestedBy.UserName!.ToLower().Contains(nameToQuery)).ToList();
+            }
+
+            if (queryModel.RequestForReturningState != null)
+            {
+                requests = requests?.Where(r => queryModel.RequestForReturningState.Contains(r.State))?.ToList();
+            }
+            if (queryModel.FilterByReturnedDates != null)
+            {
+                requests = requests?.Where(r => GetFilterByReturnedDate(r, queryModel)).ToList();
+            }
+
+            // sorting
+            var sortOption = queryModel.Sort ??= Constants.RequestForReturningIdAcsending;
+
+            switch (sortOption)
+            {
+                case Constants.RequestForReturningIdAcsending:
+                    requests = requests?.OrderBy(r => r.Id)?.ToList();
+                    break;
+                case Constants.RequestForReturningIdDescending:
+                    requests = requests?.OrderByDescending(r => r.Id)?.ToList();
+                    break;
+                case Constants.RequestForReturningCodeAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.Asset.AssetCode)?.ToList();
+                    break;
+                case Constants.RequestForReturningCodeDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.Asset.AssetCode)?.ToList();
+                    break;
+                case Constants.RequestForReturningNameAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.Asset.AssetName)?.ToList();
+                    break;
+                case Constants.RequestForReturningNameDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.Asset.AssetName)?.ToList();
+                    break;
+                case Constants.RequestForReturningRequestedByAcsending:
+                    requests = requests?.OrderBy(r => r.RequestedBy.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningRequestedByDescending:
+                    requests = requests?.OrderByDescending(r => r.RequestedBy.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAcceptedByAcsending:
+                    requests = requests?.OrderBy(r => r.AcceptedBy?.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAcceptedByDescending:
+                    requests = requests?.OrderByDescending(r => r.AcceptedBy?.UserName)?.ToList();
+                    break;
+                case Constants.RequestForReturningAssignedDateAcsending:
+                    requests = requests?.OrderBy(r => r.Assignment.AssignedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningAssignedDateDescending:
+                    requests = requests?.OrderByDescending(r => r.Assignment.AssignedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningStateAcsending:
+                    requests = requests?.OrderBy(r => r.State)?.ToList();
+                    break;
+                case Constants.RequestForReturningStateDescending:
+                    requests = requests?.OrderByDescending(r => r.State)?.ToList();
+                    break;
+                case Constants.RequestForReturningReturnedDateAcsending:
+                    requests = requests?.OrderBy(r => r.ReturnedDate)?.ToList();
+                    break;
+                case Constants.RequestForReturningReturnedDateDescending:
+                    requests = requests?.OrderByDescending(r => r.ReturnedDate)?.ToList();
+                    break;
+                default:
+                    requests = requests?.OrderBy(r => r.Id)?.ToList();
+                    break;
+            }
+
+            //paging
+            var output = new Pagination<GetRequestForReturningResponse>();
+
+            output.TotalRecord = requests.Count();
+
+            var listRequests = requests.Select(ass => new GetRequestForReturningResponse(ass));
+
+            output.Source = listRequests.Skip((queryModel.Page - 1) * queryModel.PageSize)
+                                   .Take(queryModel.PageSize)
+                                   .ToList();
+            output.TotalPage = (output.TotalRecord - 1) / queryModel.PageSize + 1;
+
+            if (queryModel.Page > output.TotalPage)
+            {
+                queryModel.Page = output.TotalPage;
+            }
+
+            output.QueryModel = queryModel;
+
+            return output!;
+        }
+
+
     }
 }

@@ -129,6 +129,7 @@ namespace AssetManagementTeam6.API.Services.Implements
                                         u!.RequestedBy.UserName!.ToLower().Contains(nameToQuery)).ToList();
             }
 
+            // filter
             if (queryModel.RequestForReturningState != null)
             {
                 requests = requests?.Where(r => queryModel.RequestForReturningState.Contains(r.State))?.ToList();
