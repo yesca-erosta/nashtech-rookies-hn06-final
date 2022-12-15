@@ -43,6 +43,7 @@ function Header() {
     const handleCloseSuccess = () => {
         navigate('/login');
         setShowSuccess(false);
+        localStorage.removeItem(TOKEN_KEY);
     };
 
     const [showChangePassword, setShowChangePassword] = useState(false);
@@ -173,7 +174,7 @@ function Header() {
                     <h3 className={cx('modal-title')}>Are you sure</h3>
                 </Modal.Header>
                 <Modal.Body>Do you want to log out?</Modal.Body>
-                <Modal.Footer style={{ justifyContent: 'flex-start' }}>
+                <Modal.Footer style={{ justifyContent: 'flex-end' }}>
                     <Button variant="danger" onClick={handleCloseRemoveAccessToken} href="/">
                         Log out
                     </Button>
@@ -208,10 +209,9 @@ function Header() {
                                 {hideOld ? <AiFillEye /> : <AiFillEyeInvisible />}
                             </div>
                         </div>
-                    </Form>
-                    {isOldPasswordError && <div className={cx('oldPassword_false')}>Password is incorrect!</div>}
-                    <br></br>
-                    <Form>
+
+                        <br></br>
+
                         <h6>New password:</h6>
                         <div className={cx('input-new-password')}>
                             <Form.Control
@@ -232,6 +232,8 @@ function Header() {
                             </div>
                         </div>
                     </Form>
+                    {isOldPasswordError && <div className={cx('oldPassword_false')}>Password is incorrect!</div>}
+
                     {isEmptyPasswordError && (
                         <div className={cx('oldPassword_false')}>You should provide the new password!</div>
                     )}
@@ -252,7 +254,7 @@ function Header() {
                     <Button variant="danger" onClick={handleSave} disabled={disable}>
                         Save
                     </Button>
-                    <Button variant="outline-secondary" onClick={handleCloseChangePassword} href="">
+                    <Button variant="outline-secondary" onClick={handleCloseChangePassword}>
                         Cancel
                     </Button>
                 </Modal.Footer>

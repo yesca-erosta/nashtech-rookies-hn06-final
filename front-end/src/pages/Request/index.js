@@ -36,6 +36,7 @@ function Request() {
 
     const onChangeDate = async (date) => {
         setLoading(true);
+
         const d = new Date(date).toLocaleDateString('fr-CA');
 
         setDate(date);
@@ -392,7 +393,7 @@ function Request() {
                                 selected={date}
                                 className="form-control w-full"
                                 onChange={(date) => onChangeDate(date)}
-                                placeholderText="dd/MM/yyyy"
+                                placeholderText="Returned Date"
                                 dateFormat="dd/MM/yyyy"
                             />
                         </Form.Group>
