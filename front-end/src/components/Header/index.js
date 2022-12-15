@@ -141,6 +141,12 @@ function Header() {
         setLoading(false);
     };
 
+    const handleOnChangeEnter = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
+        }
+    };
+
     return (
         <header className={cx('wrapper')}>
             <div className={cx('inner')}>
@@ -189,7 +195,7 @@ function Header() {
                     <h3 className={cx('modal-title')}>Change Password</h3>
                 </Modal.Header>
                 <Modal.Body>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
                         <h6>Old password:</h6>
                         <div className={cx('input-new-password')}>
                             <Form.Control
@@ -204,6 +210,7 @@ function Header() {
                                     setIsEmptyPasswordError(false);
                                     setIsSamePasswordError(false);
                                 }}
+                                onKeyUp={handleOnChangeEnter}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnOld}>
                                 {hideOld ? <AiFillEye /> : <AiFillEyeInvisible />}
@@ -226,6 +233,7 @@ function Header() {
                                     setIsSamePasswordError(false);
                                     setIsComplexityPasswordError(false);
                                 }}
+                                onKeyUp={handleOnChangeEnter}
                             />
                             <div className={cx('icon-new')} onClick={toggleBtnNew}>
                                 {hideNew ? <AiFillEye /> : <AiFillEyeInvisible />}
