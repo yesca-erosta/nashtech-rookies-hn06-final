@@ -110,7 +110,13 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>User {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter user'} style={{ width: 600 }} readOnly value={dataAdd?.fullName} />
+                        <Form.Control
+                            placeholder={'Enter user'}
+                            style={{ width: 600 }}
+                            readOnly
+                            value={dataAdd?.fullName}
+                            onClick={() => setIsShowListUser(true)}
+                        />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListUser(true)}>
                             <GoTriangleDown />
                         </InputGroup.Text>
@@ -120,7 +126,12 @@ function EditAssignment() {
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>Asset {<b className={cxx('asterisk')}>*</b>}</Form.Label>
                     <InputGroup>
-                        <Form.Control placeholder={'Enter asset'} readOnly value={dataAdd.assetName} />
+                        <Form.Control
+                            placeholder={'Enter asset'}
+                            readOnly
+                            value={dataAdd.assetName}
+                            onClick={() => setIsShowListAsset(true)}
+                        />
                         <InputGroup.Text style={{ cursor: 'pointer' }} onClick={() => setIsShowListAsset(true)}>
                             <GoTriangleDown />
                         </InputGroup.Text>
