@@ -6,7 +6,7 @@ import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../../components/Header/header.module.scss';
 import { Loading } from '../../../components/Loading/Loading';
-import { BASE_URL } from '../../../constants';
+import { BASE_URL, TOKEN_KEY } from '../../../constants';
 import { useAppContext } from '../../../context/RequiredAuth/authContext';
 export const ModalFirstChangePassword = () => {
     const cx = classNames.bind(styles);
@@ -22,10 +22,6 @@ export const ModalFirstChangePassword = () => {
 
     const [show, setShow] = useState(false);
     const navigate = useNavigate();
-    const handleClose = () => {
-        navigate('/login');
-        setShow(false);
-    };
 
     const toggleBtnNew = () => {
         setHideNew((pre) => !pre);
@@ -93,6 +89,11 @@ export const ModalFirstChangePassword = () => {
         }
     };
 
+    const handleClose = () => {
+        localStorage.removeItem(TOKEN_KEY);
+        setShow(false);
+        navigate('/login');
+    };
     return (
         <>
             <Modal
@@ -112,7 +113,7 @@ export const ModalFirstChangePassword = () => {
                     <div>This is the first time you logged in.</div>
                     <div>You have to change your password to continue.</div>
                     <hr></hr>
-                    <Form>
+                    <Form onSubmit={(e) => e.preventDefault()}>
                         <h6>New password:</h6>
                         <div className={cx('input-new-password')}>
                             <Form.Control
