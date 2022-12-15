@@ -21,8 +21,7 @@ namespace AssetManagementTeam6.API.Validation
                      .Cascade(CascadeMode.StopOnFirstFailure)
                      .NotNull()
                      .NotEmpty()
-                     .Matches(StringPattern.UserPasswordLength).WithMessage("The password should be 8-16 characters")
-                     .Matches(StringPattern.UserPassword).WithMessage("The password should be have 1 Capital character, 1 normal character and 1 digit");
+                     .Matches(StringPattern.UserPassword).WithMessage("Password must be at least 8 characters and contain at least 1 capital letter and a number");
 
                 RuleFor(x => x.UserName)
                     .Cascade(CascadeMode.StopOnFirstFailure)

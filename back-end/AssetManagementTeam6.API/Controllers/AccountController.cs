@@ -68,7 +68,6 @@ namespace AssetManagementTeam6.API.Controllers
             });
         }
 
-
         [HttpPut]
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest requestModel)
