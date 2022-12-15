@@ -94,7 +94,6 @@ namespace AssetManagementTeam6.API.Services.Implements
                 listErrorAssigner.Add("Assigner is not exist");
             }
 
-
             if (!isValid)
             {
                 var error = new ExpandoObject() as IDictionary<string, object>;
