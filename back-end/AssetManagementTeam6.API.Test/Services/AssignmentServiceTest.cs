@@ -111,7 +111,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Id = 1,
                 AssetName = "Laptop Sample",
                 InstalledDate = new DateTime(2000, 01, 13),
-                State = AssetStateEnum.NotAvailable,
+                State = AssetStateEnum.Available,
                 Location = LocationEnum.HN,
                 Specification = "null",
                 CategoryId = "LA",
@@ -154,25 +154,25 @@ namespace AssetManagementTeam6.API.Test.Services
 
         public static readonly object[][] CorrectGetPagination =
 {
-            //LocationEnum location, List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize
-            new object[] { new List<AssignmentStateEnum>(), "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>(), "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>(), "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.Accepted}, "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.WaitingForAcceptance}, "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.Accepted, AssignmentStateEnum.WaitingForAcceptance,AssignmentStateEnum.Declined}, "", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "dongnp", "", 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.NameAcsending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.NameDescending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.StaffCodeAcsending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.StaffCodeDescending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.JoinedDateAcsending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.JoinedDateDescending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.TypeAcsending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.TypeDescending, 1, 10 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.TypeDescending, 1, 2 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.TypeDescending, 2, 2 },
-            new object[] { new List<AssignmentStateEnum>() , "", Constants.TypeDescending, 100, 10 },
+            //List<StaffEnum> types, string nameToQuery, string sort, int page, int pageSize, DateTime date
+            new object[] { new List<AssignmentStateEnum>(), "", Constants.AssignmentIdAcsending, 1, 10, DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>(), "", Constants.AssignmentIdDescending, 1, 10, DateTime.UtcNow},
+            new object[] { new List<AssignmentStateEnum>(), "", Constants.AssignmentCodeAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.Accepted}, "", Constants.AssignmentCodeDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.WaitingForAcceptance}, "", Constants.AssignmentNameAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() { AssignmentStateEnum.Accepted, AssignmentStateEnum.WaitingForAcceptance,AssignmentStateEnum.Declined}, "", "", 1, 10, DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentNameDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedToAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedToDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedByAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedByDescending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedDateAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentAssignedDateDescending, 1, 10 , DateTime.UtcNow},
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentStateAcsending, 1, 10 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", Constants.AssignmentStateDescending, 1, 2 , DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>() , "", "", 2, 2 ,DateTime.UtcNow},
+            new object[] { new List<AssignmentStateEnum>() , "", "", 100, 10,DateTime.UtcNow },
+            new object[] { new List<AssignmentStateEnum>(), "", "", 1, 10 , new DateTime(2000,01, 13)},
         };
 
         public static readonly object[][] FalseThrowException =
@@ -187,7 +187,121 @@ namespace AssetManagementTeam6.API.Test.Services
 
         public List<Assignment> GetSampleAssignmentLists()
         {
-            return TestBase.ReadJsonFromFile<List<Assignment>>("dummy_assignment_data.json");
+            //return TestBase.ReadJsonFromFile<List<Assignment>>("dummy_assignment_data.json");
+
+            return new List<Assignment>
+            {
+                new Assignment
+                {
+                    AssignedDate = DateTime.Now,
+                    Note = "Assignment 1",
+                    IsReturning = false,
+                    State = AssignmentStateEnum.WaitingForAcceptance,
+                    Id = 1,
+                    AssetId = 3,
+                    AssignedToId = 2,
+                    AssignedById = 1,
+                    Asset = new Asset
+                    {
+                        Id = 3,
+                        AssetName = "Laptop Sample",
+                        InstalledDate = new DateTime(2000, 01, 13),
+                        State = AssetStateEnum.Available,
+                        Location = LocationEnum.HN,
+                        Specification = "null",
+                        CategoryId = "LA",
+
+                        Category = new Category
+                        {
+                            Id = "LA",
+                            Name = "Laptop"
+                        }
+                    },
+                    AssignedBy = new User
+                    {
+                        Id = 1,
+                        UserName = "dongnp13",
+                        FirstName = "Dong",
+                        LastName = "Nguyen Phuong",
+                        DateOfBirth = new DateTime(2000, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2010, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Admin,
+                    },
+                    AssignedTo = new User
+                    {
+                        Id = 2,
+                        UserName = "tineship",
+                        FirstName = "Tien",
+                        LastName = "Nguyen",
+                        DateOfBirth = new DateTime(1999, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2012, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Staff,
+                    }
+                },
+                new Assignment
+                {
+                    AssignedDate = DateTime.Now,
+                    Note = "Assignment 1",
+                    IsReturning = false,
+                    State = AssignmentStateEnum.WaitingForAcceptance,
+                    Id = 2,
+                    AssetId = 2,
+                    AssignedToId = 3,
+                    AssignedById = 4,
+                    Asset = new Asset
+                    {
+                        Id = 2,
+                        AssetName = "Laptop Sample",
+                        InstalledDate = new DateTime(2000, 01, 13),
+                        State = AssetStateEnum.Available,
+                        Location = LocationEnum.HN,
+                        Specification = "null",
+                        CategoryId = "LA",
+
+                        Category = new Category
+                        {
+                            Id = "LA",
+                            Name = "Laptop"
+                        }
+                    },
+                    AssignedBy = new User
+                    {
+                        Id = 4,
+                        UserName = "dongnp13",
+                        FirstName = "Dong",
+                        LastName = "Nguyen Phuong",
+                        DateOfBirth = new DateTime(2000, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2010, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Admin,
+                    },
+                    AssignedTo = new User
+                    {
+                        Id = 3,
+                        UserName = "tineship",
+                        FirstName = "Tien",
+                        LastName = "Nguyen",
+                        DateOfBirth = new DateTime(1999, 01, 13),
+                        Gender = GenderEnum.Male,
+                        JoinedDate = new DateTime(2012, 10, 10),
+                        Location = LocationEnum.HN,
+                        NeedUpdatePwdOnLogin = true,
+                        Password = SystemFunction.CreateMD5("Admin@123"),
+                        Type = StaffEnum.Staff,
+                    }
+                }
+            };
         }
 
         [Fact]
@@ -260,7 +374,7 @@ namespace AssetManagementTeam6.API.Test.Services
 
         [Theory, MemberData(nameof(CorrectGetPagination))]
         public async Task GetPaginationUser_ShouldReturnNotNull(List<AssignmentStateEnum> states, string nameToQuery
-                                                                , string sort, int page, int pageSize)
+                                                                , string sort, int page, int pageSize, DateTime? date)
         {
             //Arrange
             var assignments = GetSampleAssignmentLists();
@@ -272,6 +386,7 @@ namespace AssetManagementTeam6.API.Test.Services
                 Sort = sort,
                 ValueSearch = nameToQuery?.Trim().ToLower() ?? string.Empty,
                 AssignmentStates = states.Count != 0 ? states : null,
+                FilterByAssignedDates = date
             };
 
             var expectedOutput = GetExpectedPaginationAssignmentOutput(assignments, queryModel);
@@ -391,5 +506,177 @@ namespace AssetManagementTeam6.API.Test.Services
 
             return output!;
         }
+
+        [Fact]
+        public async Task AcceptedAssignment_ShouldNotReturnNull()
+        {
+            //Arrange
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _mockAssignmentRepository.Setup(x => x.Update(It.IsAny<Assignment>())).ReturnsAsync(_assignmentSample);
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            _assignmentSample.State = AssignmentStateEnum.WaitingForAcceptance;
+            _assignmentSample.Asset.State = AssetStateEnum.Available;
+            //Act
+            var result = await assignmentService.AcceptedAssignment(1);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(result.State, _assignmentSample.State);
+            Assert.Equal(result.Note, _assignmentSample.Note);
+            Assert.Equal(result.AssetId, _assignmentSample.AssetId);
+            Assert.Equal(result.AssignedDate, _assignmentSample.AssignedDate);
+        }
+
+        [Fact]
+        public async Task DeclinedAssignment_ShouldNotReturnNull()
+        {
+            //Arrange
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _mockAssignmentRepository.Setup(x => x.Update(It.IsAny<Assignment>())).ReturnsAsync(_assignmentSample);
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            _assignmentSample.State = AssignmentStateEnum.WaitingForAcceptance;
+            _assignmentSample.Asset.State = AssetStateEnum.Available;
+            //Act
+            var result = await assignmentService.DeclinedAssignment(1);
+
+            //Assert
+            Assert.NotNull(result);
+            Assert.Equal(result.State, _assignmentSample.State);
+            Assert.Equal(result.Note, _assignmentSample.Note);
+            Assert.Equal(result.AssetId, _assignmentSample.AssetId);
+            Assert.Equal(result.AssignedDate, _assignmentSample.AssignedDate);
+        }
+
+        [Fact]
+        public async Task DeclinedAssignment_ShouldThrowException()
+        {
+            //Arrange
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _assignmentSample.State = AssignmentStateEnum.Accepted;
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            Func<Task> act = () => assignmentService.DeclinedAssignment(1);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<MyCustomException>(act);
+
+        }
+
+        [Fact]
+        public async Task UpdateAssignment_ShouldNotReturnNull()
+        {
+            //Arrange
+            var _assignments = new List<Assignment>();
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_assignmentSample.AssignedTo);
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(_assignmentSample.Asset);
+            _mockAssignmentRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignments);
+            _assignmentSample.State = AssignmentStateEnum.WaitingForAcceptance;
+            _assignmentSample.Asset.State = AssetStateEnum.Available;
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            var testResult = await assignmentService.Update(1,new AssignmentRequest
+            {
+                AssetId = _assignmentSample.Id,
+                AssignedById = _assignmentSample.AssignedById,
+                AssignedDate = _assignmentSample.AssignedDate,
+                AssignedToId = _assignmentSample.AssignedToId,
+                Note = _assignmentSample.Note,
+            });
+
+            //Assert
+            Assert.NotNull(testResult);
+        }
+        [Fact]
+        public async Task UpdateAssignment_ShoudThrowException()
+        {
+            //Arrange
+            var _assignments = GetSampleAssignmentLists();
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _mockUserRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(_assignmentSample.AssignedTo);
+            _mockAssetRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Asset, bool>>>())).ReturnsAsync(_assignmentSample.Asset);
+            _mockAssignmentRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignments);
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+
+            //Act
+            Func<Task> act = () => assignmentService.Update(1, new AssignmentRequest
+            {
+                AssetId = _assignmentSample.Id,
+                AssignedById = _assignmentSample.AssignedById,
+                AssignedDate = _assignmentSample.AssignedDate,
+                AssignedToId = _assignmentSample.AssignedToId,
+                Note = _assignmentSample.Note,
+            });
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<MyCustomException>(act);
+        }
+
+        [Fact]
+        public async Task GetAssignmentByAssignedAsset_ShouldNotReturnNull()
+        {
+            //Arrange
+            var _assignments = GetSampleAssignmentLists();
+            _mockAssignmentRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignments);
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+
+            //Act
+            var testResult = await assignmentService.GetAllAsync();
+
+            //Assert
+            Assert.NotEmpty(testResult);
+            Assert.NotNull(testResult);
+            Assert.IsType<List<GetAssignmentResponse>>(testResult);       
+        }
+        [Fact]
+        public async Task GetAssignmentByAssignedAsset_ShouldReturnNull()
+        {
+            //Arrange
+            var _assignments = new List<Assignment>();
+            _mockAssignmentRepository.Setup(x => x.GetListAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignments);
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+
+            //Act
+            var testResult = await assignmentService.GetAllAsync();
+
+            //Assert
+            Assert.Empty(testResult);
+            Assert.NotNull(testResult);
+            Assert.IsType<List<GetAssignmentResponse>>(testResult);
+        }
+
+        [Fact]
+        public async Task DeleteAssignment_ShouldNotReturnNull()
+        {
+            //Arrange
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_assignmentSample);
+            _assignmentSample.State = AssignmentStateEnum.WaitingForAcceptance;
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+            //Act
+            var testResult = await assignmentService.Delete(1);
+
+            //Assert
+            Assert.NotNull(testResult);
+
+        }
+
+        [Fact]
+        public async Task Delete_ShouldThrowException()
+        {
+            _mockAssignmentRepository.Setup(x => x.GetOneAsync(It.IsAny<Expression<Func<Assignment, bool>>>())).ReturnsAsync(_sampleAssignment);
+            _sampleAssignment.State = AssignmentStateEnum.Accepted;
+
+            var assignmentService = new AssignmentService(_mockAssignmentRepository.Object, _mockUserRepository.Object, _mockAssetRepository.Object);
+
+            //Act
+            Func<Task> act = () => assignmentService.Delete(1);
+
+            //Assert
+            var exception = await Assert.ThrowsAsync<MyCustomException>(act);
+        }
     }
+
 }
