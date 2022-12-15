@@ -31,7 +31,16 @@ export const DetailAssignmentForUser = ({ showDetail, assignmentDetail, handleCl
                         Specification
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.specification} readOnly disabled />
+                        <Form.Control
+                            type="text"
+                            placeholder={assignmentDetail.specification}
+                            name="specification"
+                            as="textarea"
+                            rows={3}
+                            cols={40}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
                 <Row className="mt-3">
@@ -86,7 +95,16 @@ export const DetailAssignmentForUser = ({ showDetail, assignmentDetail, handleCl
                         Note
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" placeholder={assignmentDetail.note} readOnly disabled />
+                        <Form.Control
+                            type="text"
+                            placeholder={assignmentDetail.note}
+                            name="note"
+                            as="textarea"
+                            rows={3}
+                            cols={40}
+                            readOnly
+                            disabled
+                        />
                     </Col>
                 </Row>
             </Modal.Body>

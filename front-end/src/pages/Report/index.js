@@ -96,7 +96,7 @@ function Report() {
     };
 
     const CustomPagination = (e) => {
-        const count = Math.ceil(dataReport.length / 20);
+        const count = Math.ceil(dataReport.length / 30);
         return (
             <Row className="mx-0">
                 <Col className="d-flex justify-content-end" sm="12">
