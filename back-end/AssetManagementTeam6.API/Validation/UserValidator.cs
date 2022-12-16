@@ -30,12 +30,12 @@ namespace AssetManagementTeam6.API.Validation
                 RuleFor(x => x.FirstName)
                     .NotNull()
                     .NotEmpty()
-                    .Matches(StringPattern.UserFirstName).WithMessage("First name can only contain alphabetic characters and must start with an alphabetic character.");
+                    .Matches(StringPattern.UserFirstName).WithMessage("First name can only contain alphabetic characters.");
 
                 RuleFor(x => x.LastName)
                     .NotNull()
                     .NotEmpty()
-                    .Matches(StringPattern.UserLastName).WithMessage("Last name can only contain alphabetic characters and must start with an alphabetic character.");
+                    .Matches(StringPattern.UserLastName).WithMessage("Last name can only contain alphabetic characters.");
             });
 
             RuleFor(x => x.DateOfBirth)

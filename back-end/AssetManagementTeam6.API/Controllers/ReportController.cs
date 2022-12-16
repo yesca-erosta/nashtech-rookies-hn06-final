@@ -1,6 +1,7 @@
 ﻿using AssetManagementTeam6.API.Attributes;
 using AssetManagementTeam6.API.Reports;
 using AssetManagementTeam6.API.Services.Interfaces;
+using AssetManagementTeam6.Data.Entities;
 using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,8 @@ namespace AssetManagementTeam6.API.Controllers
         [AuthorizeRoles(StaffRoles.Admin)]
         public async Task<IActionResult> CreateReport()
         {
-            await _reportService.CreateReport();
+            IEnumerable<Report> createRequestList = await _reportService.GetListReport(); 
+            await _reportService.CreateReport(createRequestList);
 
             return Ok();
         }

@@ -17,16 +17,18 @@ namespace AssetManagementTeam6.API.Services.Implements
             _assetRepository = assetRepository;
         }
 
-        public async Task CreateReport()
+        public async Task<Report> CreateReport(IEnumerable<Report> createRequestList)
         {
             var reports = await _reportRepository.GetListAsync();
-            IEnumerable<Report> createRequestList = await GetListReport();
+            //IEnumerable<Report> createRequestList = await GetListReport();
 
             if (reports == null || reports.Count() == 0)
             {
                 foreach (var createRequest in createRequestList)
                 {
-                    await _reportRepository.Create(createRequest);
+                    var result = await _reportRepository.Create(createRequest);
+
+                    return result;
                 }
             }
             else
@@ -50,11 +52,15 @@ namespace AssetManagementTeam6.API.Services.Implements
                             reportRecord.Recycled = createRequest.Recycled;
                             reportRecord.NotAvailable = createRequest.NotAvailable;
 
-                            await _reportRepository.Update(reportRecord);
+                            var result = await _reportRepository.Update(reportRecord);
+
+                            return result;
                         };
                     }
                 }
             }
+
+            return null;
         }
 
         public async Task<IEnumerable<Report>> GetAll()
