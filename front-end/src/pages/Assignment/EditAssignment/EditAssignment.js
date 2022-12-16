@@ -137,7 +137,7 @@ function EditAssignment() {
                         </InputGroup.Text>
                     </InputGroup>
                 </Form.Group>
-
+                {arrMsg?.Asset && <p className={cx('msgErrorBg')}>{arrMsg?.Asset[0]}</p>}
                 <Form.Group className={cx('common-form')}>
                     <Form.Label className={cx('title_input')}>
                         Assigned Date {<b className={cxx('asterisk')}>*</b>}
