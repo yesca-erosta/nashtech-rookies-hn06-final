@@ -1,10 +1,12 @@
 ﻿using AssetManagementTeam6.Data.Entities;
 using AssetManagementTeam6.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace AssetManagementTeam6.Data.Repositories.Implements
 {
+    [ExcludeFromCodeCoverage]
     public class ReportRepository : BaseRepository<Report>, IReportRepository
     {
         public ReportRepository(AssetManagementContext context) : base(context)

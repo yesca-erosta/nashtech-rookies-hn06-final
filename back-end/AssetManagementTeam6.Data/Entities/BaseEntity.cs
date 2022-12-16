@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 
 namespace AssetManagementTeam6.Data.Entities
 {
@@ -7,6 +8,7 @@ namespace AssetManagementTeam6.Data.Entities
     {
         [Key]
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
+        [ExcludeFromCodeCoverage]
         public T Id { get; set; }
     }
 }
